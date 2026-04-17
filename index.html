@@ -8,20 +8,26 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --gold: #ffcc00; }
+        :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; }
         
-        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', Roboto, sans-serif; padding: 10px; margin: 0; padding-bottom: 160px; overflow-x: hidden; }
+        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; padding-bottom: 160px; overflow-x: hidden; }
         
-        .card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; box-sizing: border-box; }
+        /* GERAL */
+        .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-sizing: border-box; }
+        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; font-size: 1rem; }
         
-        /* ESTILOS GERAIS DE INPUT */
-        label { font-size: 0.7rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 8px; margin-left: 5px; letter-spacing: 1px; }
-        input, select, textarea { width: 100%; height: 50px; background: #000; border: 1px solid #333; border-radius: 12px; color: #fff; padding: 0 15px; font-size: 14px; box-sizing: border-box; outline: none; margin-bottom: 20px; }
+        /* FORMULÁRIOS TELA 1 */
+        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
+        input, textarea, select { 
+            width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); 
+            background: #111; color: #fff; box-sizing: border-box; font-size: 14px; outline: none; -webkit-appearance: none; appearance: none;
+        }
         textarea { height: auto; padding: 12px; resize: none; }
+        .row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .col { flex: 1; }
 
-        .btn-neon { background: var(--neon); color: #000; width: 100%; padding: 18px; border-radius: 15px; font-weight: 900; border: none; font-size: 14px; text-transform: uppercase; cursor: pointer; }
-
-        /* --- ESTILOS ESPECÍFICOS TELA 2 (BLOQUEADA/CONGELADA) --- */
+        /* TELA 2: LISTA (CONGELADA) */
         .header-lista { border-top: 2px solid #634d1a; padding-top: 15px; margin-top: 20px; }
         .titulo-secao { color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         
@@ -32,10 +38,10 @@
         .bar-fill { height: 100%; border-radius: 20px; transition: 0.3s; }
 
         .search-box { background: #111; border: 1px solid #222; border-radius: 20px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
-        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; margin-left: 8px; margin-bottom: 0; height: auto; }
+        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; margin-left: 8px; height: auto; padding: 0; }
 
         .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
-        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; -webkit-appearance: none; cursor: pointer; position: relative; margin-bottom: 0; }
+        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; -webkit-appearance: none; cursor: pointer; position: relative; }
         .atleta-check:checked { background: var(--neon); }
         .atleta-check:checked::after { content: '✓'; position: absolute; color: #000; font-weight: 900; font-size: 14px; left: 3px; top: -2px; }
         
@@ -55,9 +61,10 @@
         .pos-badge span:first-child { font-size: 18px; }
         .pos-badge span:last-child { font-size: 10px; font-weight: 900; color: var(--gold); margin-top: -3px; }
 
+        /* RODAPÉ TELA 2 */
         .fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; border-top: 1px solid #222; z-index: 100; padding-bottom: 25px; }
         .btn-row { display: flex; gap: 10px; margin-bottom: 12px; }
-        .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-align: center; }
+        .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; text-align: center; }
         .info-footer { text-align: center; font-size: 11px; color: #666; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
 
         .hidden { display: none; }
@@ -66,43 +73,46 @@
 <body>
 
     <div id="tela1">
-        <div class="card">
-            <label>Nome da Pelada</label>
-            <input type="text" id="nomeEvento" placeholder="Ex: Pelada dos Amigos">
+        <div class="card" style="border-top: 5px solid var(--neon);">
+            <div id="saudacao-container" style="text-align: left; margin-bottom: 25px; background: rgba(0,255,136,0.05); padding: 15px; border-radius: 12px; border: 1px solid #222;">
+                <h3 id="txt-saudacao" style="color: var(--neon); margin: 0; font-size: 1.1rem; line-height: 1.4;">Carregando...</h3>
+                <p style="color: #666; font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-transform: uppercase;">🎮 Painel do Gestor</p>
+            </div>
 
-            <label>Local da Arena</label>
-            <input type="text" id="localArena" placeholder="Ex: Arena Soccer">
+            <div class="row"><div class="col"><label>Nome da Pelada</label><input id="nomeEvento" placeholder="Ex: Pelada dos Amigos"></div></div>
+            <div class="row"><div class="col"><label>Local da Arena</label><input id="local" placeholder="Ex: Arena Soccer X"></div></div>
 
-            <div style="display: flex; gap: 10px;">
-                <div style="flex: 1;">
-                    <label>Data</label>
-                    <input type="date" id="dataEvento">
-                </div>
-                <div style="flex: 1;">
-                    <label>Horário</label>
-                    <input type="time" id="horaEvento">
+            <div class="row">
+                <div class="col" style="flex: 1.4;"><label>Data</label><input id="dataEv" type="date"></div>
+                <div class="col"><label>Horário</label><input id="horarioEv" type="time"></div>
+            </div>
+
+            <div class="row">
+                <div class="col"><label>Limite Atletas</label><input id="limite" type="number" placeholder="Ex: 20"></div>
+                <div class="col"><label>Atletas/Time</label><input id="jogadoresPorTime" type="number" placeholder="Ex: 5"></div>
+            </div>
+
+            <div class="row">
+                <div class="col"><label>Tempo (Min)</label><input id="tempoRegra" type="number" placeholder="Ex: 10"></div>
+                <div class="col">
+                    <label>Tipo de Campo</label>
+                    <select id="tipoCampo">
+                        <option value="" disabled selected>Selecione...</option>
+                        <option>Society</option>
+                        <option>Futsal</option>
+                        <option>Campo</option>
+                    </select>
                 </div>
             </div>
 
-            <div style="display: flex; gap: 10px;">
-                <div style="flex: 1;">
-                    <label>Atletas p/ Time</label>
-                    <input type="number" id="jogadoresPorTime" placeholder="5">
-                </div>
-                <div style="flex: 1;">
-                    <label>Tempo (Min)</label>
-                    <input type="number" id="tempoPartida" placeholder="10">
-                </div>
-            </div>
-
-            <button class="btn-neon" onclick="proximoTela2()">PRÓXIMO: LISTA →</button>
+            <button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS →</button>
         </div>
     </div>
 
     <div id="tela2" class="hidden">
         <div class="card">
-            <textarea id="listaTexto" rows="3" placeholder="Cole a lista de atletas aqui... (Nome - Categoria)"></textarea>
-            <button class="btn-neon" onclick="processarLista()">PROCESSAR LISTA →</button>
+            <textarea id="listaTexto" rows="3" placeholder="Cole a lista de atletas aqui..."></textarea>
+            <button class="btn-neon" style="margin-top: 10px;" onclick="processarLista()">PROCESSAR LISTA →</button>
         </div>
 
         <div id="listaArea" style="display: none;">
@@ -135,14 +145,27 @@
                 <div class="btn-outline" onclick="marcarTodos(false)">DESMARCAR TODOS</div>
             </div>
             <div class="info-footer">TOTAL: <span id="totalFooter">0</span> | GOLEIROS: <span id="goleirosFooter">0</span></div>
-            <button class="btn-neon" onclick="alert('Iniciando Sorteio...')">INICIAR PARTIDA</button>
+            <button class="btn-neon" onclick="alert('Iniciando Partida!')">INICIAR PARTIDA</button>
         </div>
     </div>
 
     <script>
+        // Configurações Iniciais
+        const frasesGestor = [
+            "Fala, João! Já cobrou o PIX de quem disse que 'ia ver e avisava'?",
+            "Bem-vindo, João. Preparado para ouvir que o gol foi de banheira o jogo todo?",
+            "E aí, João! Já sabe quem vai ser o primeiro a pedir pra sair com 2 minutos?",
+            "João, hoje é dia de expulsar quem trouxer chuteira de cravo pro Society!",
+            "Fala, Capitão! Se o time do colete perder de novo, a culpa é sua, hein?"
+        ];
+
+        window.onload = function() {
+            document.getElementById('txt-saudacao').innerText = frasesGestor[Math.floor(Math.random() * frasesGestor.length)];
+        };
+
         let atletasApp = [];
 
-        function proximoTela2() {
+        function irTela2() {
             document.getElementById('tela1').classList.add('hidden');
             document.getElementById('tela2').classList.remove('hidden');
         }
@@ -155,7 +178,7 @@
                 let cat = linha.toUpperCase().includes('MENSALISTA') ? 'MENSALISTA' : 'CONVIDADO';
                 return {
                     id: index,
-                    nome: linha.split(/[-]/)[0].trim(),
+                    nome: linha.replace(/^\d+[\s.-]*/, '').trim(),
                     cat: cat,
                     stars: 3,
                     pos: 'A',
