@@ -13,18 +13,22 @@
         textarea { width: 100%; background: #000; border: 1px solid #333; border-radius: 12px; color: #888; padding: 12px; font-size: 14px; resize: none; box-sizing: border-box; outline: none; }
         .btn-processar { background: var(--neon); color: #000; width: 100%; padding: 15px; border-radius: 12px; font-weight: 900; margin-top: 10px; border: none; text-transform: uppercase; cursor: pointer; }
 
+        /* DIVISOR DOURADO */
         .header-lista { border-top: 2px solid #634d1a; padding-top: 15px; margin-top: 20px; }
         .titulo-secao { color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         
+        /* STATUS PROGRESSO */
         .status-container { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
         .status-box { flex: 1; background: #111; padding: 10px; border-radius: 12px; border: 1px solid #222; }
         .status-label { font-size: 11px; font-weight: 900; display: flex; justify-content: space-between; margin-bottom: 5px; text-transform: uppercase; }
         .bar-bg { background: #222; height: 10px; border-radius: 20px; overflow: hidden; }
         .bar-fill { height: 100%; border-radius: 20px; transition: 0.3s; }
 
+        /* BUSCA */
         .search-box { background: #111; border: 1px solid #222; border-radius: 20px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
         .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; margin-left: 8px; }
 
+        /* ITEM DA LISTA */
         .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
         .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; -webkit-appearance: none; cursor: pointer; position: relative; }
         .atleta-check:checked { background: var(--neon); }
@@ -41,12 +45,15 @@
         .tag-mensalista { background: rgba(0, 255, 136, 0.15); color: var(--neon); border: 1px solid rgba(0, 255, 136, 0.3); }
         .tag-convidado { background: rgba(0, 123, 255, 0.15); color: #007bff; border: 1px solid rgba(0, 123, 255, 0.3); }
         
+        /* ESTRELAS INTERATIVAS */
         .estrelas { color: var(--gold); font-size: 16px; margin-top: 4px; letter-spacing: 2px; cursor: pointer; user-select: none; }
 
+        /* BADGE POSIÇÃO INTERATIVA */
         .pos-badge { width: 35px; height: 35px; background: #222; border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
         .pos-badge span:first-child { font-size: 18px; }
         .pos-badge span:last-child { font-size: 10px; font-weight: 900; color: var(--gold); margin-top: -3px; }
 
+        /* RODAPÉ */
         .fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; border-top: 1px solid #222; z-index: 100; padding-bottom: 25px; }
         .btn-row { display: flex; gap: 10px; margin-bottom: 12px; }
         .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
@@ -57,8 +64,6 @@
 <body>
 
     <div id="tela2">
-        <h2 style="font-size: 20px; margin-bottom: 20px;">Tela 2: Lista e Check-in</h2>
-
         <div class="card">
             <textarea id="listaTexto" rows="3" placeholder="Cole a lista de atletas aqui..."></textarea>
             <button class="btn-processar" onclick="processarLista()">PROCESSAR LISTA →</button>
@@ -193,7 +198,6 @@
             const confirmados = atletasApp.filter(a => a.confirmado);
             const total = atletasApp.length;
             const goleiros = confirmados.filter(a => a.pos === 'G').length;
-            
             const perc = total > 0 ? Math.round((confirmados.length / total) * 100) : 0;
             
             document.getElementById('percentConf').innerText = perc + '%';
