@@ -9,175 +9,274 @@
 
     <style>
         :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; --gray: #888; }
-        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; padding-bottom: 100px; }
-        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; padding-bottom: 140px; }
         
-        /* INPUTS PADRONIZADOS */
+        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-sizing: border-box; }
+        
+        /* PADRONIZAÇÃO TOTAL DOS INPUTS (TELA 1) */
         .input-group { margin-bottom: 15px; width: 100%; }
         .row { display: flex; gap: 10px; margin-bottom: 15px; }
         .col { flex: 1; }
         label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
         
         input, textarea, select { 
-            width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); 
-            background: #111; color: #fff; box-sizing: border-box; font-size: 14px; outline: none; 
-            -webkit-appearance: none; appearance: none;
+            width: 100%; 
+            height: 48px; 
+            padding: 0 12px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            background: #111; 
+            color: #fff; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            outline: none; 
+            display: flex;
+            align-items: center;
+            -webkit-appearance: none; 
+            appearance: none;
         }
         textarea { height: auto; padding: 12px; }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 5px rgba(0,255,136,0.2); }
 
-        /* CARDS E BOTÕES */
-        .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); box-sizing: border-box; }
-        .btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; font-size: 1rem; }
-        .btn-ghost { background: transparent; border: 1px solid #444; color: #aaa; padding: 10px; font-size: 10px; flex: 1; }
+        /* ESTILOS ESPECÍFICOS TELA 2 (IGUAL À IMAGEM) */
+        .search-bar { margin: 15px 0; position: relative; }
+        .search-bar input { background: #1a1a1a; border-radius: 10px; padding-left: 12px; }
         
-        /* ESTILO LISTA TELA 2 */
         .atleta-card { 
-            display: flex; align-items: center; background: #111; padding: 10px; 
-            border-radius: 14px; margin-bottom: 8px; border: 1px solid #222; gap: 10px;
+            display: flex; align-items: center; background: #111; padding: 12px; border-radius: 14px; 
+            margin-bottom: 8px; border: 1px solid #222; gap: 12px;
         }
         .atleta-info { flex: 1; }
-        .atleta-nome { font-size: 14px; font-weight: bold; display: block; margin-bottom: 2px; }
-        .tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 900; text-transform: uppercase; margin-right: 5px; }
-        .tag-mensalista { background: var(--neon); color: #000; }
-        .tag-convidado { background: var(--blue); color: #fff; }
+        .atleta-nome { font-weight: bold; font-size: 14px; margin-bottom: 4px; display: block; }
         
-        .estrelas { color: var(--gold); font-size: 12px; margin-top: 4px; }
-        .posicao-seletor { background: #222; color: var(--gold); border: 1px solid #333; border-radius: 8px; font-size: 10px; padding: 5px; width: 45px; text-align: center; }
-
-        .resumo-fixed { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: #000; 
-            padding: 15px; border-top: 1px solid #333; z-index: 100;
+        .tag-cat { font-size: 9px; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-weight: 900; }
+        .tag-mensalista { background: rgba(0, 255, 136, 0.2); color: var(--neon); }
+        .tag-convidado { background: rgba(0, 123, 255, 0.2); color: #007bff; }
+        
+        .stars { color: var(--gold); font-size: 12px; margin-top: 4px; cursor: pointer; }
+        .pos-icon { 
+            width: 32px; height: 32px; background: #222; border-radius: 8px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 1px solid #333; font-size: 10px; color: var(--gold);
         }
-        .stats-bolhas { display: flex; justify-content: center; gap: 15px; margin-bottom: 10px; font-size: 11px; color: #aaa; }
-        .stats-bolhas b { color: var(--neon); }
+
+        /* RODAPÉ FIXO TELA 2 */
+        .footer-controles { 
+            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); 
+            padding: 15px; border-top: 1px solid #333; z-index: 1000; backdrop-filter: blur(10px);
+        }
+        .btn-group-check { display: flex; gap: 10px; margin-bottom: 12px; }
+        .btn-outline { flex: 1; background: transparent; border: 1px solid #444; color: #ccc; padding: 10px; font-size: 11px; border-radius: 8px; text-transform: uppercase; }
+        .resumo-footer { text-align: center; font-size: 11px; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-neon { background: var(--neon); color: #000; padding: 16px; width: 100%; border-radius: 12px; font-weight: 900; font-size: 14px; text-transform: uppercase; }
+
+        .hidden { display: none; }
+        .section-title { font-size: 11px; font-weight: 900; color: var(--neon); margin: 20px 0 10px 5px; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
     </style>
 </head>
 <body>
 
     <div id="tela1" class="card" style="border-top: 5px solid var(--neon);">
-        <div id="saudacao-container" style="margin-bottom: 25px; background: rgba(0,255,136,0.05); padding: 15px; border-radius: 12px; border: 1px solid #222;">
-            <h3 id="txt-saudacao" style="color: var(--neon); margin: 0; font-size: 1.1rem;">Carregando...</h3>
-            <p style="color: #666; font-size: 0.75rem; margin-top: 5px; font-weight: bold; text-transform: uppercase;">🎮 Gestão de Arena</p>
+        <div id="saudacao-container" style="text-align: left; margin-bottom: 25px; background: rgba(0,255,136,0.05); padding: 15px; border-radius: 12px; border: 1px solid #222;">
+            <h3 id="txt-saudacao" style="color: var(--neon); margin: 0; font-size: 1.1rem; line-height: 1.4;">Carregando...</h3>
+            <p style="color: #666; font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-transform: uppercase;">🎮 Painel do Gestor</p>
         </div>
 
-        <div class="input-group"><label>Nome da Pelada</label><input id="nomeEvento" placeholder="Ex: Pelada dos Amigos"></div>
-        <div class="input-group"><label>Local da Arena</label><input id="local" placeholder="Ex: Arena Soccer X"></div>
+        <div class="input-group">
+            <label>Nome da Pelada</label>
+            <input id="nomeEvento" placeholder="Ex: Pelada dos Amigos">
+        </div>
+
+        <div class="input-group">
+            <label>Local da Arena</label>
+            <input id="local" placeholder="Ex: Arena Soccer X">
+        </div>
 
         <div class="row">
-            <div class="col" style="flex: 1.4;"><label>Data</label><input id="dataEv" type="date"></div>
-            <div class="col"><label>Horário</label><input id="horarioEv" type="time"></div>
+            <div class="col" style="flex: 1.4;">
+                <label>Data</label>
+                <input id="dataEv" type="date">
+            </div>
+            <div class="col">
+                <label>Horário</label>
+                <input id="horarioEv" type="time">
+            </div>
         </div>
 
         <div class="row">
-            <div class="col"><label>Atletas/Time</label><input id="jogadoresPorTime" type="number" placeholder="5"></div>
-            <div class="col"><label>Tempo (Min)</label><input id="tempoRegra" type="number" placeholder="10"></div>
+            <div class="col">
+                <label>Limite Atletas</label>
+                <input id="limite" type="number" placeholder="Ex: 20">
+            </div>
+            <div class="col">
+                <label>Atletas/Time</label>
+                <input id="jogadoresPorTime" type="number" placeholder="Ex: 5">
+            </div>
         </div>
 
-        <button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS →</button>
+        <div class="row">
+            <div class="col">
+                <label>Tempo (Min)</label>
+                <input id="tempoRegra" type="number" placeholder="Ex: 10">
+            </div>
+            <div class="col">
+                <label>Tipo de Campo</label>
+                <select id="tipoCampo">
+                    <option value="" disabled selected>Selecione...</option>
+                    <option>Society</option>
+                    <option>Futsal</option>
+                    <option>Campo</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-neon" style="margin-top: 10px;" onclick="irTela2()">CONVOCAR ATLETAS →</button>
     </div>
 
-    <div id="tela2" style="display:none">
-        <div class="card" style="margin-bottom: 10px;">
-            <label>Cole a lista aqui (Nome e Categoria)</label>
-            <textarea id="listaTexto" rows="4" placeholder="1. João (M)&#10;2. Pedro (C)&#10;3. Ricardo (M)"></textarea>
-            <button class="btn-neon" style="margin-top: 10px; height: 40px; font-size: 12px;" onclick="processarLista()">PROCESSAR LISTA ⚡</button>
+    <div id="tela2" class="hidden">
+        <h2 style="font-size: 18px; margin-left: 5px;">Tela 2: Lista e Check-in</h2>
+        
+        <div class="card">
+            <textarea id="listaTexto" rows="4" placeholder="Cole a lista de atletas aqui... (Nome, Categoria)"></textarea>
+            <button class="btn-neon" style="margin-top:10px;" onclick="processarLista()">PROCESSAR LISTA →</button>
         </div>
 
-        <div id="areaCheckin" style="display:none">
-            <div id="listaAtletasRender" style="margin-top: 15px;">
+        <div id="containerLista" class="hidden">
+            <div class="section-title">✓ LISTA DE CONVOCAÇÃO</div>
+            
+            <div class="search-bar">
+                <input type="text" id="buscaAtleta" placeholder="Buscar atleta..." onkeyup="filtrarAtletas()">
+            </div>
+
+            <div id="listaAtletasRender">
                 </div>
-
-            <div class="row" style="margin-top: 20px;">
-                <button class="btn-ghost" onclick="massa(true)">MARCAR TODOS</button>
-                <button class="btn-ghost" onclick="massa(false)">DESMARCAR TODOS</button>
-            </div>
         </div>
 
-        <div class="resumo-fixed" id="rodapeAcao" style="display:none">
-            <div class="stats-bolhas">
-                <span>CONFIRMADOS: <b id="totalConf">0</b></span>
-                <span>GOLEIROS: <b id="totalGol">0</b></span>
+        <div id="footerTela2" class="footer-controles hidden">
+            <div class="btn-group-check">
+                <button class="btn-outline" onclick="marcarTodos(true)">Selecionar Todos</button>
+                <button class="btn-outline" onclick="marcarTodos(false)">Desmarcar Todos</button>
             </div>
-            <button class="btn-neon" onclick="iniciarJogo()">INICIAR PARTIDA ⚽</button>
+            <div class="resumo-footer">
+                TOTAL: <span id="totalConf">0</span> | GOLEIROS: <span id="totalGol">0</span>
+            </div>
+            <button class="btn-neon" onclick="iniciar()">INICIAR PARTIDA</button>
         </div>
     </div>
 
     <script>
-        // Configuração Firebase (Mesma de antes)
-        const firebaseConfig = { apiKey: "AIzaSyCwi7wNRm-0Zg8W1sXVOFy-1EnGHjXyUCg", projectId: "arena-fut-f1599" };
-        firebase.initializeApp(firebaseConfig);
-        
-        let app = { atletas: [] };
+        // Configuração Firebase e Saudação
+        const frasesGestor = [
+            "Fala, João! Já cobrou o PIX de quem disse que 'ia ver e avisava'?",
+            "Bem-vindo, João. Preparado para ouvir que o gol foi de banheira o jogo todo?",
+            "E aí, João! Já sabe quem vai ser o primeiro a pedir pra sair com 2 minutos?",
+            "João, hoje é dia de expulsar quem trouxer chuteira de cravo pro Society!",
+            "Fala, Chefe! Preparado para a choradeira do sorteio dos times?"
+        ];
 
-        const frases = ["Fala, João! Preparado para o show?", "E aí, João! Quem vai ser o MVP hoje?"];
-        window.onload = () => { document.getElementById('txt-saudacao').innerText = frases[Math.floor(Math.random() * frases.length)]; };
+        window.onload = function() {
+            document.getElementById('txt-saudacao').innerText = frasesGestor[Math.floor(Math.random() * frasesGestor.length)];
+        };
 
-        function irTela2() { document.getElementById("tela1").style.display="none"; document.getElementById("tela2").style.display="block"; }
+        let app = { 
+            atletas: [] 
+        };
+
+        function irTela2() { 
+            document.getElementById("tela1").classList.add("hidden"); 
+            document.getElementById("tela2").classList.remove("hidden"); 
+        }
 
         function processarLista() {
             let texto = document.getElementById("listaTexto").value;
             let linhas = texto.split("\n").filter(l => l.trim() !== "");
             
-            app.atletas = linhas.map((linha, i) => {
-                let nomeLimpo = linha.replace(/^\d+[\s.-]*/, '').trim();
-                let categoria = "Convidado";
-                if(nomeLimpo.toUpperCase().includes("(M)")) { categoria = "Mensalista"; nomeLimpo = nomeLimpo.replace(/\(M\)/gi, '').trim(); }
-                if(nomeLimpo.toUpperCase().includes("(T)")) { categoria = "Mensalista"; nomeLimpo = nomeLimpo.replace(/\(T\)/gi, '').trim(); }
+            app.atletas = linhas.map((linha, index) => {
+                let categoria = "CONVIDADO";
+                if(linha.toUpperCase().includes("MENSALISTA")) categoria = "MENSALISTA";
                 
-                return { 
-                    id: i, nome: nomeLimpo, cat: categoria, conf: true, estrelas: 3, pos: "A" 
+                return {
+                    id: index,
+                    nome: linha.split(/[-,(]/)[0].trim(),
+                    categoria: categoria,
+                    estrelas: 3,
+                    posicao: "A", 
+                    confirmado: true
                 };
             });
 
-            document.getElementById("areaCheckin").style.display = "block";
-            document.getElementById("rodapeAcao").style.display = "block";
-            renderLista();
+            document.getElementById("containerLista").classList.remove("hidden");
+            document.getElementById("footerTela2").classList.remove("hidden");
+            renderizarLista();
         }
 
-        function renderLista() {
-            let html = app.atletas.map(atleta => `
-                <div class="atleta-card" style="opacity: ${atleta.conf ? 1 : 0.5}">
-                    <input type="checkbox" ${atleta.conf ? 'checked' : ''} onchange="toggle(${atleta.id})" style="width:20px; height:20px">
-                    
-                    <div class="atleta-info">
-                        <span class="atleta-nome">${atleta.nome}</span>
-                        <div>
-                            <span class="tag ${atleta.cat === 'Mensalista' ? 'tag-mensalista' : 'tag-convidado'}">${atleta.cat}</span>
-                            <span class="estrelas" onclick="mudarEstrela(${atleta.id})">${'★'.repeat(atleta.estrelas)}${'☆'.repeat(5-atleta.estrelas)}</span>
+        function renderizarLista() {
+            let html = "";
+            app.atletas.forEach(atleta => {
+                let tagClass = atleta.categoria === "MENSALISTA" ? "tag-mensalista" : "tag-convidado";
+                let iconPos = atleta.posicao === "G" ? "🧤<br>G" : "👟<br>A";
+                
+                html += `
+                    <div class="atleta-card" data-nome="${atleta.nome.toLowerCase()}">
+                        <input type="checkbox" ${atleta.confirmado ? 'checked' : ''} 
+                            style="width:20px; height:20px; accent-color:var(--neon)" 
+                            onchange="toggleConf(${atleta.id})">
+                        
+                        <div class="atleta-info">
+                            <span class="atleta-nome">${atleta.nome}</span>
+                            <span class="tag-cat ${tagClass}">${atleta.categoria}</span>
+                            <div class="stars" onclick="mudarEstrela(${atleta.id})">
+                                ${"★".repeat(atleta.estrelas)}${"☆".repeat(5-atleta.estrelas)}
+                            </div>
+                        </div>
+
+                        <div class="pos-icon" onclick="togglePosicao(${atleta.id})">
+                            ${iconPos}
                         </div>
                     </div>
-
-                    <select class="posicao-seletor" onchange="mudarPos(${atleta.id}, this.value)">
-                        <option value="A" ${atleta.pos === 'A' ? 'selected' : ''}>Linha</option>
-                        <option value="G" ${atleta.pos === 'G' ? 'selected' : ''}>GOL</option>
-                    </select>
-                </div>
-            `).join('');
-            
+                `;
+            });
             document.getElementById("listaAtletasRender").innerHTML = html;
-            atualizarResumo();
+            atualizarContadores();
         }
 
-        function toggle(id) { app.atletas[id].conf = !app.atletas[id].conf; renderLista(); }
-        
-        function mudarEstrela(id) { 
-            app.atletas[id].estrelas = app.atletas[id].estrelas >= 5 ? 1 : app.atletas[id].estrelas + 1;
-            renderLista();
+        function toggleConf(id) {
+            app.atletas[id].confirmado = !app.atletas[id].confirmado;
+            atualizarContadores();
         }
 
-        function mudarPos(id, val) { app.atletas[id].pos = val; atualizarResumo(); }
+        function togglePosicao(id) {
+            app.atletas[id].posicao = app.atletas[id].posicao === "A" ? "G" : "A";
+            renderizarLista();
+        }
 
-        function massa(val) { app.atletas.forEach(a => a.conf = val); renderLista(); }
+        function mudarEstrela(id) {
+            app.atletas[id].estrelas = (app.atletas[id].estrelas % 5) + 1;
+            renderizarLista();
+        }
 
-        function atualizarResumo() {
-            let confs = app.atletas.filter(a => a.conf);
+        function marcarTodos(status) {
+            app.atletas.forEach(a => a.confirmado = status);
+            renderizarLista();
+        }
+
+        function filtrarAtletas() {
+            let termo = document.getElementById("buscaAtleta").value.toLowerCase();
+            document.querySelectorAll(".atleta-card").forEach(card => {
+                let nome = card.getAttribute("data-nome");
+                card.style.display = nome.includes(termo) ? "flex" : "none";
+            });
+        }
+
+        function atualizarContadores() {
+            let confs = app.atletas.filter(a => a.confirmado);
             document.getElementById("totalConf").innerText = confs.length;
-            document.getElementById("totalGol").innerText = confs.filter(a => a.pos === 'G').length;
+            document.getElementById("totalGol").innerText = confs.filter(a => a.posicao === "G").length;
         }
 
-        function iniciarJogo() {
-            alert("Partida Iniciada com " + app.atletas.filter(a => a.conf).length + " atletas!");
-            // Aqui chamaria a Tela 3 (Cronômetro)
+        function iniciar() {
+            alert("Iniciando com " + app.atletas.filter(a => a.confirmado).length + " confirmados!");
         }
     </script>
 </body>
