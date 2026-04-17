@@ -16,7 +16,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -30,19 +30,19 @@
         .login-container {
             text-align: center;
             padding: 40px;
-            width: 90%;
-            max-width: 400px;
+            width: 85%;
+            max-width: 380px;
             background: var(--card-bg);
             border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             border: 1px solid #333;
         }
 
         .logo h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-style: italic;
             font-weight: 900;
-            margin-bottom: 5px;
+            margin-bottom: 0;
             letter-spacing: -1px;
         }
 
@@ -52,7 +52,8 @@
 
         .tagline {
             color: #888;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            margin-top: 10px;
             margin-bottom: 40px;
         }
 
@@ -60,32 +61,27 @@
             background-color: var(--primary-color);
             color: #000;
             border: none;
-            padding: 18px 30px;
+            padding: 18px;
             border-radius: 15px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            gap: 12px;
+            transition: 0.2s;
         }
 
         .btn-google:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
         }
 
-        .btn-google:hover {
-            box-shadow: 0 0 20px rgba(212, 255, 0, 0.4);
-        }
-
-        #error-msg {
-            color: #ff4444;
-            font-size: 0.8rem;
+        #status-msg {
             margin-top: 20px;
-            min-height: 1.2rem;
+            font-size: 0.85rem;
+            min-height: 20px;
         }
     </style>
 </head>
@@ -94,52 +90,54 @@
     <div class="login-container">
         <div class="logo">
             <h1>ARENA<span>FUT</span></h1>
-            <div style="margin-top:-10px; margin-bottom: 20px; font-weight: bold; letter-spacing: 2px;">PRO V2</div>
+            <div style="font-weight: bold; letter-spacing: 3px; color: var(--primary-color); font-size: 0.8rem;">PRO V2</div>
         </div>
         
-        <p class="tagline">Gestão inteligente para o seu dia de jogo.</p>
+        <p class="tagline">Sua pelada levada a sério.</p>
 
-        <button class="btn-google" onclick="handleGoogleLogin()">
+        <button class="btn-google" onclick="handleLogin()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.344-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg>
             Entrar com Google
         </button>
 
-        <div id="error-msg"></div>
+        <div id="status-msg"></div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO NOVO PROJETO V2
-        // Substitua pelos dados do seu novo App no Firebase
+        // CONFIGURAÇÃO ATUALIZADA
         const firebaseConfig = {
-            apiKey: "COLE_AQUI_A_NOVA_API_KEY",
-            authDomain: "SEU_PROJETO.firebaseapp.com",
-            projectId: "SEU_PROJETO",
-            storageBucket: "SEU_PROJETO.appspot.com",
-            messagingSenderId: "SEU_ID",
-            appId: "SEU_APP_ID"
+            apiKey: "AIzaSyCwi7wNRm-0Zg8W1sXVOFy-1EnGHjXyUCg",
+            authDomain: "arena-fut-f1599.firebaseapp.com",
+            projectId: "arena-fut-f1599",
+            storageBucket: "arena-fut-f1599.firebasestorage.app",
+            messagingSenderId: "835218567459",
+            appId: "1:835218567459:web:8ff9a673cc523f6e7b9c96",
+            measurementId: "G-LTT2WMZ0LF"
         };
 
-        // Initialize Firebase
+        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
 
-        function handleGoogleLogin() {
+        function handleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            const btn = document.querySelector('.btn-google');
-            const errorDiv = document.getElementById('error-msg');
+            const msg = document.getElementById('status-msg');
             
-            btn.innerText = "A carregar...";
-            errorDiv.innerText = "";
+            msg.style.color = "#888";
+            msg.innerText = "Conectando ao Google...";
 
             firebase.auth().signInWithPopup(provider)
                 .then((result) => {
-                    console.log("Sucesso:", result.user.displayName);
-                    // Aqui enviaremos para a Tela 1 (Dashboard)
-                    alert("Bem-vindo, " + result.user.displayName);
+                    msg.style.color = "#d4ff00";
+                    msg.innerText = "Bem-vindo, " + result.user.displayName;
+                    
+                    setTimeout(() => {
+                        alert("Sucesso! Próxima parada: Gestão da Pelada.");
+                    }, 500);
                 })
                 .catch((error) => {
-                    btn.innerText = "Entrar com Google";
-                    errorDiv.innerText = "Erro ao entrar: " + error.message;
-                    console.error(error);
+                    msg.style.color = "#ff4444";
+                    msg.innerText = "Erro: " + error.message;
+                    console.error("Erro no Login:", error);
                 });
         }
     </script>
