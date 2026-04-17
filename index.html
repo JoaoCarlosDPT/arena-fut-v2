@@ -9,15 +9,12 @@
 
     <style>
         :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; }
-        
         body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; padding-bottom: 160px; overflow-x: hidden; }
         
-        /* GERAL */
         .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-sizing: border-box; }
         button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
         .btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; font-size: 1rem; }
         
-        /* FORMULÁRIOS TELA 1 */
         label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
         input, textarea, select { 
             width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); 
@@ -27,7 +24,6 @@
         .row { display: flex; gap: 10px; margin-bottom: 15px; }
         .col { flex: 1; }
 
-        /* TELA 2: LISTA (CONGELADA) */
         .header-lista { border-top: 2px solid #634d1a; padding-top: 15px; margin-top: 20px; }
         .titulo-secao { color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         
@@ -56,12 +52,10 @@
         .tag-convidado { background: rgba(0, 123, 255, 0.15); color: #007bff; border: 1px solid rgba(0, 123, 255, 0.3); }
         
         .estrelas { color: var(--gold); font-size: 16px; margin-top: 4px; letter-spacing: 2px; cursor: pointer; user-select: none; }
-
         .pos-badge { width: 35px; height: 35px; background: #222; border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
         .pos-badge span:first-child { font-size: 18px; }
         .pos-badge span:last-child { font-size: 10px; font-weight: 900; color: var(--gold); margin-top: -3px; }
 
-        /* RODAPÉ TELA 2 */
         .fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; border-top: 1px solid #222; z-index: 100; padding-bottom: 25px; }
         .btn-row { display: flex; gap: 10px; margin-bottom: 12px; }
         .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; text-align: center; }
@@ -80,29 +74,14 @@
             </div>
 
             <div class="row"><div class="col"><label>Nome da Pelada</label><input id="nomeEvento" placeholder="Ex: Pelada dos Amigos"></div></div>
-            <div class="row"><div class="col"><label>Local da Arena</label><input id="local" placeholder="Ex: Arena Soccer X"></div></div>
-
             <div class="row">
                 <div class="col" style="flex: 1.4;"><label>Data</label><input id="dataEv" type="date"></div>
                 <div class="col"><label>Horário</label><input id="horarioEv" type="time"></div>
             </div>
 
             <div class="row">
-                <div class="col"><label>Limite Atletas</label><input id="limite" type="number" placeholder="Ex: 20"></div>
-                <div class="col"><label>Atletas/Time</label><input id="jogadoresPorTime" type="number" placeholder="Ex: 5"></div>
-            </div>
-
-            <div class="row">
-                <div class="col"><label>Tempo (Min)</label><input id="tempoRegra" type="number" placeholder="Ex: 10"></div>
-                <div class="col">
-                    <label>Tipo de Campo</label>
-                    <select id="tipoCampo">
-                        <option value="" disabled selected>Selecione...</option>
-                        <option>Society</option>
-                        <option>Futsal</option>
-                        <option>Campo</option>
-                    </select>
-                </div>
+                <div class="col"><label>Limite Atletas</label><input id="limite" type="number" placeholder="Ex: 20" value="20"></div>
+                <div class="col"><label>Atletas/Time</label><input id="jogadoresPorTime" type="number" placeholder="Ex: 5" value="5"></div>
             </div>
 
             <button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS →</button>
@@ -125,7 +104,7 @@
                         <div class="bar-bg"><div id="barConf" class="bar-fill" style="width: 0%; background: var(--neon);"></div></div>
                     </div>
                     <div class="status-box">
-                        <div class="status-label"><span style="color:var(--gold)">ESPERA</span> <span id="countEsp">(0)</span></div>
+                        <div class="status-label"><span style="color:var(--gold)">ESPERA</span> <span id="countEspLabel">(0)</span></div>
                         <div class="bar-bg"><div id="barEsp" class="bar-fill" style="width: 0%; background: var(--gold);"></div></div>
                     </div>
                 </div>
@@ -150,13 +129,11 @@
     </div>
 
     <script>
-        // Configurações Iniciais
         const frasesGestor = [
-            "Fala, João! Já cobrou o PIX de quem disse que 'ia ver e avisava'?",
-            "Bem-vindo, João. Preparado para ouvir que o gol foi de banheira o jogo todo?",
-            "E aí, João! Já sabe quem vai ser o primeiro a pedir pra sair com 2 minutos?",
-            "João, hoje é dia de expulsar quem trouxer chuteira de cravo pro Society!",
-            "Fala, Capitão! Se o time do colete perder de novo, a culpa é sua, hein?"
+            "Fala, João! Já cobrou o PIX?",
+            "Preparado para o sorteio, João?",
+            "Bem-vindo ao Arena Fut PRO!",
+            "E aí, João! Quem vai buscar a bola hoje?"
         ];
 
         window.onload = function() {
@@ -173,9 +150,13 @@
         function processarLista() {
             const texto = document.getElementById('listaTexto').value;
             const linhas = texto.split('\n').filter(l => l.trim() !== '');
+            const limite = parseInt(document.getElementById('limite').value) || 999;
             
             atletasApp = linhas.map((linha, index) => {
                 let cat = linha.toUpperCase().includes('MENSALISTA') ? 'MENSALISTA' : 'CONVIDADO';
+                // LÓGICA DE ESPERA: Se o index for maior ou igual ao limite, começa como desmarcado (espera)
+                let estaNoLimite = index < limite; 
+                
                 return {
                     id: index,
                     nome: linha.replace(/^\d+[\s.-]*/, '').trim(),
@@ -183,7 +164,7 @@
                     stars: 3,
                     pos: 'A',
                     img: '👟',
-                    confirmado: true
+                    confirmado: estaNoLimite 
                 };
             });
 
@@ -218,55 +199,51 @@
             atualizarResumos();
         }
 
-        function mudarCategoria(id) {
-            atletasApp[id].cat = atletasApp[id].cat === 'MENSALISTA' ? 'CONVIDADO' : 'MENSALISTA';
-            renderizarLista();
-        }
-
-        function mudarNivel(id) {
-            atletasApp[id].stars = (atletasApp[id].stars % 5) + 1;
-            renderizarLista();
-        }
-
-        function alternarPosicao(id) {
-            if (atletasApp[id].pos === 'A') {
-                atletasApp[id].pos = 'G';
-                atletasApp[id].img = '🧤';
-            } else {
-                atletasApp[id].pos = 'A';
-                atletasApp[id].img = '👟';
-            }
-            renderizarLista();
-        }
-
         function toggleCheck(id) {
             atletasApp[id].confirmado = !atletasApp[id].confirmado;
             atualizarResumos();
         }
 
-        function marcarTodos(status) {
-            atletasApp.forEach(a => a.confirmado = status);
-            renderizarLista();
+        function atualizarResumos() {
+            const limite = parseInt(document.getElementById('limite').value) || 0;
+            const confirmados = atletasApp.filter(a => a.confirmado).length;
+            const totalGeral = atletasApp.length;
+            
+            // Atletas que estão na lista mas desmarcados (ou excedentes)
+            const emEspera = totalGeral - confirmados;
+            
+            // Goleiros apenas dos confirmados
+            const goleiros = atletasApp.filter(a => a.confirmado && a.pos === 'G').length;
+            
+            // Cálculo da barra de progresso (Confirmados / Limite)
+            const percConf = limite > 0 ? Math.min(Math.round((confirmados / limite) * 100), 100) : 0;
+            const percEsp = totalGeral > 0 ? Math.round((emEspera / totalGeral) * 100) : 0;
+
+            document.getElementById('percentConf').innerText = confirmados + '/' + limite;
+            document.getElementById('barConf').style.width = percConf + '%';
+            
+            document.getElementById('countEspLabel').innerText = '(' + emEspera + ')';
+            document.getElementById('barEsp').style.width = percEsp + '%';
+            
+            document.getElementById('totalFooter').innerText = confirmados;
+            document.getElementById('goleirosFooter').innerText = goleiros;
         }
 
+        // Funções de apoio mantidas conforme código original aprovado
+        function mudarCategoria(id) { atletasApp[id].cat = atletasApp[id].cat === 'MENSALISTA' ? 'CONVIDADO' : 'MENSALISTA'; renderizarLista(); }
+        function mudarNivel(id) { atletasApp[id].stars = (atletasApp[id].stars % 5) + 1; renderizarLista(); }
+        function alternarPosicao(id) {
+            if (atletasApp[id].pos === 'A') { atletasApp[id].pos = 'G'; atletasApp[id].img = '🧤'; } 
+            else { atletasApp[id].pos = 'A'; atletasApp[id].img = '👟'; }
+            renderizarLista();
+        }
+        function marcarTodos(status) { atletasApp.forEach(a => a.confirmado = status); renderizarLista(); }
         function filtrarAtletas() {
             const busca = document.getElementById('inputBusca').value.toLowerCase();
             document.querySelectorAll('.atleta-item').forEach(card => {
                 const nome = card.getAttribute('data-nome');
                 card.style.display = nome.includes(busca) ? 'flex' : 'none';
             });
-        }
-
-        function atualizarResumos() {
-            const confirmados = atletasApp.filter(a => a.confirmado);
-            const total = atletasApp.length;
-            const goleiros = confirmados.filter(a => a.pos === 'G').length;
-            const perc = total > 0 ? Math.round((confirmados.length / total) * 100) : 0;
-            
-            document.getElementById('percentConf').innerText = perc + '%';
-            document.getElementById('barConf').style.width = perc + '%';
-            document.getElementById('totalFooter').innerText = confirmados.length;
-            document.getElementById('goleirosFooter').innerText = goleiros;
         }
     </script>
 </body>
