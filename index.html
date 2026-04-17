@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Arena Fut PRO V2</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -15,12 +15,15 @@
         .btn-vitoria { padding: 18px 10px; font-size: 13px; color: white; flex: 1; }
         .btn-empate { background: #333; color: #fff; padding: 12px; width: 100%; margin-top: 8px; }
         .btn-voltar { background: transparent; color: #888; border: 1px solid #444; padding: 8px 15px; margin-bottom: 10px; font-size: 11px; width: fit-content; }
-        .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; }
+        .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-sizing: border-box; overflow: hidden; }
         
-        /* Estilos de Input Intuitivos */
-        .input-group { margin-bottom: 18px; text-align: left; }
-        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
-        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; box-sizing: border-box; font-size: 14px; outline: none; }
+        /* Estilos de Input Corrigidos */
+        .input-group { margin-bottom: 15px; text-align: left; width: 100%; box-sizing: border-box; }
+        .row { display: flex; gap: 10px; width: 100%; margin-bottom: 15px; box-sizing: border-box; }
+        .col { flex: 1; min-width: 0; } /* min-width evita que o input quebre o flex */
+
+        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 5px; margin-left: 5px; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; box-sizing: border-box; font-size: 14px; outline: none; -webkit-appearance: none; }
         input:focus { border-color: var(--neon); }
         
         .section-title { font-size: 10px; font-weight: 900; color: #888; letter-spacing: 1px; margin: 15px 0 8px 5px; text-transform: uppercase; }
@@ -62,34 +65,34 @@
             <input id="local" placeholder="Ex: Arena Soccer X">
         </div>
 
-        <div style="display:flex; gap:10px; margin-bottom: 18px;">
-            <div style="flex: 1.5;">
+        <div class="row">
+            <div class="col" style="flex: 1.5;">
                 <label>Data</label>
                 <input id="dataEv" type="date">
             </div>
-            <div style="flex: 1;">
+            <div class="col">
                 <label>Horário</label>
                 <input id="horarioEv" type="time">
             </div>
         </div>
 
-        <div style="display:flex; gap:10px; margin-bottom: 18px;">
-            <div style="flex: 1;">
+        <div class="row">
+            <div class="col">
                 <label>Limite Atletas</label>
                 <input id="limite" type="number" placeholder="20">
             </div>
-            <div style="flex: 1;">
+            <div class="col">
                 <label>Atletas/Time</label>
                 <input id="jogadoresPorTime" type="number" placeholder="5">
             </div>
         </div>
 
-        <div style="display:flex; gap:10px; align-items: flex-end; margin-bottom: 10px;">
-            <div style="flex: 1;">
+        <div class="row" style="align-items: flex-end;">
+            <div class="col">
                 <label>Tempo (Min)</label>
                 <input id="tempoRegra" type="number" value="10">
             </div>
-            <div style="flex: 1;">
+            <div class="col">
                 <label>Tipo de Campo</label>
                 <select id="tipoCampo">
                     <option>Society</option>
@@ -99,7 +102,7 @@
             </div>
         </div>
 
-        <button class="btn-neon" style="margin-top: 20px; height: 55px;" onclick="irTela2()">CONVOCAR ATLETAS →</button>
+        <button class="btn-neon" style="margin-top: 10px; height: 55px;" onclick="irTela2()">CONVOCAR ATLETAS →</button>
     </div>
 
     <div id="tela2" style="display:none">
