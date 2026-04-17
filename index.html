@@ -3,60 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARENA FUT PRO v2</title>
+    <title>ARENA FUT PRO V2</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-
+    
     <style>
-        :root { --primary: #d4ff00; --bg: #000000; --card: #1a1a1a; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .login-container { text-align: center; width: 90%; max-width: 400px; padding: 20px; }
-        .logo { font-size: 2.5rem; font-weight: 900; font-style: italic; color: var(--primary); margin-bottom: 5px; }
-        .subtitle { color: #888; margin-bottom: 40px; font-size: 0.9rem; letter-spacing: 1px; }
-        .btn-google { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 50px; font-weight: bold; font-size: 1rem; cursor: pointer; color: #000; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-        .btn-google:active { transform: scale(0.95); opacity: 0.8; }
-        #msg-status { margin-top: 20px; font-size: 0.8rem; color: #ff4444; }
+        :root {
+            --primary-color: #d4ff00; /* Verde Neon */
+            --bg-color: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .login-container {
+            text-align: center;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            background: var(--card-bg);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-style: italic;
+            font-weight: 900;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        .tagline {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+        }
+
+        .btn-google {
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-google:active {
+            transform: scale(0.95);
+        }
+
+        .btn-google:hover {
+            box-shadow: 0 0 20px rgba(212, 255, 0, 0.4);
+        }
+
+        #error-msg {
+            color: #ff4444;
+            font-size: 0.8rem;
+            margin-top: 20px;
+            min-height: 1.2rem;
+        }
     </style>
 </head>
 <body>
 
     <div class="login-container">
-        <div class="logo">ARENA FUT PRO</div>
-        <div class="subtitle">GESTÃO DE PELADAS v2.0</div>
+        <div class="logo">
+            <h1>ARENA<span>FUT</span></h1>
+            <div style="margin-top:-10px; margin-bottom: 20px; font-weight: bold; letter-spacing: 2px;">PRO V2</div>
+        </div>
         
-        <button class="btn-google" onclick="fazerLogin()">
-            ENTRAR COM GOOGLE
+        <p class="tagline">Gestão inteligente para o seu dia de jogo.</p>
+
+        <button class="btn-google" onclick="handleGoogleLogin()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.344-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg>
+            Entrar com Google
         </button>
 
-        <div id="msg-status"></div>
+        <div id="error-msg"></div>
     </div>
 
     <script>
-        // Use os dados do projeto V2 que você criou no Firebase Console
+        // CONFIGURAÇÃO DO NOVO PROJETO V2
+        // Substitua pelos dados do seu novo App no Firebase
         const firebaseConfig = {
-            apiKey: "COLE_AQUI_A_API_KEY_DO_V2",
-            authDomain: "SEU-PROJETO-V2.firebaseapp.com",
-            projectId: "SEU-PROJETO-V2",
-            appId: "SEU-APP-ID-AQUI"
+            apiKey: "COLE_AQUI_A_NOVA_API_KEY",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_ID",
+            appId: "SEU_APP_ID"
         };
 
-        // Inicializar
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
 
-        function fazerLogin() {
+        function handleGoogleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
+            const btn = document.querySelector('.btn-google');
+            const errorDiv = document.getElementById('error-msg');
+            
+            btn.innerText = "A carregar...";
+            errorDiv.innerText = "";
+
+            firebase.auth().signInWithPopup(provider)
                 .then((result) => {
-                    console.log("Usuário logado:", result.user.displayName);
-                    // Aqui depois enviaremos para a Tela de Gestão
-                    alert("Sucesso, " + result.user.displayName + "! Vamos pro jogo.");
+                    console.log("Sucesso:", result.user.displayName);
+                    // Aqui enviaremos para a Tela 1 (Dashboard)
+                    alert("Bem-vindo, " + result.user.displayName);
                 })
                 .catch((error) => {
-                    document.getElementById('msg-status').innerText = "Erro no Login: " + error.message;
+                    btn.innerText = "Entrar com Google";
+                    errorDiv.innerText = "Erro ao entrar: " + error.message;
+                    console.error(error);
                 });
         }
     </script>
 </body>
 </html>
-
