@@ -6,105 +6,70 @@
     <title>ARENA FUT PRO V2</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        :root {
-            --primary-color: #d4ff00; /* Verde Neon */
-            --bg-color: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --text-color: #ffffff;
-        }
+        :root { --primary: #d4ff00; --bg: #0f0f0f; --card: #1a1a1a; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 420px; padding: 20px; }
+        
+        /* Telas */
+        .page { display: none; flex-direction: column; align-items: center; text-align: center; }
+        .active { display: flex; }
 
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-        }
+        /* Componentes */
+        .card { background: var(--card); border-radius: 20px; padding: 20px; width: 100%; border-bottom: 4px solid var(--primary); margin-bottom: 20px; box-sizing: border-box; }
+        .logo h1 { font-size: 2.8rem; font-style: italic; font-weight: 900; margin: 0; }
+        .logo span { color: var(--primary); }
+        
+        button { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 12px; font-weight: bold; cursor: pointer; color: #000; font-size: 1rem; transition: 0.2s; }
+        button:active { transform: scale(0.96); }
+        .btn-outline { background: transparent; color: #888; border: 1px solid #333; margin-top: 10px; }
 
-        .login-container {
-            text-align: center;
-            padding: 40px;
-            width: 85%;
-            max-width: 380px;
-            background: var(--card-bg);
-            border-radius: 30px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            border: 1px solid #333;
-        }
-
-        .logo h1 {
-            font-size: 2.8rem;
-            font-style: italic;
-            font-weight: 900;
-            margin-bottom: 0;
-            letter-spacing: -1px;
-        }
-
-        .logo span {
-            color: var(--primary-color);
-        }
-
-        .tagline {
-            color: #888;
-            font-size: 0.95rem;
-            margin-top: 10px;
-            margin-bottom: 40px;
-        }
-
-        .btn-google {
-            background-color: var(--primary-color);
-            color: #000;
-            border: none;
-            padding: 18px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            transition: 0.2s;
-        }
-
-        .btn-google:active {
-            transform: scale(0.96);
-        }
-
-        #status-msg {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            min-height: 20px;
-        }
+        .user-header { display: flex; align-items: center; gap: 15px; text-align: left; }
+        .user-pic { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--primary); }
+        
+        .status-badge { background: #333; padding: 5px 10px; border-radius: 20px; font-size: 0.7rem; color: var(--primary); font-weight: bold; }
+        #lista-presenca { text-align: left; font-size: 0.9rem; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="login-container">
-        <div class="logo">
-            <h1>ARENA<span>FUT</span></h1>
-            <div style="font-weight: bold; letter-spacing: 3px; color: var(--primary-color); font-size: 0.8rem;">PRO V2</div>
-        </div>
+    <div class="container">
         
-        <p class="tagline">Sua pelada levada a sério.</p>
+        <div id="page-login" class="page active">
+            <div class="logo" style="margin-top: 80px;">
+                <h1>ARENA<span>FUT</span></h1>
+                <div style="letter-spacing: 3px; color: var(--primary); font-size: 0.8rem; font-weight: bold;">PRO V2</div>
+            </div>
+            <p style="color: #888; margin-bottom: 40px;">A tua pelada levada a sério.</p>
+            <button onclick="handleLogin()">Entrar com Google</button>
+            <div id="login-error" style="color: red; font-size: 0.8rem; margin-top: 15px;"></div>
+        </div>
 
-        <button class="btn-google" onclick="handleLogin()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.344-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg>
-            Entrar com Google
-        </button>
+        <div id="page-dash" class="page">
+            <div class="card user-header">
+                <img id="user-img" class="user-pic" src="" alt="">
+                <div>
+                    <div id="user-display-name" style="font-weight: bold;">Nome</div>
+                    <div class="status-badge">RANKING: #--</div>
+                </div>
+            </div>
 
-        <div id="status-msg"></div>
+            <div class="card">
+                <h3 style="margin-top: 0; color: var(--primary);">Próximo Jogo</h3>
+                <div id="jogo-info">Procurando pelada marcada...</div>
+                <div id="lista-presenca"></div>
+                <button id="btn-confirmar" style="margin-top: 15px; display: none;" onclick="confirmarPresenca()">Tô Dentro!</button>
+            </div>
+
+            <button onclick="criarPartida()">Criar Nova Pelada</button>
+            <button class="btn-outline" onclick="handleLogout()">Sair da Conta</button>
+        </div>
+
     </div>
 
     <script>
-        // CONFIGURAÇÃO ATUALIZADA
         const firebaseConfig = {
             apiKey: "AIzaSyCwi7wNRm-0Zg8W1sXVOFy-1EnGHjXyUCg",
             authDomain: "arena-fut-f1599.firebaseapp.com",
@@ -115,30 +80,83 @@
             measurementId: "G-LTT2WMZ0LF"
         };
 
-        // Inicializar Firebase
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
+        // --- LÓGICA DE NAVEGAÇÃO ---
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                showPage('page-dash');
+                document.getElementById('user-img').src = user.photoURL;
+                document.getElementById('user-display-name').innerText = user.displayName;
+                carregarPartida();
+            } else {
+                showPage('page-login');
+            }
+        });
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // --- FUNÇÕES DE AUTH ---
         function handleLogin() {
             const provider = new firebase.auth.GoogleAuthProvider();
-            const msg = document.getElementById('status-msg');
-            
-            msg.style.color = "#888";
-            msg.innerText = "Conectando ao Google...";
+            auth.signInWithPopup(provider).catch(e => {
+                document.getElementById('login-error').innerText = e.message;
+            });
+        }
 
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
-                    msg.style.color = "#d4ff00";
-                    msg.innerText = "Bem-vindo, " + result.user.displayName;
-                    
-                    setTimeout(() => {
-                        alert("Sucesso! Próxima parada: Gestão da Pelada.");
-                    }, 500);
-                })
-                .catch((error) => {
-                    msg.style.color = "#ff4444";
-                    msg.innerText = "Erro: " + error.message;
-                    console.error("Erro no Login:", error);
+        function handleLogout() {
+            auth.signOut();
+        }
+
+        // --- GESTÃO DA PELADA (FIRESTORE) ---
+        function criarPartida() {
+            const dataJogo = prompt("Qual o dia e hora da pelada? (ex: Quarta, 20h)");
+            if(!dataJogo) return;
+
+            db.collection("partidas").add({
+                data: dataJogo,
+                admin_uid: auth.currentUser.uid,
+                status: "aberta",
+                confirmados: [auth.currentUser.displayName],
+                criado_em: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => alert("Pelada criada!"));
+        }
+
+        function carregarPartida() {
+            db.collection("partidas").orderBy("criado_em", "desc").limit(1)
+            .onSnapshot(snapshot => {
+                const info = document.getElementById('jogo-info');
+                const lista = document.getElementById('lista-presenca');
+                const btn = document.getElementById('btn-confirmar');
+
+                if (snapshot.empty) {
+                    info.innerText = "Nenhuma pelada agendada.";
+                    btn.style.display = "none";
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const jogo = doc.data();
+                    info.innerHTML = `⚽ <b>${jogo.data}</b><br>Vagas preenchidas: ${jogo.confirmados.length}`;
+                    lista.innerHTML = "<b>Lista:</b> " + jogo.confirmados.join(", ");
+                    btn.style.display = "block";
+                    btn.onclick = () => confirmarPresenca(doc.id, jogo.confirmados);
                 });
+            });
+        }
+
+        function confirmarPresenca(id, listaAtual) {
+            const nome = auth.currentUser.displayName;
+            if(listaAtual.includes(nome)) return alert("Já estás na lista, craque!");
+
+            db.collection("partidas").doc(id).update({
+                confirmados: firebase.firestore.FieldValue.arrayUnion(nome)
+            });
         }
     </script>
 </body>
