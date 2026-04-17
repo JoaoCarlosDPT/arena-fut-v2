@@ -10,58 +10,47 @@
     <style>
         :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; }
         body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; padding-bottom: 160px; overflow-x: hidden; }
-        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; outline: none; }
         
         .card { background: var(--card); padding: 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; box-sizing: border-box; }
         
-        /* TELA 2 - ESTILOS IGUAIS À IMAGEM 100% */
         textarea { width: 100%; background: #000; border: 1px solid #333; border-radius: 12px; color: #888; padding: 12px; font-size: 14px; resize: none; box-sizing: border-box; outline: none; }
         .btn-processar { background: var(--neon); color: #000; width: 100%; padding: 15px; border-radius: 12px; font-weight: 900; margin-top: 10px; border: none; text-transform: uppercase; cursor: pointer; }
 
         .header-lista { border-top: 2px solid #634d1a; padding-top: 15px; margin-top: 20px; }
         .titulo-secao { color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         
-        /* BARRAS DE STATUS - LARGAS E ARREDONDADAS */
-        .status-container { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
-        .status-box { flex: 1; background: #111; padding: 10px; border-radius: 12px; border: 1px solid #222; width: calc(50% - 5px); box-sizing: border-box; }
+        .status-container { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
+        .status-box { flex: 1; background: #111; padding: 10px; border-radius: 12px; border: 1px solid #222; }
         .status-label { font-size: 11px; font-weight: 900; display: flex; justify-content: space-between; margin-bottom: 5px; text-transform: uppercase; }
         .bar-bg { background: #222; height: 10px; border-radius: 20px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 20px; }
+        .bar-fill { height: 100%; border-radius: 20px; transition: 0.3s; }
 
-        /* BUSCA - PÍLULA E ÍCONE VISÍVEL */
-        .search-box { background: #111; border: 1px solid #222; border-radius: 20px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; width: 100%; box-sizing: border-box; }
-        .search-box span { color: #666; font-size: 16px; margin-right: 10px; }
-        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; }
+        .search-box { background: #111; border: 1px solid #222; border-radius: 20px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
+        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; margin-left: 8px; }
 
-        /* CARDS DE ATLETAS - LAYOUT COMPACTO */
-        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; box-sizing: border-box; width: 100%; }
+        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
         .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; -webkit-appearance: none; cursor: pointer; position: relative; }
         .atleta-check:checked { background: var(--neon); }
         .atleta-check:checked::after { content: '✓'; position: absolute; color: #000; font-weight: 900; font-size: 14px; left: 3px; top: -2px; }
         
-        /* AVATAR CIRCULAR */
-        .atleta-avatar { width: 45px; height: 45px; background: #444; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+        .atleta-avatar { width: 45px; height: 45px; background: #444; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .atleta-avatar img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
 
-        /* LAYOUT INTERNO DOS DADOS */
-        .atleta-dados { flex: 1; min-width: 0; }
+        .atleta-dados { flex: 1; }
         .atleta-nome { display: block; font-weight: bold; font-size: 14px; margin-bottom: 2px; }
         .tag { font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; display: inline-block; margin-bottom: 4px; }
         .tag-mensalista { background: rgba(0, 255, 136, 0.2); color: var(--neon); }
         .tag-convidado { background: rgba(0, 123, 255, 0.2); color: #007bff; }
         
-        /* ESTRELAS MAIORES E VIBRANTES */
-        .estrelas { color: var(--gold); font-size: 16px; margin-top: 4px; letter-spacing: 2px; }
+        .estrelas { color: var(--gold); font-size: 16px; margin-top: 4px; letter-spacing: 2px; cursor: pointer; user-select: none; }
 
-        /* BADGE DE POSIÇÃO COM FUNDO DELIMITADOR */
-        .pos-badge { width: 35px; height: 35px; background: #222; border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+        .pos-badge { width: 35px; height: 35px; background: #222; border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
         .pos-badge span:first-child { font-size: 18px; }
         .pos-badge span:last-child { font-size: 10px; font-weight: 900; color: var(--gold); margin-top: -3px; }
 
-        /* RODAPÉ FIXO - ARREDONDADO E ALTO */
-        .fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; border-top: 1px solid #222; z-index: 100; box-sizing: border-box; padding-bottom: 25px; /* Compensa o arredondamento */ }
+        .fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; border-top: 1px solid #222; z-index: 100; padding-bottom: 25px; }
         .btn-row { display: flex; gap: 10px; margin-bottom: 12px; }
-        .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; text-align: center; }
+        .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .info-footer { text-align: center; font-size: 11px; color: #666; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
         .btn-iniciar { background: var(--neon); color: #000; width: 100%; padding: 18px; border-radius: 18px; font-weight: 900; border: none; font-size: 14px; text-transform: uppercase; }
     </style>
@@ -72,7 +61,7 @@
         <h2 style="font-size: 20px; margin-bottom: 20px;">Tela 2: Lista e Check-in</h2>
 
         <div class="card">
-            <textarea id="listaTexto" rows="3" placeholder="Cole a lista de atletas aqui... (Nome, Categoria)"></textarea>
+            <textarea id="listaTexto" rows="3" placeholder="Cole a lista de atletas aqui..."></textarea>
             <button class="btn-processar" onclick="processarLista()">PROCESSAR LISTA →</button>
         </div>
 
@@ -82,78 +71,128 @@
                 
                 <div class="status-container">
                     <div class="status-box">
-                        <div class="status-label"><span style="color:var(--neon)">CONFIRMADOS (20)</span> <span style="color:#666">80%</span></div>
-                        <div class="bar-bg"><div class="bar-fill" style="width: 80%; background: var(--neon);"></div></div>
+                        <div class="status-label"><span style="color:var(--neon)">CONFIRMADOS</span> <span id="percentConf">0%</span></div>
+                        <div class="bar-bg"><div id="barConf" class="bar-fill" style="width: 0%; background: var(--neon);"></div></div>
                     </div>
                     <div class="status-box">
-                        <div class="status-label"><span style="color:var(--gold)">ESPERA (3)</span> <span style="color:#666">30%</span></div>
-                        <div class="bar-bg"><div class="bar-fill" style="width: 30%; background: var(--gold);"></div></div>
+                        <div class="status-label"><span style="color:var(--gold)">ESPERA</span> <span id="countEsp">(0)</span></div>
+                        <div class="bar-bg"><div id="barEsp" class="bar-fill" style="width: 0%; background: var(--gold);"></div></div>
                     </div>
                 </div>
 
-                <div style="font-size: 11px; color: #666; font-weight: 900; margin-bottom: 10px; text-transform: uppercase;">ATLETAS JÁ CONFIRMADOS</div>
                 <div class="search-box">
                     <span>🔍</span>
-                    <input type="text" placeholder="Buscar atleta...">
+                    <input type="text" id="inputBusca" placeholder="Buscar atleta..." onkeyup="filtrarAtletas()">
                 </div>
 
-                <div id="renderAtletas">
-                    </div>
+                <div id="renderAtletas"></div>
             </div>
         </div>
 
         <div class="fixed-footer">
             <div class="btn-row">
-                <button class="btn-outline">SELECIONAR TODOS</button>
-                <button class="btn-outline">DESMARCAR TODOS</button>
+                <button class="btn-outline" onclick="marcarTodos(true)">SELECIONAR TODOS</button>
+                <button class="btn-outline" onclick="marcarTodos(false)">DESMARCAR TODOS</button>
             </div>
-            <div class="info-footer">TOTAL: 23 | GOLEIROS: 3</div>
+            <div class="info-footer">TOTAL: <span id="totalFooter">0</span> | GOLEIROS: <span id="goleirosFooter">0</span></div>
             <button class="btn-iniciar" onclick="alert('Iniciando Partida!')">INICIAR PARTIDA</button>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO DO FIREBASE COM SUAS CREDENCIAIS
-        const firebaseConfig = {
-            apiKey: "AIzaSyCwi7wNRm-0Zg8W1sXVOFy-1EnGHjXyUCg",
-            authDomain: "arena-fut-f1599.firebaseapp.com",
-            projectId: "arena-fut-f1599",
-            storageBucket: "arena-fut-f1599.firebasestorage.app",
-            messagingSenderId: "835218567459",
-            appId: "1:835218567459:web:8ff9a673cc523f6e7b9c96"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        let atletasApp = [];
 
         function processarLista() {
+            const texto = document.getElementById('listaTexto').value;
+            const linhas = texto.split('\n').filter(l => l.trim() !== '');
+            
+            atletasApp = linhas.map((linha, index) => {
+                let cat = linha.toUpperCase().includes('MENSALISTA') ? 'MENSALISTA' : 'CONVIDADO';
+                return {
+                    id: index,
+                    nome: linha.split(/[-]/)[0].trim(),
+                    cat: cat,
+                    stars: 3,
+                    pos: 'A',
+                    img: '👟',
+                    confirmado: true
+                };
+            });
+
+            document.getElementById('listaArea').style.display = 'block';
+            atualizarInterface();
+        }
+
+        function atualizarInterface() {
             const container = document.getElementById('renderAtletas');
-            const listaArea = document.getElementById('listaArea');
-            listaArea.style.display = 'block';
-
-            // Dados simulados baseados exatamente na imagem de referência
-            const atletas = [
-                { nome: "João Silva", cat: "MENSALISTA", stars: 4, pos: "G", img: "🧤" },
-                { nome: "Ricardo P.", cat: "CONVIDADO", stars: 3, pos: "A", img: "👟" },
-                { nome: "Rlerando M.", cat: "CONVIDADO", stars: 2, pos: "A", img: "👟" }
-            ];
-
-            container.innerHTML = atletas.map(atleta => `
-                <div class="atleta-item">
-                    <input type="checkbox" class="atleta-check" checked>
+            container.innerHTML = atletasApp.map(atleta => `
+                <div class="atleta-item" data-nome="${atleta.nome.toLowerCase()}">
+                    <input type="checkbox" class="atleta-check" ${atleta.confirmado ? 'checked' : ''} onchange="toggleCheck(${atleta.id})">
                     <div class="atleta-avatar">
                         <img src="https://www.w3schools.com/howto/img_avatar.png">
                     </div>
                     <div class="atleta-dados">
                         <span class="atleta-nome">${atleta.nome}</span>
                         <span class="tag ${atleta.cat === 'MENSALISTA' ? 'tag-mensalista' : 'tag-convidado'}">${atleta.cat}</span>
-                        <div class="estrelas">${"★".repeat(atleta.stars)}${"☆".repeat(5-atleta.stars)}</div>
+                        <div class="estrelas" onclick="mudarNivel(${atleta.id})">
+                            ${"★".repeat(atleta.stars)}${"☆".repeat(5 - atleta.stars)}
+                        </div>
                     </div>
-                    <div class="pos-badge">
+                    <div class="pos-badge" onclick="alternarPosicao(${atleta.id})">
                         <span>${atleta.img}</span>
                         <span>${atleta.pos}</span>
                     </div>
                 </div>
             `).join('');
+            
+            atualizarResumos();
+        }
+
+        function mudarNivel(id) {
+            atletasApp[id].stars = (atletasApp[id].stars % 5) + 1;
+            atualizarInterface();
+        }
+
+        function alternarPosicao(id) {
+            if (atletasApp[id].pos === 'A') {
+                atletasApp[id].pos = 'G';
+                atletasApp[id].img = '🧤';
+            } else {
+                atletasApp[id].pos = 'A';
+                atletasApp[id].img = '👟';
+            }
+            atualizarInterface();
+        }
+
+        function toggleCheck(id) {
+            atletasApp[id].confirmado = !atletasApp[id].confirmado;
+            atualizarResumos();
+        }
+
+        function marcarTodos(status) {
+            atletasApp.forEach(a => a.confirmado = status);
+            atualizarInterface();
+        }
+
+        function filtrarAtletas() {
+            const busca = document.getElementById('inputBusca').value.toLowerCase();
+            document.querySelectorAll('.atleta-item').forEach(card => {
+                const nome = card.getAttribute('data-nome');
+                card.style.display = nome.includes(busca) ? 'flex' : 'none';
+            });
+        }
+
+        function atualizarResumos() {
+            const confirmados = atletasApp.filter(a => a.confirmado);
+            const total = atletasApp.length;
+            const goleiros = confirmados.filter(a => a.pos === 'G').length;
+            
+            const perc = total > 0 ? Math.round((confirmados.length / total) * 100) : 0;
+            
+            document.getElementById('percentConf').innerText = perc + '%';
+            document.getElementById('barConf').style.width = perc + '%';
+            document.getElementById('totalFooter').innerText = confirmados.length;
+            document.getElementById('goleirosFooter').innerText = goleiros;
         }
     </script>
 </body>
