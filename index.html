@@ -18,9 +18,10 @@
         .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; }
         
         /* Estilos de Input Intuitivos */
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 5px; margin-left: 5px; }
-        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; box-sizing: border-box; font-size: 14px; }
+        .input-group { margin-bottom: 18px; text-align: left; }
+        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
+        input, textarea, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; box-sizing: border-box; font-size: 14px; outline: none; }
+        input:focus { border-color: var(--neon); }
         
         .section-title { font-size: 10px; font-weight: 900; color: #888; letter-spacing: 1px; margin: 15px 0 8px 5px; text-transform: uppercase; }
         .container-confirmados { background: rgba(0, 255, 136, 0.03); border-radius: 12px; padding: 5px; border: 1px solid #222; }
@@ -61,7 +62,7 @@
             <input id="local" placeholder="Ex: Arena Soccer X">
         </div>
 
-        <div style="display:flex; gap:10px; margin-bottom: 15px;">
+        <div style="display:flex; gap:10px; margin-bottom: 18px;">
             <div style="flex: 1.5;">
                 <label>Data</label>
                 <input id="dataEv" type="date">
@@ -72,7 +73,7 @@
             </div>
         </div>
 
-        <div style="display:flex; gap:10px; margin-bottom: 15px;">
+        <div style="display:flex; gap:10px; margin-bottom: 18px;">
             <div style="flex: 1;">
                 <label>Limite Atletas</label>
                 <input id="limite" type="number" placeholder="20">
