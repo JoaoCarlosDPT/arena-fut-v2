@@ -4,279 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Arena Fut PRO V2</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
     <style>
-        :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; --gray: #888; }
-        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; padding-bottom: 140px; }
+        :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #ff4444; --gold: #ffcc00; }
         
-        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-        .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-sizing: border-box; }
+        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', Roboto, sans-serif; padding: 15px; margin: 0; padding-bottom: 160px; }
         
-        /* PADRONIZAÇÃO TOTAL DOS INPUTS (TELA 1) */
-        .input-group { margin-bottom: 15px; width: 100%; }
-        .row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .col { flex: 1; }
-        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
-        
-        input, textarea, select { 
-            width: 100%; 
-            height: 48px; 
-            padding: 0 12px; 
-            border-radius: 12px; 
-            border: 1px solid var(--border); 
-            background: #111; 
-            color: #fff; 
-            box-sizing: border-box; 
-            font-size: 14px; 
-            outline: none; 
-            display: flex;
-            align-items: center;
-            -webkit-appearance: none; 
-            appearance: none;
-        }
-        textarea { height: auto; padding: 12px; }
-        input:focus { border-color: var(--neon); box-shadow: 0 0 5px rgba(0,255,136,0.2); }
+        .card { background: var(--card); padding: 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
 
-        /* ESTILOS ESPECÍFICOS TELA 2 (IGUAL À IMAGEM) */
-        .search-bar { margin: 15px 0; position: relative; }
-        .search-bar input { background: #1a1a1a; border-radius: 10px; padding-left: 12px; }
+        /* INPUTS TELA 2 */
+        textarea { width: 100%; background: #000; border: 1px solid #333; border-radius: 12px; color: #888; padding: 12px; font-size: 14px; resize: none; box-sizing: border-box; }
+        .btn-processar { background: var(--neon); color: #000; width: 100%; padding: 15px; border-radius: 12px; font-weight: 900; margin-top: 10px; border: none; text-transform: uppercase; cursor: pointer; }
+
+        /* SEÇÃO DE LISTA - IGUAL À IMAGEM */
+        .header-lista { border-top: 2px solid #634d1a; padding-top: 15px; margin-top: 20px; }
+        .titulo-secao { color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
         
-        .atleta-card { 
-            display: flex; align-items: center; background: #111; padding: 12px; border-radius: 14px; 
-            margin-bottom: 8px; border: 1px solid #222; gap: 12px;
-        }
-        .atleta-info { flex: 1; }
-        .atleta-nome { font-weight: bold; font-size: 14px; margin-bottom: 4px; display: block; }
+        /* BARRAS DE STATUS */
+        .status-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .status-box { flex: 1; background: #111; padding: 10px; border-radius: 12px; border: 1px solid #222; }
+        .status-label { font-size: 11px; font-weight: 900; display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .bar-bg { background: #222; height: 6px; border-radius: 10px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 10px; }
+
+        /* BUSCA */
+        .search-box { background: #111; border: 1px solid #222; border-radius: 10px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
+        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; }
+
+        /* CARDS DE ATLETAS */
+        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
+        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; -webkit-appearance: none; cursor: pointer; position: relative; }
+        .atleta-check:checked { background: var(--neon); }
+        .atleta-check:checked::after { content: '✓'; position: absolute; color: #000; font-weight: 900; font-size: 14px; left: 3px; top: -2px; }
         
-        .tag-cat { font-size: 9px; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; font-weight: 900; }
+        .atleta-avatar { width: 45px; height: 45px; background: #444; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .atleta-avatar img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+
+        .atleta-dados { flex: 1; }
+        .atleta-nome { display: block; font-weight: bold; font-size: 14px; margin-bottom: 2px; }
+        .tag { font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; }
         .tag-mensalista { background: rgba(0, 255, 136, 0.2); color: var(--neon); }
         .tag-convidado { background: rgba(0, 123, 255, 0.2); color: #007bff; }
         
-        .stars { color: var(--gold); font-size: 12px; margin-top: 4px; cursor: pointer; }
-        .pos-icon { 
-            width: 32px; height: 32px; background: #222; border-radius: 8px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 1px solid #333; font-size: 10px; color: var(--gold);
-        }
+        .estrelas { color: var(--gold); font-size: 14px; margin-top: 4px; letter-spacing: 2px; }
 
-        /* RODAPÉ FIXO TELA 2 */
-        .footer-controles { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); 
-            padding: 15px; border-top: 1px solid #333; z-index: 1000; backdrop-filter: blur(10px);
-        }
-        .btn-group-check { display: flex; gap: 10px; margin-bottom: 12px; }
-        .btn-outline { flex: 1; background: transparent; border: 1px solid #444; color: #ccc; padding: 10px; font-size: 11px; border-radius: 8px; text-transform: uppercase; }
-        .resumo-footer { text-align: center; font-size: 11px; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-neon { background: var(--neon); color: #000; padding: 16px; width: 100%; border-radius: 12px; font-weight: 900; font-size: 14px; text-transform: uppercase; }
+        .pos-badge { width: 35px; height: 35px; background: #222; border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .pos-badge span { font-size: 10px; font-weight: 900; color: var(--gold); }
 
-        .hidden { display: none; }
-        .section-title { font-size: 11px; font-weight: 900; color: var(--neon); margin: 20px 0 10px 5px; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        /* RODAPÉ FIXO */
+        .fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; border-top: 1px solid #222; z-index: 100; }
+        .btn-row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .info-footer { text-align: center; font-size: 11px; color: #666; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; }
+        .btn-iniciar { background: var(--neon); color: #000; width: 100%; padding: 16px; border-radius: 14px; font-weight: 900; border: none; font-size: 14px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <div id="tela1" class="card" style="border-top: 5px solid var(--neon);">
-        <div id="saudacao-container" style="text-align: left; margin-bottom: 25px; background: rgba(0,255,136,0.05); padding: 15px; border-radius: 12px; border: 1px solid #222;">
-            <h3 id="txt-saudacao" style="color: var(--neon); margin: 0; font-size: 1.1rem; line-height: 1.4;">Carregando...</h3>
-            <p style="color: #666; font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-transform: uppercase;">🎮 Painel do Gestor</p>
-        </div>
+    <div id="tela2">
+        <h2 style="font-size: 20px; margin-bottom: 20px;">Tela 2: Lista e Check-in</h2>
 
-        <div class="input-group">
-            <label>Nome da Pelada</label>
-            <input id="nomeEvento" placeholder="Ex: Pelada dos Amigos">
-        </div>
-
-        <div class="input-group">
-            <label>Local da Arena</label>
-            <input id="local" placeholder="Ex: Arena Soccer X">
-        </div>
-
-        <div class="row">
-            <div class="col" style="flex: 1.4;">
-                <label>Data</label>
-                <input id="dataEv" type="date">
-            </div>
-            <div class="col">
-                <label>Horário</label>
-                <input id="horarioEv" type="time">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <label>Limite Atletas</label>
-                <input id="limite" type="number" placeholder="Ex: 20">
-            </div>
-            <div class="col">
-                <label>Atletas/Time</label>
-                <input id="jogadoresPorTime" type="number" placeholder="Ex: 5">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <label>Tempo (Min)</label>
-                <input id="tempoRegra" type="number" placeholder="Ex: 10">
-            </div>
-            <div class="col">
-                <label>Tipo de Campo</label>
-                <select id="tipoCampo">
-                    <option value="" disabled selected>Selecione...</option>
-                    <option>Society</option>
-                    <option>Futsal</option>
-                    <option>Campo</option>
-                </select>
-            </div>
-        </div>
-
-        <button class="btn-neon" style="margin-top: 10px;" onclick="irTela2()">CONVOCAR ATLETAS →</button>
-    </div>
-
-    <div id="tela2" class="hidden">
-        <h2 style="font-size: 18px; margin-left: 5px;">Tela 2: Lista e Check-in</h2>
-        
         <div class="card">
-            <textarea id="listaTexto" rows="4" placeholder="Cole a lista de atletas aqui... (Nome, Categoria)"></textarea>
-            <button class="btn-neon" style="margin-top:10px;" onclick="processarLista()">PROCESSAR LISTA →</button>
+            <textarea id="listaTexto" rows="3" placeholder="Cole a lista de atletas aqui... (Nome, Categoria)"></textarea>
+            <button class="btn-processar" onclick="processarLista()">PROCESSAR LISTA →</button>
         </div>
 
-        <div id="containerLista" class="hidden">
-            <div class="section-title">✓ LISTA DE CONVOCAÇÃO</div>
-            
-            <div class="search-bar">
-                <input type="text" id="buscaAtleta" placeholder="Buscar atleta..." onkeyup="filtrarAtletas()">
-            </div>
-
-            <div id="listaAtletasRender">
+        <div id="listaArea" style="display: none;">
+            <div class="header-lista">
+                <div class="titulo-secao">✓ LISTA DE CONVOCAÇÃO</div>
+                
+                <div class="status-container">
+                    <div class="status-box">
+                        <div class="status-label"><span style="color:var(--neon)">CONFIRMADOS (20)</span> <span style="color:#666">80%</span></div>
+                        <div class="bar-bg"><div class="bar-fill" style="width: 80%; background: var(--neon);"></div></div>
+                    </div>
+                    <div class="status-box">
+                        <div class="status-label"><span style="color:var(--gold)">ESPERA</span> <span style="color:#666">(3)</span></div>
+                        <div class="bar-bg"><div class="bar-fill" style="width: 30%; background: var(--gold);"></div></div>
+                    </div>
                 </div>
+
+                <div style="font-size: 11px; color: #666; font-weight: 900; margin-bottom: 10px;">ATLETAS JÁ CONFIRMADOS</div>
+                <div class="search-box">
+                    <input type="text" placeholder="🔍 Buscar atleta...">
+                </div>
+
+                <div id="renderAtletas">
+                    </div>
+            </div>
         </div>
 
-        <div id="footerTela2" class="footer-controles hidden">
-            <div class="btn-group-check">
-                <button class="btn-outline" onclick="marcarTodos(true)">Selecionar Todos</button>
-                <button class="btn-outline" onclick="marcarTodos(false)">Desmarcar Todos</button>
+        <div class="fixed-footer">
+            <div class="btn-row">
+                <button class="btn-outline">SELECIONAR TODOS</button>
+                <button class="btn-outline">DESMARCAR TODOS</button>
             </div>
-            <div class="resumo-footer">
-                TOTAL: <span id="totalConf">0</span> | GOLEIROS: <span id="totalGol">0</span>
-            </div>
-            <button class="btn-neon" onclick="iniciar()">INICIAR PARTIDA</button>
+            <div class="info-footer">TOTAL: 23 | GOLEIROS: 3</div>
+            <button class="btn-iniciar" onclick="alert('Iniciando Partida!')">INICIAR PARTIDA</button>
         </div>
     </div>
 
     <script>
-        // Configuração Firebase e Saudação
-        const frasesGestor = [
-            "Fala, João! Já cobrou o PIX de quem disse que 'ia ver e avisava'?",
-            "Bem-vindo, João. Preparado para ouvir que o gol foi de banheira o jogo todo?",
-            "E aí, João! Já sabe quem vai ser o primeiro a pedir pra sair com 2 minutos?",
-            "João, hoje é dia de expulsar quem trouxer chuteira de cravo pro Society!",
-            "Fala, Chefe! Preparado para a choradeira do sorteio dos times?"
-        ];
-
-        window.onload = function() {
-            document.getElementById('txt-saudacao').innerText = frasesGestor[Math.floor(Math.random() * frasesGestor.length)];
-        };
-
-        let app = { 
-            atletas: [] 
-        };
-
-        function irTela2() { 
-            document.getElementById("tela1").classList.add("hidden"); 
-            document.getElementById("tela2").classList.remove("hidden"); 
-        }
-
         function processarLista() {
-            let texto = document.getElementById("listaTexto").value;
-            let linhas = texto.split("\n").filter(l => l.trim() !== "");
-            
-            app.atletas = linhas.map((linha, index) => {
-                let categoria = "CONVIDADO";
-                if(linha.toUpperCase().includes("MENSALISTA")) categoria = "MENSALISTA";
-                
-                return {
-                    id: index,
-                    nome: linha.split(/[-,(]/)[0].trim(),
-                    categoria: categoria,
-                    estrelas: 3,
-                    posicao: "A", 
-                    confirmado: true
-                };
-            });
+            const container = document.getElementById('renderAtletas');
+            const listaArea = document.getElementById('listaArea');
+            listaArea.style.display = 'block';
 
-            document.getElementById("containerLista").classList.remove("hidden");
-            document.getElementById("footerTela2").classList.remove("hidden");
-            renderizarLista();
-        }
+            // Dados simulados baseados na imagem
+            const atletas = [
+                { nome: "João Silva", cat: "MENSALISTA", stars: 4, pos: "G", img: "🧤" },
+                { nome: "Ricardo P.", cat: "CONVIDADO", stars: 3, pos: "A", img: "👟" },
+                { nome: "Rlerando M.", cat: "CONVIDADO", stars: 2, pos: "A", img: "👟" }
+            ];
 
-        function renderizarLista() {
-            let html = "";
-            app.atletas.forEach(atleta => {
-                let tagClass = atleta.categoria === "MENSALISTA" ? "tag-mensalista" : "tag-convidado";
-                let iconPos = atleta.posicao === "G" ? "🧤<br>G" : "👟<br>A";
-                
-                html += `
-                    <div class="atleta-card" data-nome="${atleta.nome.toLowerCase()}">
-                        <input type="checkbox" ${atleta.confirmado ? 'checked' : ''} 
-                            style="width:20px; height:20px; accent-color:var(--neon)" 
-                            onchange="toggleConf(${atleta.id})">
-                        
-                        <div class="atleta-info">
-                            <span class="atleta-nome">${atleta.nome}</span>
-                            <span class="tag-cat ${tagClass}">${atleta.categoria}</span>
-                            <div class="stars" onclick="mudarEstrela(${atleta.id})">
-                                ${"★".repeat(atleta.estrelas)}${"☆".repeat(5-atleta.estrelas)}
-                            </div>
-                        </div>
-
-                        <div class="pos-icon" onclick="togglePosicao(${atleta.id})">
-                            ${iconPos}
-                        </div>
+            container.innerHTML = atletas.map(atleta => `
+                <div class="atleta-item">
+                    <input type="checkbox" class="atleta-check" checked>
+                    <div class="atleta-avatar">
+                        <img src="https://www.w3schools.com/howto/img_avatar.png">
                     </div>
-                `;
-            });
-            document.getElementById("listaAtletasRender").innerHTML = html;
-            atualizarContadores();
-        }
-
-        function toggleConf(id) {
-            app.atletas[id].confirmado = !app.atletas[id].confirmado;
-            atualizarContadores();
-        }
-
-        function togglePosicao(id) {
-            app.atletas[id].posicao = app.atletas[id].posicao === "A" ? "G" : "A";
-            renderizarLista();
-        }
-
-        function mudarEstrela(id) {
-            app.atletas[id].estrelas = (app.atletas[id].estrelas % 5) + 1;
-            renderizarLista();
-        }
-
-        function marcarTodos(status) {
-            app.atletas.forEach(a => a.confirmado = status);
-            renderizarLista();
-        }
-
-        function filtrarAtletas() {
-            let termo = document.getElementById("buscaAtleta").value.toLowerCase();
-            document.querySelectorAll(".atleta-card").forEach(card => {
-                let nome = card.getAttribute("data-nome");
-                card.style.display = nome.includes(termo) ? "flex" : "none";
-            });
-        }
-
-        function atualizarContadores() {
-            let confs = app.atletas.filter(a => a.confirmado);
-            document.getElementById("totalConf").innerText = confs.length;
-            document.getElementById("totalGol").innerText = confs.filter(a => a.posicao === "G").length;
-        }
-
-        function iniciar() {
-            alert("Iniciando com " + app.atletas.filter(a => a.confirmado).length + " confirmados!");
+                    <div class="atleta-dados">
+                        <span class="atleta-nome">${atleta.nome}</span>
+                        <span class="tag ${atleta.cat === 'MENSALISTA' ? 'tag-mensalista' : 'tag-convidado'}">${atleta.cat}</span>
+                        <div class="estrelas">${"★".repeat(atleta.stars)}${"☆".repeat(5-atleta.stars)}</div>
+                    </div>
+                    <div class="pos-badge">
+                        <span>${atleta.img}</span>
+                        <span>${atleta.pos}</span>
+                    </div>
+                </div>
+            `).join('');
         }
     </script>
 </body>
