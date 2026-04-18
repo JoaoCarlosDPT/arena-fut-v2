@@ -2,252 +2,277 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena Fut PRO - Tela 3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arena Fut PRO - Teste Funcional</title>
     <style>
         :root {
-            --bg-body: #121417;
-            --bg-card: #1a1d21;
-            --blue: #3a86ff;
-            --red: #ff4d4d;
+            --bg-body: #0c0e11;
+            --bg-card: #15181d;
+            --blue: #007bff;
+            --red: #dc3545;
             --neon-green: #00ff88;
             --gold: #ffcc00;
-            --text-muted: #8a8d91;
-            --border: #2c3035;
+            --text-muted: #888;
+            --border: #222;
         }
 
         body {
             background: var(--bg-body);
             color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+            font-family: -apple-system, system-ui, sans-serif;
+            margin: 0; padding: 15px;
+            display: flex; justify-content: center;
         }
 
         #app-container {
-            width: 100%;
-            max-width: 400px;
-            background: linear-gradient(180deg, #1e2126 0%, #121417 100%);
-            min-height: 90vh;
-            border-radius: 40px;
-            padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 100%; max-width: 400px;
+            background: linear-gradient(180deg, #1a1d21 0%, #0c0e11 100%);
+            min-height: 95vh; border-radius: 35px; padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border: 1px solid #222;
         }
 
-        /* TIMER & HEADER */
+        /* TIMER & PLACAR */
         .timer-section { text-align: center; margin-bottom: 20px; }
         .clock {
-            font-size: 80px;
-            font-weight: 600;
-            color: var(--gold);
-            text-shadow: 0 0 20px rgba(255, 204, 0, 0.3);
-            margin: 10px 0;
-            font-variant-numeric: tabular-nums;
+            font-size: 75px; font-weight: bold; color: var(--gold);
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.4); margin: 5px 0;
         }
-        .timer-btns { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .timer-btns { display: flex; justify-content: center; gap: 15px; }
         .btn-circle {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: #fff;
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
+            background: #222; border: 1px solid #333; color: #fff;
+            width: 45px; height: 45px; border-radius: 50%; cursor: pointer;
         }
 
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background: #25282c;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 30px;
-        }
-        .progress-bar {
-            width: 65%; /* Simulado */
-            height: 100%;
-            background: var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green);
-        }
+        .p-bar-container { width: 100%; height: 8px; background: #111; border-radius: 10px; margin: 20px 0; overflow: hidden; border: 1px solid #222; }
+        .p-bar-fill { height: 100%; width: 100%; background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); transition: 1s linear; }
 
-        /* SCOREBOARD */
         .scoreboard { display: flex; justify-content: center; gap: 25px; margin-bottom: 30px; }
         .score-box {
-            width: 90px; height: 90px;
-            border-radius: 15px;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-            font-weight: bold;
-            border: 2px solid transparent;
+            width: 85px; height: 85px; border-radius: 15px; background: #000;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 50px; font-weight: bold; border: 2px solid transparent;
         }
         .score-box.azul { color: var(--blue); border-color: var(--blue); text-shadow: 0 0 15px var(--blue); }
         .score-box.red { color: var(--red); border-color: var(--red); text-shadow: 0 0 15px var(--red); }
 
         /* FIELD PANEL */
-        .label-section { font-size: 12px; font-weight: bold; color: #666; margin-bottom: 10px; }
-        .field-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .team-card { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
-        .team-header { padding: 8px; text-align: center; font-size: 12px; font-weight: 800; color: #fff; }
+        .field-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .team-card { background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+        .team-header { padding: 10px; text-align: center; font-size: 11px; font-weight: 900; color: #fff; }
         .header-azul { background: var(--blue); }
         .header-red { background: var(--red); }
 
         .player-row {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 8px 10px; border-bottom: 1px solid #25282c;
+            padding: 10px; border-bottom: 1px solid #1e2126; font-size: 12px;
         }
-        .p-name { font-size: 13px; font-weight: 500; color: #eee; }
-        .p-pos { color: var(--neon-green); font-weight: bold; font-size: 11px; margin: 0 4px; }
-        .btn-action-small {
-            background: #111; border: 1px solid #333; color: var(--neon-green);
-            font-size: 9px; font-weight: bold; padding: 4px 6px; border-radius: 5px; cursor: pointer;
+        .p-pos { color: var(--gold); font-weight: bold; margin-right: 4px; }
+        .btn-gol {
+            background: #111; border: 1px solid var(--neon-green); color: var(--neon-green);
+            font-size: 9px; font-weight: bold; padding: 4px 8px; border-radius: 5px;
         }
-        .btn-swap { color: #fff; border: none; background: transparent; font-size: 14px; }
+        .btn-swap { background: transparent; border: none; color: #fff; cursor: pointer; font-size: 14px; }
 
         /* TIMELINE */
-        .timeline-container {
-            background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border);
+        .timeline {
+            background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border);
             padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;
+            min-height: 80px;
         }
-        .log-col { font-size: 11px; color: #999; }
-        .log-title { font-size: 10px; font-weight: 900; color: #444; margin-bottom: 8px; text-align: center; }
-        .log-entry { margin-bottom: 6px; line-height: 1.4; }
+        .log-title { font-size: 10px; font-weight: 900; color: #444; text-align: center; margin-bottom: 10px; }
+        .log-entry { font-size: 11px; color: #aaa; margin-bottom: 5px; line-height: 1.3; }
         .log-entry b { color: #fff; }
 
-        /* NEXT TEAM */
-        .next-card {
-            background: #15181d; border: 1.5px solid var(--neon-green); border-radius: 15px;
-            padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+        /* FILA & FOOTER */
+        .fila-card {
+            background: rgba(0, 255, 136, 0.05); border: 2px solid var(--neon-green);
+            border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
         }
-        .next-info h4 { color: var(--neon-green); margin: 0; font-size: 13px; font-weight: 800; }
-        .next-info p { margin: 5px 0 0; font-size: 11px; color: #777; font-weight: 500; }
-        .btn-edit-fila {
-            background: transparent; border: 1px solid var(--gold); color: var(--gold);
-            padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: bold;
-        }
+        .fila-card h4 { color: var(--neon-green); margin: 0; font-size: 12px; }
+        .fila-card p { margin: 5px 0 0; font-size: 10px; color: #777; }
 
-        /* OUTCOME BUTTONS */
+        .add-atrasado { display: flex; gap: 10px; margin-bottom: 20px; }
+        .add-atrasado input { flex: 1; background: #111; border: 1px solid #333; color: #fff; border-radius: 8px; padding: 8px; font-size: 12px; }
+
         .outcome-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
         .btn-outcome {
             background: var(--bg-card); border: 1px solid var(--border); color: #fff;
-            padding: 15px 5px; border-radius: 12px; font-weight: bold; font-size: 12px; text-align: center;
+            padding: 12px 5px; border-radius: 10px; font-weight: bold; font-size: 10px;
         }
-        .btn-v-azul { border-color: var(--blue); color: var(--blue); }
-        .btn-v-red { border-color: var(--red); color: var(--red); }
     </style>
 </head>
 <body>
 
 <div id="app-container">
     <div class="timer-section">
-        <div class="clock" id="timer">08:47</div>
+        <div class="clock" id="display-time">10:00</div>
         <div class="timer-btns">
-            <button class="btn-circle">▶</button>
-            <button class="btn-circle">Ⅱ</button>
-            <button class="btn-circle">↺</button>
+            <button class="btn-circle" onclick="startTimer()">▶</button>
+            <button class="btn-circle" onclick="pauseTimer()">Ⅱ</button>
+            <button class="btn-circle" onclick="resetTimer()">↺</button>
         </div>
-        <div class="progress-container">
-            <div class="progress-bar"></div>
-        </div>
+        <div class="p-bar-container"><div class="p-bar-fill" id="timer-bar"></div></div>
     </div>
 
     <div class="scoreboard">
-        <div class="score-box azul">2</div>
-        <div class="score-box red">1</div>
+        <div class="score-box azul" id="score-azul">0</div>
+        <div class="score-box red" id="score-red">0</div>
     </div>
 
-    <div class="label-section">FIELD PANEL</div>
+    <div style="font-size: 10px; color: #555; font-weight: 900; margin-bottom: 8px;">FIELD PANEL</div>
     <div class="field-panel">
         <div class="team-card">
             <div class="team-header header-azul">TIME AZUL</div>
-            <div id="players-azul">
-                <div class="player-row">
-                    <span class="p-name">1. Lucas <span class="p-pos">G</span> 🧤</span>
-                    <button class="btn-action-small">GOL</button>
-                </div>
-                <div class="player-row">
-                    <span class="p-name">2. Pedro <span class="p-pos">A</span> ⚽</span>
-                    <button class="btn-action-small">GOL</button>
-                </div>
-                <div class="player-row">
-                    <span class="p-name">3. Mateus <span class="p-pos">A</span> ⚽</span>
-                    <button class="btn-action-small">GOL</button>
-                </div>
-                <div class="player-row"><span class="p-name">4. Carlos <span class="p-pos">A</span></span><button class="btn-swap">🔄</button></div>
-                <div class="player-row"><span class="p-name">5. Daniel <span class="p-pos">A</span></span><button class="btn-swap">🔄</button></div>
-            </div>
+            <div id="players-azul"></div>
         </div>
         <div class="team-card">
             <div class="team-header header-red">TIME RED</div>
-            <div id="players-red">
-                <div class="player-row">
-                    <span class="p-name">1. Ricardo <span class="p-pos">G</span> 🧤</span>
-                    <button class="btn-action-small">GOL</button>
-                </div>
-                <div class="player-row"><span class="p-name">2. Silva <span class="p-pos">A</span> ⚽</span><button class="btn-swap">🔄</button></div>
-                <div class="player-row"><span class="p-name">3. Andre <span class="p-pos">A</span></span><button class="btn-swap">🔄</button></div>
-                <div class="player-row"><span class="p-name">4. Roberto <span class="p-pos">A</span></span><button class="btn-swap">🔄</button></div>
-                <div class="player-row"><span class="p-name">5. Felipe <span class="p-pos">A</span></span><button class="btn-swap">🔄</button></div>
-            </div>
+            <div id="players-red"></div>
         </div>
     </div>
 
-    <div class="label-section">TIMELINE / LOG</div>
-    <div class="timeline-container">
-        <div class="log-col">
-            <div class="log-title">AZUL LOG</div>
-            <div class="log-entry">[02'] ⚽ <b>Pedro</b><br>(👟 Assist: Daniel)</div>
-            <div class="log-entry">[05'] ⚽ <b>Mateus</b></div>
-        </div>
-        <div class="log-col">
-            <div class="log-title">RED LOG</div>
-            <div class="log-entry">[04'] ⚽ <b>Silva</b></div>
-            <div class="log-entry">[06'] 🔄 Sai: André / Entra: Jorge</div>
-        </div>
+    <div style="font-size: 10px; color: #555; font-weight: 900; margin-bottom: 8px;">TIMELINE / LOG</div>
+    <div class="timeline">
+        <div><div class="log-title">AZUL LOG</div><div id="log-azul"></div></div>
+        <div><div class="log-title">RED LOG</div><div id="log-red"></div></div>
     </div>
 
-    <div class="next-card">
-        <div class="next-info">
+    <div class="fila-card">
+        <div>
             <h4>PRÓXIMO TIME (FILA)</h4>
-            <p>PRÓXIMOS: [Gustavo, Bruno, Vinícius, Henrique, Fábio]</p>
+            <p id="txt-fila">Ninguém na espera</p>
         </div>
-        <button class="btn-edit-fila">EDITAR FILA 🖊️</button>
+        <button style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:5px 10px; border-radius:8px; font-size:10px;">EDITAR</button>
+    </div>
+
+    <div class="add-atrasado">
+        <input type="text" id="input-atrasado" placeholder="Nome do atrasado...">
+        <button onclick="adicionarAtrasado()" style="background:var(--neon-green); border:none; color:#000; font-weight:bold; padding:0 15px; border-radius:8px;">+</button>
     </div>
 
     <div class="outcome-row">
-        <button class="btn-outcome btn-v-azul">VITÓRIA<br>AZUL</button>
-        <button class="btn-outcome btn-v-red">VITÓRIA<br>RED</button>
-        <button class="btn-outcome">EMPATE</button>
+        <button class="btn-outcome" style="border-color: var(--blue); color: var(--blue);" onclick="fimJogo('Azul')">VITÓRIA AZUL</button>
+        <button class="btn-outcome" style="border-color: var(--red); color: var(--red);" onclick="fimJogo('Red')">VITÓRIA RED</button>
+        <button class="btn-outcome" onclick="fimJogo('Empate')">EMPATE</button>
     </div>
 </div>
 
 <script>
-    /* PREENCHIMENTO FICTÍCIO DAS TELAS 1 E 2 PARA TESTE DIRETO */
-    const configPelada = {
-        nome: "Pelada do João",
-        tempo: 10,
-        limiteAtletas: 20
+    // --- DADOS FICTÍCIOS DAS TELAS 1 E 2 ---
+    let tempoOriginal = 10; 
+    let segundosRestantes = tempoOriginal * 60;
+    let timerId = null;
+    let placar = { azul: 0, red: 0 };
+
+    let atletasEmCampo = {
+        azul: [
+            { id: 1, nome: "Lucas", pos: "G" },
+            { id: 2, nome: "Pedro", pos: "A" },
+            { id: 3, nome: "Mateus", pos: "A" },
+            { id: 4, nome: "Carlos", pos: "A" },
+            { id: 5, nome: "Daniel", pos: "A" }
+        ],
+        red: [
+            { id: 6, nome: "Ricardo", pos: "G" },
+            { id: 7, nome: "Silva", pos: "A" },
+            { id: 8, nome: "André", pos: "A" },
+            { id: 9, nome: "Roberto", pos: "A" },
+            { id: 10, nome: "Felipe", pos: "A" }
+        ]
     };
 
-    const listaAtletasTeste = [
-        { nome: "Lucas", pos: "G", stars: 5, status: "Confirmado" },
-        { nome: "Ricardo", pos: "G", stars: 4, status: "Confirmado" },
-        { nome: "Pedro", pos: "A", stars: 5, status: "Confirmado" },
-        { nome: "Mateus", pos: "A", stars: 5, status: "Confirmado" },
-        { nome: "Silva", pos: "A", stars: 4, status: "Confirmado" },
-        { nome: "Daniel", pos: "A", stars: 3, status: "Confirmado" },
-        { nome: "André", pos: "A", stars: 4, status: "Confirmado" },
-        { nome: "Jorge", pos: "A", stars: 3, status: "Espera" }
-    ];
+    let filaEspera = ["Gustavo", "Bruno", "Vinícius", "Henrique", "Fábio"];
 
-    console.log("Sistema Inicializado com dados fictícios.");
-    console.log("Configurações:", configPelada);
-    console.table(listaAtletasTeste);
+    // --- FUNCIONALIDADES ---
+
+    function renderizarTudo() {
+        renderTime('azul');
+        renderTime('red');
+        document.getElementById('txt-fila').innerText = "PRÓXIMOS: [" + filaEspera.join(", ") + "]";
+    }
+
+    function renderTime(time) {
+        const container = document.getElementById(`players-${time}`);
+        container.innerHTML = atletasEmCampo[time].map(p => `
+            <div class="player-row">
+                <span><span class="p-pos">${p.pos}</span> ${p.nome}</span>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn-gol" onclick="marcarGol('${time}', '${p.nome}')">GOL</button>
+                    <button class="btn-swap" onclick="substituir('${time}', ${p.id})">🔄</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function marcarGol(time, nome) {
+        placar[time]++;
+        document.getElementById(`score-${time}`).innerText = placar[time];
+        const log = document.getElementById(`log-${time}`);
+        const min = Math.floor((tempoOriginal * 60 - segundosRestantes) / 60);
+        log.innerHTML = `<div class="log-entry">[${min}'] ⚽ <b>${nome}</b></div>` + log.innerHTML;
+    }
+
+    function substituir(time, idSaindo) {
+        if (filaEspera.length === 0) return alert("Fila vazia!");
+        const saindo = atletasEmCampo[time].find(p => p.id === idSaindo);
+        const proximo = filaEspera.shift();
+        
+        const log = document.getElementById(`log-${time}`);
+        log.innerHTML = `<div class="log-entry">🔄 Sai: ${saindo.nome} / Entra: ${proximo}</div>` + log.innerHTML;
+        
+        saindo.nome = proximo; // Simples troca de nome para o teste
+        renderizarTudo();
+    }
+
+    function adicionarAtrasado() {
+        const input = document.getElementById('input-atrasado');
+        if (input.value) {
+            filaEspera.push(input.value);
+            input.value = "";
+            renderizarTudo();
+        }
+    }
+
+    // --- CRONÔMETRO ---
+    function startTimer() {
+        if (timerId) return;
+        timerId = setInterval(() => {
+            segundosRestantes--;
+            if (segundosRestantes <= 0) {
+                clearInterval(timerId);
+                alert("FIM DE JOGO!");
+            }
+            atualizarRelogio();
+        }, 1000);
+    }
+
+    function pauseTimer() {
+        clearInterval(timerId);
+        timerId = null;
+    }
+
+    function resetTimer() {
+        pauseTimer();
+        segundosRestantes = tempoOriginal * 60;
+        atualizarRelogio();
+    }
+
+    function atualizarRelogio() {
+        const m = Math.floor(segundosRestantes / 60);
+        const s = segundosRestantes % 60;
+        document.getElementById('display-time').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+        const perc = (segundosRestantes / (tempoOriginal * 60)) * 100;
+        document.getElementById('timer-bar').style.width = perc + "%";
+    }
+
+    function fimJogo(res) {
+        alert("Resultado final registrado: " + res);
+        location.reload(); // Reinicia para novo teste
+    }
+
+    // Iniciar
+    renderizarTudo();
 </script>
-
 </body>
 </html>
