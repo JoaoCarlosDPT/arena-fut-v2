@@ -1,242 +1,211 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arena Fut PRO V2 - Gestão Total</title>
+<div id="tela3" class="hidden">
     <style>
-        :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; }
-        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; overflow-x: hidden; }
-        .hidden { display: none; }
-        button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; transition: 0.2s; }
+        .timer-container { text-align: center; padding: 20px 0; }
+        .timer-display { font-size: 64px; font-weight: bold; color: var(--gold); text-shadow: 0 0 20px rgba(255, 204, 0, 0.4); font-family: 'Courier New', Courier, monospace; }
+        .timer-controls { display: flex; justify-content: center; gap: 20px; margin-top: 10px; }
+        .btn-timer { background: #222; color: #fff; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #333; }
         
-        /* ESTILOS TELA 3 */
-        .header-jogo { text-align: center; padding: 20px 0; }
-        .cronometro { font-size: 4rem; color: var(--gold); font-weight: 900; text-shadow: 0 0 15px rgba(255,204,0,0.4); margin-bottom: 10px; }
-        .controles-tempo { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
-        .btn-tempo { background: #222; color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 20px; border: 1px solid #444; }
+        .progress-container { width: 80%; margin: 15px auto; height: 8px; background: #222; border-radius: 10px; border: 1px solid #333; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--neon); width: 100%; transition: width 1s linear; box-shadow: 0 0 10px var(--neon); }
+
+        .placar-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 25px; }
+        .placar-box { width: 80px; height: 80px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; background: #111; border-width: 2px; border-style: solid; }
+        .placar-azul { border-color: var(--blue); color: var(--blue); box-shadow: inset 0 0 15px rgba(0, 123, 255, 0.3); }
+        .placar-red { border-color: var(--red); color: var(--red); box-shadow: inset 0 0 15px rgba(220, 53, 69, 0.3); }
+
+        .field-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .team-card { background: #111; border-radius: 12px; border: 1px solid #222; overflow: hidden; }
+        .team-header { padding: 8px; text-align: center; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        .header-azul { background: var(--blue); color: #fff; }
+        .header-red { background: var(--red); color: #fff; }
         
-        .progresso-container { width: 100%; height: 6px; background: #222; border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
-        .progresso-bar { height: 100%; width: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); transition: 0.1s linear; }
+        .player-row { display: flex; align-items: center; padding: 8px; border-bottom: 1px solid #222; font-size: 12px; gap: 5px; }
+        .player-info { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .pos-indicator { color: var(--gold); font-weight: bold; font-size: 10px; }
+        .btn-action { background: #222; border: 1px solid #333; color: #fff; border-radius: 6px; padding: 4px 8px; font-size: 9px; font-weight: bold; cursor: pointer; }
+        .btn-gol { border-color: var(--neon); color: var(--neon); }
 
-        .placar-container { display: flex; justify-content: center; align-items: center; gap: 30px; margin-bottom: 30px; }
-        .placar-box { width: 80px; height: 80px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: 900; border: 2px solid transparent; }
-        .placar-azul { border-color: var(--blue); color: var(--blue); text-shadow: 0 0 10px var(--blue); }
-        .placar-red { border-color: var(--red); color: var(--red); text-shadow: 0 0 10px var(--red); }
+        .timeline-section { background: #111; border: 1px solid #222; border-radius: 12px; padding: 12px; margin-bottom: 20px; }
+        .log-entry { font-size: 11px; margin-bottom: 5px; color: #aaa; border-left: 2px solid #333; padding-left: 8px; }
+        .log-entry b { color: #fff; }
 
-        .campo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .time-card { background: var(--card); border-radius: 15px; padding: 10px; border: 1px solid #333; }
-        .time-header { text-align: center; font-weight: 900; padding: 5px; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; text-transform: uppercase; }
-        .atleta-jogo { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
-        .atleta-info { display: flex; align-items: center; gap: 5px; overflow: hidden; }
-        .btn-gol { background: var(--neon); color: #000; font-size: 10px; padding: 4px 8px; border-radius: 5px; }
-        .btn-troca { background: transparent; color: #666; font-size: 16px; padding: 0 5px; }
+        .next-up-card { background: rgba(0, 255, 136, 0.05); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 12px; padding: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .next-info { font-size: 11px; color: var(--neon); font-weight: bold; }
+        .next-names { font-size: 10px; color: #888; display: block; margin-top: 3px; }
 
-        .timeline { background: #0a0a0a; border-radius: 12px; padding: 15px; height: 120px; overflow-y: auto; border: 1px solid #222; margin-bottom: 20px; }
-        .log-item { font-size: 12px; margin-bottom: 5px; color: #aaa; border-left: 2px solid #444; padding-left: 8px; }
-
-        .fila-section { background: rgba(0,255,136,0.05); border: 1px solid var(--neon); border-radius: 12px; padding: 12px; margin-bottom: 80px; }
-        .fila-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .btn-edit-fila { font-size: 10px; color: var(--gold); border: 1px solid var(--gold); background: transparent; padding: 4px 8px; }
-
-        .footer-controles { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; display: flex; gap: 10px; border-top: 1px solid #222; }
-        .btn-resultado { flex: 1; padding: 15px; font-size: 12px; text-transform: uppercase; }
-
-        /* MODAL ASSISTÊNCIA */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: var(--card); padding: 20px; border-radius: 20px; width: 80%; border: 1px solid var(--neon); }
-        .btn-assist { display: block; width: 100%; padding: 12px; margin-bottom: 10px; background: #222; color: #fff; text-align: left; }
+        .btn-finish-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .btn-outcome { padding: 12px 5px; font-size: 10px; border: 1px solid #333; background: #111; color: #fff; }
+        
+        /* Modal Assistência */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .modal-content { background: var(--card); width: 90%; max-width: 400px; border-radius: 20px; border: 1px solid var(--neon); padding: 20px; }
+        .assist-option { background: #222; padding: 15px; border-radius: 12px; margin-bottom: 8px; text-align: center; font-weight: bold; border: 1px solid #333; }
     </style>
-</head>
-<body>
 
-    <div id="tela3">
-        <div class="header-jogo">
-            <div id="relogio" class="cronometro">10:00</div>
-            <div class="controles-tempo">
-                <button class="btn-tempo" onclick="controlarTempo('start')">▶</button>
-                <button class="btn-tempo" onclick="controlarTempo('pause')">⏸</button>
-                <button class="btn-tempo" onclick="controlarTempo('reset')">↺</button>
-            </div>
-            <div class="progresso-container">
-                <div id="barraProgresso" class="progresso-bar"></div>
-            </div>
+    <div class="timer-container">
+        <div class="timer-display" id="clock">10:00</div>
+        <div class="timer-controls">
+            <button class="btn-timer" onclick="toggleTimer()">▶</button>
+            <button class="btn-timer" onclick="resetTimer()">↺</button>
         </div>
+        <div class="progress-container"><div class="progress-bar" id="timerBar"></div></div>
+    </div>
 
-        <div class="placar-container">
-            <div id="placarAzul" class="placar-box placar-azul">0</div>
-            <div style="font-size: 20px; color: #444;">VS</div>
-            <div id="placarRed" class="placar-box placar-red">0</div>
+    <div class="placar-container">
+        <div class="placar-box placar-azul" id="scoreAzul">0</div>
+        <div class="placar-box placar-red" id="scoreRed">0</div>
+    </div>
+
+    <div class="field-panel">
+        <div class="team-card">
+            <div class="team-header header-azul">TIME AZUL</div>
+            <div id="playersAzul"></div>
         </div>
-
-        <div class="campo-grid">
-            <div class="time-card">
-                <div class="time-header" style="background: var(--blue);">Time Azul</div>
-                <div id="jogadoresAzul"></div>
-            </div>
-            <div class="time-card">
-                <div class="time-header" style="background: var(--red);">Time Red</div>
-                <div id="jogadoresRed"></div>
-            </div>
-        </div>
-
-        <div class="timeline" id="logPartida">
-            <div class="log-item">Partida iniciada. Boa sorte!</div>
-        </div>
-
-        <div class="fila-section">
-            <div class="fila-header">
-                <span style="font-size: 12px; font-weight: bold; color: var(--neon);">PRÓXIMOS (FILA)</span>
-                <button class="btn-edit-fila" onclick="alert('Modo Edição de Fila Ativado')">EDITAR FILA ✏️</button>
-            </div>
-            <div id="listaFira" style="font-size: 11px; color: #888;">Ninguém na espera...</div>
-            <div style="margin-top: 15px; display: flex; gap: 5px;">
-                <input type="text" id="nomeAtrasado" placeholder="Nome do atrasado..." style="flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 8px; border-radius: 8px; font-size: 12px;">
-                <button onclick="adicionarAtrasado()" style="background: var(--neon); color: #000; padding: 0 15px; border-radius: 8px;">+</button>
-            </div>
-        </div>
-
-        <div class="footer-controles">
-            <button class="btn-resultado" style="border: 1px solid var(--blue); color: var(--blue); background: transparent;" onclick="fimPartida('azul')">VITÓRIA AZUL</button>
-            <button class="btn-resultado" style="border: 1px solid var(--red); color: var(--red); background: transparent;" onclick="fimPartida('red')">VITÓRIA RED</button>
-            <button class="btn-resultado" style="background: #333; color: #fff;" onclick="fimPartida('empate')">EMPATE</button>
+        <div class="team-card">
+            <div class="team-header header-red">TIME RED</div>
+            <div id="playersRed"></div>
         </div>
     </div>
 
-    <div id="modalAssist" class="modal hidden">
-        <div class="modal-content">
-            <h4 style="margin-top:0; color: var(--neon);">Quem deu o passe?</h4>
-            <div id="opcoesAssist"></div>
-            <button class="btn-assist" style="background: var(--neon); color: #000; text-align: center; font-weight: bold;" onclick="registrarGol(null)">GOL INDIVIDUAL (SEM ASSIST.)</button>
-        </div>
+    <div class="timeline-section">
+        <div style="font-size: 10px; font-weight: 900; color: #444; margin-bottom: 10px; letter-spacing: 1px;">TIMELINE / LOG</div>
+        <div id="gameLog"></div>
     </div>
 
-    <script>
-        // DADOS PARA TESTE DIRETO (TELA 1 E 2 PREENCHIDAS)
-        let tempoTotal = 10 * 60;
-        let tempoRestante = tempoTotal;
-        let timerInterval;
-        let golsAzul = 0, golsRed = 0;
-        let autorGolAtual = null, timeGolAtual = null;
+    <div class="next-up-card">
+        <div style="flex:1">
+            <span class="next-info">PRÓXIMO TIME (FILA)</span>
+            <span class="next-names" id="txtProximoTime">Aguardando definição...</span>
+        </div>
+        <button class="btn-action" style="border-color: var(--gold); color: var(--gold);" onclick="abrirEdicaoFila()">EDITAR FILA 📝</button>
+    </div>
 
-        let atletas = [
-            { id: 0, nome: "João Silva", pos: "G", img: "🧤", emCampo: true, time: "azul" },
-            { id: 1, nome: "Ricardo P.", pos: "A", img: "👟", emCampo: true, time: "azul" },
-            { id: 2, nome: "Mateus A.", pos: "A", img: "👟", emCampo: true, time: "azul" },
-            { id: 3, nome: "Carlos", pos: "A", img: "👟", emCampo: true, time: "azul" },
-            { id: 4, nome: "Daniel", pos: "A", img: "👟", emCampo: true, time: "azul" },
-            { id: 5, nome: "Ricardo G.", pos: "G", img: "🧤", emCampo: true, time: "red" },
-            { id: 6, nome: "Silva", pos: "A", img: "👟", emCampo: true, time: "red" },
-            { id: 7, nome: "Andre", pos: "A", img: "👟", emCampo: true, time: "red" },
-            { id: 8, nome: "Roberto", pos: "A", img: "👟", emCampo: true, time: "red" },
-            { id: 9, nome: "Felipe", pos: "A", img: "👟", emCampo: true, time: "red" },
-            { id: 10, nome: "Gustavo", emCampo: false }, { id: 11, nome: "Bruno", emCampo: false },
-            { id: 12, nome: "Vinícius", emCampo: false }, { id: 13, nome: "Henrique", emCampo: false }
-        ];
+    <div class="card" style="padding: 10px; display: flex; gap: 10px;">
+        <input type="text" id="nomeAtrasado" placeholder="Adicionar retardatário..." style="height: 40px; font-size: 12px;">
+        <button class="btn-neon" style="width: 50px; padding: 0;" onclick="addRetardatario()">+</button>
+    </div>
 
-        function renderizarPartida() {
-            const containerAzul = document.getElementById('jogadoresAzul');
-            const containerRed = document.getElementById('jogadoresRed');
-            const containerFila = document.getElementById('listaFira');
+    <div class="btn-finish-row">
+        <button class="btn-outcome" style="color: var(--blue); border-color: var(--blue);" onclick="finalizarPartida('azul')">VITÓRIA<br>AZUL</button>
+        <button class="btn-outcome" style="color: var(--red); border-color: var(--red);" onclick="finalizarPartida('red')">VITÓRIA<br>RED</button>
+        <button class="btn-outcome" onclick="finalizarPartida('empate')">EMPATE</button>
+    </div>
+</div>
 
-            containerAzul.innerHTML = ""; containerRed.innerHTML = ""; containerFila.innerHTML = "";
+<div id="modalAssist" class="modal">
+    <div class="modal-content">
+        <h3 style="color: var(--neon); text-align: center; margin-top: 0;">Quem deu o passe? 👟</h3>
+        <div id="assistOptions"></div>
+        <div class="assist-option" style="color: #666;" onclick="registrarGol(null)">GOL INDIVIDUAL / SEM ASSIST.</div>
+    </div>
+</div>
 
-            atletas.forEach(atleta => {
-                if(atleta.emCampo) {
-                    const html = `
-                        <div class="atleta-jogo">
-                            <div class="atleta-info">
-                                <span>${atleta.img}</span>
-                                <span style="white-space:nowrap">${atleta.nome.split(' ')[0]}</span>
-                            </div>
-                            <div style="display:flex; gap:4px">
-                                <button class="btn-gol" onclick="abrirModalAssist(${atleta.id}, '${atleta.time}')">GOL</button>
-                                <button class="btn-troca" onclick="trocaEmergencia(${atleta.id})">🔄</button>
-                            </div>
-                        </div>`;
-                    atleta.time === "azul" ? containerAzul.innerHTML += html : containerRed.innerHTML += html;
-                } else {
-                    containerFila.innerHTML += atleta.nome + ", ";
-                }
-            });
+<script>
+    // Variáveis de Estado da Tela 3
+    let tempoRestante = 600; // 10 min padrão
+    let timerRunning = false;
+    let timerInterval;
+    let score = { azul: 0, red: 0 };
+    let autorGolAtual = null;
+    let timeGolAtual = null;
+
+    function toggleTimer() {
+        if(timerRunning) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+        } else {
+            timerInterval = setInterval(updateTimer, 1000);
+            timerRunning = true;
         }
+    }
 
-        function controlarTempo(acao) {
-            if(acao === 'start') {
-                clearInterval(timerInterval);
-                timerInterval = setInterval(() => {
-                    if(tempoRestante <= 0) return clearInterval(timerInterval);
-                    tempoRestante--;
-                    atualizarRelogio();
-                }, 1000);
-            } else if(acao === 'pause') clearInterval(timerInterval);
-            else {
-                tempoRestante = tempoTotal;
-                atualizarRelogio();
-            }
+    function updateTimer() {
+        if(tempoRestante <= 0) {
+            clearInterval(timerInterval);
+            alert("Fim de partida!");
+            return;
         }
+        tempoRestante--;
+        const mins = Math.floor(tempoRestante / 60);
+        const secs = tempoRestante % 60;
+        document.getElementById('clock').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+        
+        const total = (parseInt(document.getElementById('tempoRegra').value) || 10) * 60;
+        const perc = (tempoRestante / total) * 100;
+        document.getElementById('timerBar').style.width = perc + '%';
+    }
 
-        function atualizarRelogio() {
-            const m = Math.floor(tempoRestante / 60);
-            const s = tempoRestante % 60;
-            document.getElementById('relogio').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-            document.getElementById('barraProgresso').style.width = (tempoRestante / tempoTotal * 100) + "%";
-        }
+    function abrirModalGol(atletaId, time) {
+        autorGolAtual = atletaId;
+        timeGolAtual = time;
+        const timeAtletas = atletasApp.filter(a => a.confirmado && (a.time === time) && a.id !== atletaId);
+        
+        const container = document.getElementById('assistOptions');
+        container.innerHTML = timeAtletas.map(a => `
+            <div class="assist-option" onclick="registrarGol(${a.id})">${a.nome}</div>
+        `).join('');
+        
+        document.getElementById('modalAssist').style.display = 'flex';
+    }
 
-        function abrirModalAssist(id, time) {
-            autorGolAtual = id; timeGolAtual = time;
-            const container = document.getElementById('opcoesAssist');
-            container.innerHTML = "";
-            atletas.filter(a => a.emCampo && a.time === time && a.id !== id).forEach(p => {
-                container.innerHTML += `<button class="btn-assist" onclick="registrarGol(${p.id})">👟 Passe de ${p.nome}</button>`;
-            });
-            document.getElementById('modalAssist').classList.remove('hidden');
-        }
+    function registrarGol(assistId) {
+        score[timeGolAtual]++;
+        document.getElementById(`score${timeGolAtual.charAt(0).toUpperCase() + timeGolAtual.slice(1)}`).innerText = score[timeGolAtual];
+        
+        const autor = atletasApp.find(a => a.id === autorGolAtual);
+        const assist = assistId !== null ? atletasApp.find(a => a.id === assistId) : null;
+        
+        const log = document.getElementById('gameLog');
+        const timeLabel = document.getElementById('clock').innerText;
+        
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = `[${timeLabel}] ⚽ <b>${autor.nome}</b> ${assist ? `<br>👟 Assist: ${assist.nome}` : ''}`;
+        log.prepend(entry);
+        
+        document.getElementById('modalAssist').style.display = 'none';
+        // Aqui você salvaria as stats (autor.gols++, assist.assists++)
+    }
 
-        function registrarGol(assistId) {
-            const autor = atletas.find(a => a.id === autorGolAtual);
-            const assist = assistId !== null ? atletas.find(a => a.id === assistId) : null;
-            const min = Math.floor((tempoTotal - tempoRestante) / 60);
+    // Função para Troca de Emergência
+    function trocarAtleta(idSaindo) {
+        const espera = atletasApp.filter(a => !a.confirmado);
+        if(espera.length === 0) return alert("Ninguém na fila de espera!");
+        
+        // Lógica simplificada: pega o primeiro da espera
+        const entrando = espera[0];
+        const saindo = atletasApp.find(a => a.id === idSaindo);
+        
+        saindo.confirmado = false;
+        entrando.confirmado = true;
+        entrando.time = saindo.time; // Herda o time
+        
+        const log = document.getElementById('gameLog');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.style.borderColor = 'var(--gold)';
+        entry.innerHTML = `🔄 Sai: ${saindo.nome} / Entra: ${entrando.nome}`;
+        log.prepend(entry);
+        
+        renderizarPartida(); // Atualiza os nomes em campo
+    }
 
-            if(timeGolAtual === 'azul') golsAzul++; else golsRed++;
-            
-            document.getElementById('placarAzul').innerText = golsAzul;
-            document.getElementById('placarRed').innerText = golsRed;
-
-            const log = document.getElementById('logPartida');
-            log.innerHTML = `<div class="log-item" style="color:var(--neon)">[${min}'] ⚽ ${autor.nome} ${assist ? '(👟 '+assist.nome+')' : ''}</div>` + log.innerHTML;
-            
-            document.getElementById('modalAssist').classList.add('hidden');
-        }
-
-        function adicionarAtrasado() {
-            const nome = document.getElementById('nomeAtrasado').value;
-            if(!nome) return;
-            atletas.push({ id: atletas.length, nome: nome, emCampo: false });
-            document.getElementById('nomeAtrasado').value = "";
-            renderizarPartida();
-        }
-
-        function trocaEmergencia(idSai) {
-            const proximo = atletas.find(a => !a.emCampo);
-            if(!proximo) return alert("Ninguém na fila!");
-            
-            const saindo = atletas.find(a => a.id === idSai);
-            proximo.emCampo = true; proximo.time = saindo.time; proximo.pos = "A"; proximo.img = "👟";
-            saindo.emCampo = false;
-            
-            const log = document.getElementById('logPartida');
-            log.innerHTML = `<div class="log-item">[🔄] Saiu: ${saindo.nome} / Entrou: ${proximo.nome}</div>` + log.innerHTML;
-            renderizarPartida();
-        }
-
-        function fimPartida(resultado) {
-            alert("Fim de partida! Lógica de giro de times seria aplicada aqui.");
-            location.reload(); // Apenas para resetar o teste
-        }
-
-        renderizarPartida();
-        atualizarRelogio();
-    </script>
-</body>
-</html>
+    function addRetardatario() {
+        const nome = document.getElementById('nomeAtrasado').value;
+        if(!nome) return;
+        
+        const novo = {
+            id: atletasApp.length,
+            nome: nome,
+            cat: 'CONVIDADO',
+            stars: 3,
+            pos: 'A',
+            img: '👟',
+            confirmado: false // Entra na espera
+        };
+        atletasApp.push(novo);
+        document.getElementById('nomeAtrasado').value = '';
+        alert(`${nome} adicionado à fila!`);
+        atualizarResumos(); 
+    }
+</script>
