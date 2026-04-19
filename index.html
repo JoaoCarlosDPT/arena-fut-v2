@@ -148,7 +148,6 @@
     let filaTemp = []; 
     let sAzul = 0, sRed = 0, segs = 600, tId = null, autor = null;
 
-    // CONFIRMAÇÃO
     function pedirConfirmacao(msg, callback) {
         document.getElementById('confirm-msg').innerText = msg;
         document.getElementById('btn-sim').onclick = () => { callback(); document.getElementById('modal-confirm').style.display='none'; };
@@ -156,7 +155,6 @@
     }
 
     function processarFim(resultado) {
-        let perdedores = [];
         let timePerdedor = "";
         if (resultado === 'azul') { timePerdedor = "red"; atletas.filter(a => a.t === 'azul').forEach(a => a.v++); }
         else if (resultado === 'red') { timePerdedor = "azul"; atletas.filter(a => a.t === 'red').forEach(a => a.v++); }
@@ -181,8 +179,8 @@
     function render() {
         const field = document.getElementById('field');
         field.innerHTML = `
-            <div class="team-card"><div class="t-header" style="background:var(--blue)">TIME AZUL</div>${atletas.filter(a => a.t === 'azul').map(a => `<div class="row"><span><b>${a.p}</b> ${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'azul')">GOL</button></div>`).join('')}</div>
-            <div class="team-card"><div class="t-header" style="background:var(--red)">TIME RED</div>${atletas.filter(a => a.t === 'red').map(a => `<div class="row"><span><b>${a.p}</b> ${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
+            <div class="team-card"><div class="t-header" style="background:var(--blue)">TIME AZUL</div>${atletas.filter(a => a.t === 'azul').map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'azul')">GOL</button></div>`).join('')}</div>
+            <div class="team-card"><div class="t-header" style="background:var(--red)">TIME RED</div>${atletas.filter(a => a.t === 'red').map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
         `;
         const sorted = [...atletas].sort((a,b) => (b.g + b.a) - (a.g + a.a));
         document.getElementById('r-body').innerHTML = sorted.map(a => `<tr><td>${a.n}</td><td>${a.v}</td><td>${a.g}</td><td>${a.a}</td></tr>`).join('');
@@ -190,7 +188,6 @@
         document.getElementById('fila-lista').innerHTML = fText || "Fila vazia";
     }
 
-    // EDITOR E CANCELAR
     function abrirEditorFila() {
         filaTemp = [...fila];
         renderEditor();
@@ -222,7 +219,6 @@
         render();
     }
 
-    // EVENTOS DRAG
     document.getElementById('fila-editor-container').addEventListener('dragover', e => {
         e.preventDefault();
         const after = getDragAfterElement(document.getElementById('fila-editor-container'), e.clientY);
@@ -241,7 +237,6 @@
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // LOG E DEMAIS
     function gol(assist) {
         let aObj = atletas.find(x => x.n === autor);
         aObj.g++; if(assist) atletas.find(x => x.n === assist).a++;
