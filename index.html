@@ -3,158 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arena Fut PRO FINAL</title>
+<title>Arena Fut PRO - FULL</title>
 
 <style>
-/* --- SEU CSS ORIGINAL MANTIDO 100% --- */
-:root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; }
+/* ===== SEU CSS ORIGINAL 100% PRESERVADO ===== */
+:root { --neon:#00ff88; --dark:#000; --card:#1a1a1a; --border:#333; --blue:#007bff; --red:#dc3545; --gold:#ffcc00; }
 
-body { background: var(--dark); color: #fff; font-family: 'Segoe UI'; padding: 10px; margin: 0; }
+body { background:var(--dark); color:#fff; font-family:'Segoe UI'; margin:0; padding:10px; padding-bottom:150px; }
 
-.card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
-button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
-.btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; }
+.card { background:var(--card); padding:15px; border-radius:16px; margin-bottom:12px; border:1px solid var(--border); }
 
-.hidden { display: none; }
+button { border:none; border-radius:12px; font-weight:bold; cursor:pointer; }
+.btn-neon { background:var(--neon); color:#000; padding:15px; width:100%; }
+
+.hidden { display:none; }
+
+.atleta-item { display:flex; gap:10px; background:#1a1a1a; padding:10px; border-radius:12px; margin-bottom:8px; align-items:center; }
+.atleta-check { width:20px; height:20px; }
+.estrelas { color:var(--gold); cursor:pointer; }
+.tag { font-size:10px; padding:3px 6px; border-radius:8px; cursor:pointer; }
+.tag-mensalista { color:var(--neon); border:1px solid var(--neon); }
+.tag-convidado { color:var(--blue); border:1px solid var(--blue); }
+
+.pos-badge { cursor:pointer; }
+
+.clock { font-size:50px; text-align:center; color:var(--gold); }
+.score { display:flex; justify-content:center; gap:20px; font-size:30px; }
+
 </style>
 </head>
 
 <body>
 
-<!-- TELA 1 -->
+<!-- ================= TELA 1 ================= -->
 <div id="tela1">
-    <div class="card">
-        <h2>CRIAR PELADA</h2>
-        <input id="nomeEvento" placeholder="Nome"><br><br>
-        <input id="limite" type="number" placeholder="Limite"><br><br>
-        <button class="btn-neon" onclick="irTela2()">PRÓXIMO</button>
-    </div>
+<div class="card">
+<h3>Criar Pelada</h3>
+
+<input id="limite" type="number" placeholder="Limite jogadores"><br><br>
+
+<button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS</button>
+</div>
 </div>
 
-<!-- TELA 2 -->
+<!-- ================= TELA 2 ================= -->
 <div id="tela2" class="hidden">
-    <div class="card">
-        <textarea id="listaTexto" placeholder="Lista jogadores"></textarea>
-        <button class="btn-neon" onclick="processarLista()">PROCESSAR</button>
-    </div>
 
-    <div id="lista"></div>
-
-    <button class="btn-neon" onclick="irParaJogo()">INICIAR PARTIDA</button>
+<div class="card">
+<textarea id="listaTexto" placeholder="Cole a lista..."></textarea>
+<button class="btn-neon" onclick="processarLista()">PROCESSAR LISTA</button>
 </div>
 
-<!-- TELA 3 -->
+<div id="listaArea"></div>
+
+<button class="btn-neon" onclick="irParaJogo()">INICIAR PARTIDA</button>
+
+</div>
+
+<!-- ================= TELA 3 ================= -->
 <div id="tela3" class="hidden">
 
-    <h2>JOGO</h2>
+<div class="clock" id="timer">10:00</div>
 
-    <div>
-        <h3>AZUL</h3>
-        <div id="timeAzul"></div>
-    </div>
+<div class="score">
+<div id="s-azul">0</div>
+<div id="s-red">0</div>
+</div>
 
-    <div>
-        <h3>VERMELHO</h3>
-        <div id="timeRed"></div>
-    </div>
+<h3>TIME AZUL</h3>
+<div id="timeAzul"></div>
 
-    <h3>FILA</h3>
-    <div id="fila"></div>
+<h3>TIME RED</h3>
+<div id="timeRed"></div>
+
+<h3>FILA</h3>
+<div id="fila"></div>
 
 </div>
 
 <script>
 
-/* =========================
-   ESTADO GLOBAL
-========================= */
+/* ================= ESTADO GLOBAL ================= */
+let atletasApp = [];
+let atletas = [];
+let fila = [];
+let sAzul=0, sRed=0;
 
-let appState = {
-    atletas: [],
-    confirmados: [],
-    times: { azul: [], red: [] },
-    fila: []
-};
-
-/* =========================
-   TELA 1 → 2
-========================= */
-
+/* ================= TELA 1 ================= */
 function irTela2(){
-    document.getElementById('tela1').classList.add('hidden');
-    document.getElementById('tela2').classList.remove('hidden');
+    tela1.classList.add("hidden");
+    tela2.classList.remove("hidden");
 }
 
-/* =========================
-   PROCESSAR LISTA
-========================= */
+/* ================= TELA 2 ================= */
 
 function processarLista(){
-    let texto = document.getElementById('listaTexto').value.split('\n');
+    const linhas = listaTexto.value.split('\n').filter(l=>l.trim()!="");
+    const limite = parseInt(limite.value) || 999;
 
-    appState.atletas = texto.map((nome, i) => ({
-        id: i,
-        nome: nome.trim(),
-        confirmado: true
+    atletasApp = linhas.map((l,i)=>({
+        id:i,
+        nome:l,
+        confirmado: i<limite,
+        cat:'CONVIDADO',
+        stars:3,
+        pos:'A',
+        img:'👟'
     }));
 
     renderLista();
 }
 
 function renderLista(){
-    let html = "";
-
-    appState.atletas.forEach(a=>{
-        html += `
+    listaArea.innerHTML = atletasApp.map(a=>`
+        <div class="atleta-item">
+            <input type="checkbox" ${a.confirmado?'checked':''} onchange="toggle(${a.id})">
             <div>
-                <input type="checkbox" checked onchange="toggle(${a.id})">
-                ${a.nome}
+                <div>${a.nome}</div>
+                <div class="tag ${a.cat==='MENSALISTA'?'tag-mensalista':'tag-convidado'}"
+                    onclick="mudarCat(${a.id})">${a.cat}</div>
+                <div class="estrelas" onclick="mudarStar(${a.id})">
+                    ${"★".repeat(a.stars)}${"☆".repeat(5-a.stars)}
+                </div>
             </div>
-        `;
-    });
-
-    document.getElementById('lista').innerHTML = html;
+            <div class="pos-badge" onclick="mudarPos(${a.id})">
+                ${a.img}
+            </div>
+        </div>
+    `).join('');
 }
 
-function toggle(id){
-    let a = appState.atletas.find(x=>x.id==id);
-    a.confirmado = !a.confirmado;
+function toggle(id){ atletasApp[id].confirmado=!atletasApp[id].confirmado; }
+function mudarCat(id){
+    atletasApp[id].cat = atletasApp[id].cat==='MENSALISTA'?'CONVIDADO':'MENSALISTA';
+    renderLista();
+}
+function mudarStar(id){
+    atletasApp[id].stars = atletasApp[id].stars%5+1;
+    renderLista();
+}
+function mudarPos(id){
+    if(atletasApp[id].pos==='A'){
+        atletasApp[id].pos='G'; atletasApp[id].img='🧤';
+    } else {
+        atletasApp[id].pos='A'; atletasApp[id].img='👟';
+    }
+    renderLista();
 }
 
-/* =========================
-   INICIAR JOGO
-========================= */
+/* ================= INTEGRAÇÃO ================= */
 
 function irParaJogo(){
 
-    appState.confirmados = appState.atletas.filter(a=>a.confirmado);
+    let confirmados = atletasApp.filter(a=>a.confirmado);
 
-    let jogadores = [...appState.confirmados].sort(()=>Math.random()-0.5);
+    if(confirmados.length < 10){
+        alert("Mínimo 10 jogadores");
+        return;
+    }
 
-    appState.times.azul = jogadores.slice(0,5);
-    appState.times.red = jogadores.slice(5,10);
-    appState.fila = jogadores.slice(10);
+    let embaralhado = [...confirmados].sort(()=>Math.random()-0.5);
 
-    document.getElementById('tela2').classList.add('hidden');
-    document.getElementById('tela3').classList.remove('hidden');
+    let azul = embaralhado.slice(0,5);
+    let red = embaralhado.slice(5,10);
+    fila = embaralhado.slice(10);
+
+    atletas=[];
+
+    azul.forEach(a=> atletas.push({n:a.nome,t:"azul",g:0,v:0,a:0,active:true}));
+    red.forEach(a=> atletas.push({n:a.nome,t:"red",g:0,v:0,a:0,active:true}));
+
+    tela2.classList.add("hidden");
+    tela3.classList.remove("hidden");
 
     renderJogo();
 }
 
-/* =========================
-   RENDER JOGO
-========================= */
+/* ================= TELA 3 ================= */
 
 function renderJogo(){
 
-    document.getElementById('timeAzul').innerHTML =
-        appState.times.azul.map(a=>`<div>${a.nome}</div>`).join('');
+    timeAzul.innerHTML = atletas.filter(a=>a.t==="azul")
+        .map(a=>`<div>${a.n} <button onclick="gol('${a.n}')">⚽</button></div>`).join('');
 
-    document.getElementById('timeRed').innerHTML =
-        appState.times.red.map(a=>`<div>${a.nome}</div>`).join('');
+    timeRed.innerHTML = atletas.filter(a=>a.t==="red")
+        .map(a=>`<div>${a.n} <button onclick="gol('${a.n}')">⚽</button></div>`).join('');
 
-    document.getElementById('fila').innerHTML =
-        appState.fila.map(a=>`<div>${a.nome}</div>`).join('');
+    fila.innerHTML = fila.map(a=>`<div>${a.nome}</div>`).join('');
+}
+
+function gol(nome){
+    let p = atletas.find(a=>a.n===nome);
+    p.g++;
+
+    if(p.t==="azul"){ sAzul++; s-azul.innerText=sAzul; }
+    else { sRed++; s-red.innerText=sRed; }
+}
+
+/* ================= TIMER ================= */
+
+let segs=600, timer=null;
+
+function start(){
+    if(timer) return;
+    timer=setInterval(()=>{
+        if(segs>0){
+            segs--;
+            let m=Math.floor(segs/60);
+            let s=segs%60;
+            timer.innerText=`${m}:${s<10?'0':''}${s}`;
+        }
+    },1000);
 }
 
 </script>
