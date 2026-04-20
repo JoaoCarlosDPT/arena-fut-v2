@@ -3,140 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arena Fut PRO</title>
+    <title>Arena Fut PRO - Completo</title>
     <style>
-        :root { --blue: #007bff; --red: #dc3545; --neon: #00ff88; --gold: #ffcc00; --bg: #0c0e11; --card: #15181d; }
+        :root { --blue: #007bff; --red: #dc3545; --neon: #00ff88; --gold: #ffcc00; --bg: #0c0e11; --card: #15181d; --border: #333; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
-        #app { width: 100%; max-width: 420px; background: linear-gradient(180deg, #1a1d21 0%, #0c0e11 100%); border-radius: 35px; padding: 20px; border: 1px solid #222; display: flex; flex-direction: column; gap: 15px; }
-        .screen { display: none; flex-direction: column; gap: 15px; }
+        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; overflow-x: hidden; }
+        #app { width: 100%; max-width: 420px; }
+        
+        .screen { display: none; flex-direction: column; gap: 12px; }
         .screen.active { display: flex; }
+        .hidden { display: none; }
 
-        /* INPUTS E BUTTONS */
-        input, textarea { width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 12px; font-size: 14px; }
-        button { padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .btn-neon { background: var(--neon); color: #000; }
+        /* ESTILOS DE COMPONENTES */
+        .card { background: var(--card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); }
+        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; font-size: 1rem; }
         
-        /* TIMER & SCORE */
-        .clock { font-size: 50px; color: var(--gold); font-weight: bold; text-align: center; }
+        /* TELA 1 E 2 (LISTAS) */
+        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; margin-bottom: 6px; display: block; margin-left: 5px; }
+        input, select, textarea { width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; }
+        .row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .col { flex: 1; }
+        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
+        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; cursor: pointer; }
+        .atleta-check:checked { background: var(--neon); }
+
+        /* TELA 3 (JOGO) */
+        .clock { font-size: 60px; color: var(--gold); font-weight: bold; text-align: center; margin: 10px 0; }
         .scoreboard { display: flex; justify-content: center; gap: 20px; }
-        .score-box { width: 70px; height: 70px; background: #000; border: 2px solid; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 35px; font-weight: bold; }
-
-        /* JOGO */
-        .field { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .team-card { background: var(--card); border-radius: 12px; border: 1px solid #222; overflow: hidden; }
-        .t-header { padding: 8px; font-size: 10px; font-weight: 900; text-align: center; color: #fff; }
-        .row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #1c1f24; font-size: 11px; }
-        .btn-gol { background: #111; border: 1px solid var(--neon); color: var(--neon); font-size: 9px; padding: 4px 7px; border-radius: 5px; }
-        .fila-box { border: 2px solid var(--neon); border-radius: 15px; padding: 12px; }
-        .next-list { font-size: 11px; color: #aaa; margin-top: 5px; }
-        
-        /* MODAIS */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:999; }
-        .m-content { background: var(--card); width:90%; padding: 20px; border-radius: 20px; border: 1px solid var(--gold); }
-        .fila-edit-item { background: #222; margin-bottom: 8px; padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; border: 1px solid #333; }
+        .score-box { width: 75px; height: 75px; background: #000; border: 2px solid; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 45px; font-weight: bold; }
+        .field { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
+        .team-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+        .t-header { padding: 8px; font-size: 10px; font-weight: 900; text-align: center; text-transform: uppercase; }
+        .btn-gol { background: #111; border: 1px solid var(--neon); color: var(--neon); font-size: 9px; padding: 4px 7px; border-radius: 5px; font-weight: bold; }
+        .btn-finalizar { background: var(--gold); color: #000; padding: 15px; border-radius: 15px; border: none; font-weight: bold; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div id="screen-1" class="screen active">
-        <h2 style="text-align:center; color:var(--gold)">Configuração</h2>
-        <label>Nome da Pelada</label>
-        <input type="text" id="nomePelada" placeholder="Ex: Pelada da Terça">
-        <label>Tempo de Jogo (min)</label>
-        <input type="number" id="tempoJogo" value="10">
-        <button class="btn-neon" onclick="irParaTela(2)">PRÓXIMA ETAPA →</button>
+    <div id="tela1" class="screen active">
+        <div class="card" style="border-top: 5px solid var(--neon);">
+            <h3 style="color:var(--neon); margin-top:0">Configuração da Pelada</h3>
+            <div class="row"><div class="col"><label>Nome da Pelada</label><input id="nomeEvento" placeholder="Ex: Pelada dos Amigos"></div></div>
+            <div class="row"><div class="col"><label>Local</label><input id="local" placeholder="Ex: Arena X"></div></div>
+            <button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS →</button>
+        </div>
     </div>
 
-    <div id="screen-2" class="screen">
-        <h2 style="text-align:center; color:var(--neon)">Convocação</h2>
-        <textarea id="listaTexto" rows="8" placeholder="Cole os nomes dos atletas (um por linha)"></textarea>
-        <button class="btn-neon" onclick="iniciarPartida()">INICIAR PARTIDA</button>
+    <div id="tela2" class="screen">
+        <div class="card">
+            <label>Cole a lista de nomes:</label>
+            <textarea id="listaTexto" rows="4" style="height:100px; padding:10px;"></textarea>
+            <button class="btn-neon" style="margin-top: 10px;" onclick="processarLista()">PROCESSAR LISTA →</button>
+        </div>
+        <div id="listaArea" style="display:none">
+            <div id="renderAtletas"></div>
+            <button class="btn-neon" onclick="iniciarPartida()">INICIAR PARTIDA</button>
+        </div>
     </div>
 
-    <div id="screen-3" class="screen">
+    <div id="tela3" class="screen">
         <div class="clock" id="timer">10:00</div>
         <div class="scoreboard">
             <div class="score-box" style="border-color:var(--blue); color:var(--blue)" id="s-azul">0</div>
             <div class="score-box" style="border-color:var(--red); color:var(--red)" id="s-red">0</div>
         </div>
-
         <div class="field" id="field"></div>
-
-        <div class="fila-box">
-            <span style="color:var(--neon); font-size:11px; font-weight:bold">FILA DE ESPERA</span>
-            <div class="next-list" id="fila-lista"></div>
-        </div>
-        
-        <button onclick="irParaTela(1)" style="background:#444; color:#fff;">NOVA PELADA</button>
-    </div>
-</div>
-
-<div id="modal-assist" class="modal">
-    <div class="m-content">
-        <h4 style="text-align:center">Quem deu o passe?</h4>
-        <div id="opts"></div>
-        <button onclick="gol(null)" style="width:100%; margin-top:10px;">GOL INDIVIDUAL</button>
+        <button class="btn-finalizar" onclick="alert('Pelada Finalizada!')">FINALIZAR PELADA</button>
     </div>
 </div>
 
 <script>
+    // ESTADO TELA 1/2
+    let atletasApp = [];
+    
+    // ESTADO TELA 3 (JOGO)
     let atletas = [];
-    let fila = [];
-    let sAzul = 0, sRed = 0, segs = 600, autor = null;
+    let sAzul = 0, sRed = 0;
 
-    function irParaTela(n) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById('screen-' + n).classList.add('active');
-        if(n === 3) render();
+    function irTela2() {
+        document.getElementById('tela1').classList.remove('active');
+        document.getElementById('tela2').classList.add('active');
     }
 
-    function iniciarPartida() {
+    function processarLista() {
         const texto = document.getElementById('listaTexto').value;
-        const nomes = texto.split('\n').filter(l => l.trim() !== '');
-        
-        atletas = [];
-        fila = [];
-        
-        // Distribui os 10 primeiros como ativos, resto na fila
-        nomes.forEach((nome, i) => {
-            if (i < 10) {
-                atletas.push({ n: nome.trim(), v: 0, g: 0, a: 0, t: i < 5 ? 'azul' : 'red', active: true });
-            } else {
-                fila.push(nome.trim());
-            }
-        });
-        
-        segs = document.getElementById('tempoJogo').value * 60;
-        irParaTela(3);
+        const linhas = texto.split('\n').filter(l => l.trim() !== '');
+        atletasApp = linhas.map((n, i) => ({ id: i, nome: n, confirmado: true }));
+        document.getElementById('listaArea').style.display = 'block';
+        renderLista();
     }
 
-    function render() {
+    function renderLista() {
+        const container = document.getElementById('renderAtletas');
+        container.innerHTML = atletasApp.map(a => `
+            <div class="atleta-item">
+                <input type="checkbox" class="atleta-check" ${a.confirmado ? 'checked' : ''} onchange="toggle(${a.id})">
+                <span>${a.nome}</span>
+            </div>
+        `).join('');
+    }
+
+    function toggle(id) { atletasApp[id].confirmado = !atletasApp[id].confirmado; }
+
+    // BRIDGE: Iniciar Partida
+    function iniciarPartida() {
+        const confirmados = atletasApp.filter(a => a.confirmado);
+        if(confirmados.length === 0) return alert("Selecione alguém!");
+
+        // Popular atletas para o jogo
+        atletas = confirmados.map((a, i) => ({
+            n: a.nome,
+            t: (i < Math.ceil(confirmados.length/2)) ? 'azul' : 'red',
+            active: true
+        }));
+
+        document.getElementById('tela2').classList.remove('active');
+        document.getElementById('tela3').classList.add('active');
+        renderJogo();
+    }
+
+    function renderJogo() {
         const field = document.getElementById('field');
         field.innerHTML = `
-            <div class="team-card"><div class="t-header" style="background:var(--blue)">AZUL</div>${atletas.filter(a => a.t === 'azul' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'azul')">GOL</button></div>`).join('')}</div>
-            <div class="team-card"><div class="t-header" style="background:var(--red)">RED</div>${atletas.filter(a => a.t === 'red' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
+            <div class="team-card"><div class="t-header" style="background:var(--blue)">AZUL</div>${atletas.filter(a => a.t === 'azul').map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="gol('azul')">GOL</button></div>`).join('')}</div>
+            <div class="team-card"><div class="t-header" style="background:var(--red)">RED</div>${atletas.filter(a => a.t === 'red').map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="gol('red')">GOL</button></div>`).join('')}</div>
         `;
-        document.getElementById('fila-lista').innerText = fila.length > 0 ? fila.join(', ') : "Fila vazia";
     }
 
-    function gol(assist) {
-        let aObj = atletas.find(x => x.n === autor);
-        aObj.g++; 
-        if(assist) atletas.find(x => x.n === assist).a++;
-        aObj.t === 'azul' ? sAzul++ : sRed++;
-        document.getElementById('s-azul').innerText = sAzul; 
+    function gol(time) {
+        if(time === 'azul') sAzul++; else sRed++;
+        document.getElementById('s-azul').innerText = sAzul;
         document.getElementById('s-red').innerText = sRed;
-        document.getElementById('modal-assist').style.display = 'none';
-        render();
-    }
-
-    function abrAssist(n, t) { 
-        autor = n; 
-        const opts = document.getElementById('opts'); 
-        opts.innerHTML = atletas.filter(a => a.t === t && a.active && a.n !== n).map(c => `<button onclick="gol('${c.n}')" style="width:100%; margin:5px 0; padding:10px;">${c.n}</button>`).join(''); 
-        document.getElementById('modal-assist').style.display = 'flex'; 
     }
 </script>
 </body>
