@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arena Fut PRO - Final</title>
+    <title>Arena Fut PRO</title>
     <style>
         :root { --blue: #007bff; --red: #dc3545; --neon: #00ff88; --gold: #ffcc00; --bg: #0c0e11; --card: #15181d; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -67,6 +67,12 @@
 <body>
 
 <div id="app">
+    <div id="screen-2" class="screen">
+        <h2 style="color:var(--gold); text-align:center;">Configurações</h2>
+        <p style="text-align:center; color:#666;">Tela de ajustes da pelada.</p>
+        <button class="btn-finalizar" onclick="irParaTela(3)">IR PARA O JOGO</button>
+    </div>
+
     <div id="screen-3" class="screen active">
         <div class="header-nav">
             <button class="btn-nav" onclick="irParaTela(2)">← VOLTAR</button>
@@ -160,7 +166,6 @@
 </div>
 
 <script>
-    // Agora 'atletas' tem a propriedade 'active' para controlar quem está em campo
     let atletas = [
         { n: "Lucas", v: 2, g: 0, a: 0, t: "azul", active: true },
         { n: "Pedro", v: 1, g: 2, a: 1, t: "azul", active: true },
@@ -198,7 +203,6 @@
             rodarFila('azul'); rodarFila('red'); resetPlacar(); return;
         }
 
-        // Perdedores saem
         atletas.filter(a => a.t === timePerdedor && a.active).forEach(a => { 
             fila.push(a.n); 
             a.active = false; 
@@ -212,7 +216,6 @@
     function rodarFila(time) {
         for(let i=0; i<5; i++) {
             let nome = fila.shift() || "Vaga";
-            // Verifica se o jogador já existe na lista (para somar stats) ou cria novo
             let player = atletas.find(a => a.n === nome);
             if(player) {
                 player.active = true;
@@ -231,8 +234,13 @@
             <div class="team-card"><div class="t-header" style="background:var(--red)">TIME RED</div>${atletas.filter(a => a.t === 'red' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
         `;
         
-        // Ranking soma TUDO (active ou não)
-        const sorted = [...atletas].sort((a,b) => (b.g + b.a) - (a.g + a.a));
+        // RANKING DINÂMICO AJUSTADO: V > G > A
+        const sorted = [...atletas].sort((a,b) => {
+            if (b.v !== a.v) return b.v - a.v;
+            if (b.g !== a.g) return b.g - a.g;
+            return b.a - a.a;
+        });
+
         const htmlRanking = sorted.map(a => `<tr><td>${a.n}</td><td>${a.v}</td><td>${a.g}</td><td>${a.a}</td></tr>`).join('');
         
         document.getElementById('r-body').innerHTML = htmlRanking;
@@ -242,7 +250,6 @@
         document.getElementById('fila-lista').innerHTML = fText || "Fila vazia";
     }
 
-    // [Funções de fila e timer mantidas... (reutilizar as anteriores)]
     function abrirEditorFila() { filaTemp = [...fila]; renderEditor(); document.getElementById('modal-fila').style.display = 'flex'; }
     function renderEditor() {
         const c = document.getElementById('fila-editor-container'); c.innerHTML = "";
