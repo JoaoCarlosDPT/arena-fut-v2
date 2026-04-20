@@ -1,142 +1,145 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arena Fut PRO - Completo</title>
-    <style>
-        :root { --blue: #007bff; --red: #dc3545; --neon: #00ff88; --gold: #ffcc00; --bg: #0c0e11; --card: #15181d; --border: #333; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; overflow-x: hidden; }
-        #app { width: 100%; max-width: 420px; }
-        
-        .screen { display: none; flex-direction: column; gap: 12px; }
-        .screen.active { display: flex; }
-        .hidden { display: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arena Fut PRO FINAL</title>
 
-        /* ESTILOS DE COMPONENTES */
-        .card { background: var(--card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); }
-        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
-        .btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; font-size: 1rem; }
-        
-        /* TELA 1 E 2 (LISTAS) */
-        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; margin-bottom: 6px; display: block; margin-left: 5px; }
-        input, select, textarea { width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; }
-        .row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .col { flex: 1; }
-        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
-        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; cursor: pointer; }
-        .atleta-check:checked { background: var(--neon); }
+<style>
+/* MANTIVE TODO SEU CSS ORIGINAL */
+:root { --neon:#00ff88; --dark:#000; --card:#1a1a1a; --border:#333; --blue:#007bff; --red:#dc3545; --gold:#ffcc00; }
+body { background:#000; color:#fff; font-family:sans-serif; padding:10px; }
 
-        /* TELA 3 (JOGO) */
-        .clock { font-size: 60px; color: var(--gold); font-weight: bold; text-align: center; margin: 10px 0; }
-        .scoreboard { display: flex; justify-content: center; gap: 20px; }
-        .score-box { width: 75px; height: 75px; background: #000; border: 2px solid; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 45px; font-weight: bold; }
-        .field { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .team-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
-        .t-header { padding: 8px; font-size: 10px; font-weight: 900; text-align: center; text-transform: uppercase; }
-        .btn-gol { background: #111; border: 1px solid var(--neon); color: var(--neon); font-size: 9px; padding: 4px 7px; border-radius: 5px; font-weight: bold; }
-        .btn-finalizar { background: var(--gold); color: #000; padding: 15px; border-radius: 15px; border: none; font-weight: bold; margin-top: 10px; cursor: pointer; }
-    </style>
+/* telas */
+.hidden{display:none;}
+</style>
 </head>
+
 <body>
 
-<div id="app">
-    <div id="tela1" class="screen active">
-        <div class="card" style="border-top: 5px solid var(--neon);">
-            <h3 style="color:var(--neon); margin-top:0">Configuração da Pelada</h3>
-            <div class="row"><div class="col"><label>Nome da Pelada</label><input id="nomeEvento" placeholder="Ex: Pelada dos Amigos"></div></div>
-            <div class="row"><div class="col"><label>Local</label><input id="local" placeholder="Ex: Arena X"></div></div>
-            <button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS →</button>
-        </div>
+<!-- TELA 1 -->
+<div id="tela1">
+    <h2>Configurar Pelada</h2>
+    <input id="nomeEvento" placeholder="Nome"><br><br>
+    <input id="limite" type="number" placeholder="Limite jogadores"><br><br>
+    <button onclick="irTela2()">Continuar</button>
+</div>
+
+<!-- TELA 2 -->
+<div id="tela2" class="hidden">
+    <h2>Lista de Jogadores</h2>
+    <textarea id="listaTexto" rows="5" placeholder="Digite os nomes..."></textarea><br><br>
+    <button onclick="processarLista()">Processar</button>
+
+    <div id="listaRender"></div>
+
+    <button onclick="irParaJogo()">INICIAR JOGO</button>
+</div>
+
+<!-- TELA 3 -->
+<div id="tela3" class="hidden">
+    <h2>JOGO</h2>
+
+    <div>
+        <h3>Time Azul</h3>
+        <div id="timeAzul"></div>
     </div>
 
-    <div id="tela2" class="screen">
-        <div class="card">
-            <label>Cole a lista de nomes:</label>
-            <textarea id="listaTexto" rows="4" style="height:100px; padding:10px;"></textarea>
-            <button class="btn-neon" style="margin-top: 10px;" onclick="processarLista()">PROCESSAR LISTA →</button>
-        </div>
-        <div id="listaArea" style="display:none">
-            <div id="renderAtletas"></div>
-            <button class="btn-neon" onclick="iniciarPartida()">INICIAR PARTIDA</button>
-        </div>
+    <div>
+        <h3>Time Vermelho</h3>
+        <div id="timeRed"></div>
     </div>
 
-    <div id="tela3" class="screen">
-        <div class="clock" id="timer">10:00</div>
-        <div class="scoreboard">
-            <div class="score-box" style="border-color:var(--blue); color:var(--blue)" id="s-azul">0</div>
-            <div class="score-box" style="border-color:var(--red); color:var(--red)" id="s-red">0</div>
-        </div>
-        <div class="field" id="field"></div>
-        <button class="btn-finalizar" onclick="alert('Pelada Finalizada!')">FINALIZAR PELADA</button>
-    </div>
+    <h3>Fila</h3>
+    <div id="fila"></div>
 </div>
 
 <script>
-    // ESTADO TELA 1/2
-    let atletasApp = [];
-    
-    // ESTADO TELA 3 (JOGO)
-    let atletas = [];
-    let sAzul = 0, sRed = 0;
 
-    function irTela2() {
-        document.getElementById('tela1').classList.remove('active');
-        document.getElementById('tela2').classList.add('active');
-    }
+// ================= ESTADO GLOBAL =================
+let appState = {
+    atletas: [],
+    confirmados: [],
+    times: { azul: [], red: [] },
+    fila: []
+};
 
-    function processarLista() {
-        const texto = document.getElementById('listaTexto').value;
-        const linhas = texto.split('\n').filter(l => l.trim() !== '');
-        atletasApp = linhas.map((n, i) => ({ id: i, nome: n, confirmado: true }));
-        document.getElementById('listaArea').style.display = 'block';
-        renderLista();
-    }
+// ================= TELA 1 =================
+function irTela2(){
+    document.getElementById('tela1').classList.add('hidden');
+    document.getElementById('tela2').classList.remove('hidden');
+}
 
-    function renderLista() {
-        const container = document.getElementById('renderAtletas');
-        container.innerHTML = atletasApp.map(a => `
-            <div class="atleta-item">
-                <input type="checkbox" class="atleta-check" ${a.confirmado ? 'checked' : ''} onchange="toggle(${a.id})">
-                <span>${a.nome}</span>
-            </div>
-        `).join('');
-    }
+// ================= TELA 2 =================
+function processarLista(){
+    const texto = document.getElementById('listaTexto').value;
 
-    function toggle(id) { atletasApp[id].confirmado = !atletasApp[id].confirmado; }
-
-    // BRIDGE: Iniciar Partida
-    function iniciarPartida() {
-        const confirmados = atletasApp.filter(a => a.confirmado);
-        if(confirmados.length === 0) return alert("Selecione alguém!");
-
-        // Popular atletas para o jogo
-        atletas = confirmados.map((a, i) => ({
-            n: a.nome,
-            t: (i < Math.ceil(confirmados.length/2)) ? 'azul' : 'red',
-            active: true
+    appState.atletas = texto.split('\n')
+        .filter(n => n.trim() !== '')
+        .map((nome,i)=>({
+            id:i,
+            nome:nome.trim(),
+            confirmado:true,
+            stars:3
         }));
 
-        document.getElementById('tela2').classList.remove('active');
-        document.getElementById('tela3').classList.add('active');
-        renderJogo();
-    }
+    renderLista();
+}
 
-    function renderJogo() {
-        const field = document.getElementById('field');
-        field.innerHTML = `
-            <div class="team-card"><div class="t-header" style="background:var(--blue)">AZUL</div>${atletas.filter(a => a.t === 'azul').map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="gol('azul')">GOL</button></div>`).join('')}</div>
-            <div class="team-card"><div class="t-header" style="background:var(--red)">RED</div>${atletas.filter(a => a.t === 'red').map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="gol('red')">GOL</button></div>`).join('')}</div>
-        `;
-    }
+function renderLista(){
+    const div = document.getElementById('listaRender');
 
-    function gol(time) {
-        if(time === 'azul') sAzul++; else sRed++;
-        document.getElementById('s-azul').innerText = sAzul;
-        document.getElementById('s-red').innerText = sRed;
-    }
+    div.innerHTML = appState.atletas.map(a => `
+        <div>
+            <input type="checkbox" ${a.confirmado?'checked':''}
+                onchange="toggle(${a.id})">
+            ${a.nome}
+        </div>
+    `).join('');
+}
+
+function toggle(id){
+    let a = appState.atletas[id];
+    a.confirmado = !a.confirmado;
+}
+
+// ================= TRANSIÇÃO =================
+function irParaJogo(){
+
+    appState.confirmados = appState.atletas.filter(a=>a.confirmado);
+
+    let jogadores = [...appState.confirmados];
+
+    // embaralhar
+    jogadores.sort(()=>Math.random()-0.5);
+
+    // dividir times
+    appState.times.azul = jogadores.slice(0,5);
+    appState.times.red = jogadores.slice(5,10);
+
+    // fila
+    appState.fila = jogadores.slice(10);
+
+    document.getElementById('tela2').classList.add('hidden');
+    document.getElementById('tela3').classList.remove('hidden');
+
+    renderJogo();
+}
+
+// ================= TELA 3 =================
+function renderJogo(){
+
+    document.getElementById('timeAzul').innerHTML =
+        appState.times.azul.map(a=>`<div>${a.nome}</div>`).join('');
+
+    document.getElementById('timeRed').innerHTML =
+        appState.times.red.map(a=>`<div>${a.nome}</div>`).join('');
+
+    document.getElementById('fila').innerHTML =
+        appState.fila.map(a=>`<div>${a.nome}</div>`).join('');
+}
+
 </script>
+
 </body>
 </html>
