@@ -1,1191 +1,143 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#00ff88">
-<title>Arena Fut PRO</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-<style>
-/* ═══════════ VARIÁVEIS ═══════════ */
-:root {
-  --neon:#00ff88; --blue:#007bff; --red:#dc3545; --gold:#ffcc00;
-  --bg:#0a0c0f; --card:#15181d; --card2:#1a1d22; --border:#222;
-  --text:#fff; --muted:#555;
-}
-/* ═══════════ RESET ═══════════ */
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
-body{padding:0 0 120px;display:flex;justify-content:center}
-#app{width:100%;max-width:440px;padding:14px;display:flex;flex-direction:column;gap:0}
-/* ═══════════ TELAS ═══════════ */
-.screen{display:none;flex-direction:column;gap:10px}
-.screen.active{display:flex}
-/* ═══════════ BOTÕES ═══════════ */
-button{border-radius:12px;border:none;font-weight:700;cursor:pointer;
-  text-transform:uppercase;transition:all .15s;font-family:'Inter',sans-serif}
-button:active{transform:scale(.96)}
-.btn-neon{background:var(--neon);color:#000;padding:15px;width:100%;font-size:13px;border-radius:14px}
-.btn-gold{background:var(--gold);color:#000;padding:14px;width:100%;font-size:13px;border-radius:14px}
-.btn-secondary{background:#1e2126;color:#fff;padding:13px;width:100%;border:1px solid #2a2d32;font-size:12px;border-radius:12px}
-.btn-danger{background:var(--red);color:#fff;padding:13px;width:100%;font-size:12px;border-radius:12px}
-.btn-back{background:transparent;color:var(--muted);border:1px solid #2a2a2a;padding:8px 14px;font-size:11px;width:auto}
-.btn-sm{padding:6px 13px;font-size:10px;width:auto;border-radius:8px}
-.btn-nav{background:#1e2126;border:1px solid #333;color:#fff;padding:7px 14px;font-size:11px}
-.btn-outline{flex:1;background:transparent;border:1px solid #333;color:#fff;padding:10px;border-radius:10px;font-size:11px;text-align:center;cursor:pointer}
-/* ═══════════ CARDS ═══════════ */
-.card{background:var(--card);padding:15px;border-radius:18px;margin-bottom:10px;border:1px solid var(--border)}
-.card-neon{border-left:3px solid var(--neon)}
-.card-gold{border:1px solid rgba(255,204,0,.3);background:#0e0c00}
-/* ═══════════ INPUTS ═══════════ */
-label{font-size:.65rem;color:var(--neon);font-weight:900;text-transform:uppercase;display:block;margin-bottom:5px;margin-left:4px}
-input,textarea,select{width:100%;height:48px;padding:0 12px;border-radius:12px;border:1px solid #222;
-  background:#111;color:#fff;font-size:14px;font-family:'Inter',sans-serif;transition:border-color .2s;outline:none;
-  -webkit-appearance:none;appearance:none}
-input:focus,select:focus,textarea:focus{border-color:var(--neon)}
-textarea{height:auto;padding:12px;resize:none}
-::placeholder{color:#333}
-.row-fields{display:flex;gap:10px;margin-bottom:12px}
-.col-field{flex:1}
-/* ═══════════ STATUS BARS (T2) ═══════════ */
-.status-container{display:flex;gap:10px;margin-bottom:16px}
-.status-box{flex:1;background:#111;padding:12px;border-radius:12px;border:1px solid #222}
-.status-label{font-size:11px;font-weight:900;display:flex;justify-content:space-between;margin-bottom:6px;text-transform:uppercase}
-.bar-bg{background:#222;height:8px;border-radius:20px;overflow:hidden}
-.bar-fill{height:100%;border-radius:20px;transition:.3s}
-/* ═══════════ ATLETA ITEM (T2) ═══════════ */
-.atleta-item{display:flex;align-items:center;background:var(--card2);padding:11px;border-radius:15px;
-  margin-bottom:8px;gap:11px;border:1px solid #222;transition:border-color .2s}
-.atleta-item.confirmado{border-left:3px solid var(--neon)}
-.atleta-item.espera{border-left:3px solid var(--gold)}
-.atleta-check{width:22px;height:22px;min-width:22px;border:2px solid var(--neon);border-radius:6px;
-  appearance:none;-webkit-appearance:none;cursor:pointer;position:relative;background:transparent}
-.atleta-check:checked{background:var(--neon)}
-.atleta-check:checked::after{content:'✓';position:absolute;color:#000;font-weight:900;font-size:13px;left:3px;top:-1px}
-.atleta-avatar{width:44px;height:44px;min-width:44px;background:#2a2d32;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden}
-.atleta-avatar img{width:100%;height:100%;object-fit:cover}
-.atleta-dados{flex:1;min-width:0}
-.atleta-nome{display:block;font-weight:700;font-size:13px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tag{font-size:9px;font-weight:900;padding:3px 9px;border-radius:10px;text-transform:uppercase;
-  display:inline-block;margin-bottom:4px;cursor:pointer;user-select:none}
-.tag-mensalista{background:rgba(0,255,136,.1);color:var(--neon);border:1px solid rgba(0,255,136,.25)}
-.tag-convidado{background:rgba(0,123,255,.1);color:var(--blue);border:1px solid rgba(0,123,255,.25)}
-.estrelas{color:var(--gold);font-size:15px;cursor:pointer;user-select:none;letter-spacing:1px}
-.pos-badge{width:38px;min-width:38px;height:38px;background:#1e2126;border:1px solid #2a2d32;
-  border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
-.pos-badge span:first-child{font-size:16px}
-.pos-badge span:last-child{font-size:9px;font-weight:900;color:var(--gold);margin-top:-2px}
-/* ═══════════ BUSCA (T2) ═══════════ */
-.search-box{background:#111;border:1px solid #222;border-radius:14px;padding:10px 14px;
-  margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.search-box input{background:transparent;border:none;color:#fff;flex:1;height:auto;padding:0;font-size:13px}
-/* ═══════════ RODAPÉ FIXO (T2) ═══════════ */
-.fixed-footer{position:fixed;bottom:0;left:0;right:0;background:rgba(10,12,15,.97);
-  padding:12px 14px 22px;border-top:1px solid #222;z-index:100;backdrop-filter:blur(10px)}
-.fixed-footer-inner{max-width:440px;margin:0 auto}
-.btn-row{display:flex;gap:8px;margin-bottom:10px}
-.info-footer{text-align:center;font-size:11px;color:#555;font-weight:700;margin-bottom:10px;letter-spacing:1px;text-transform:uppercase}
-/* ═══════════ JOGO (T3) ═══════════ */
-.header-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.clock{font-size:clamp(52px,14vw,66px);color:var(--gold);font-weight:900;text-align:center;
-  margin:4px 0;font-family:'Bebas Neue',sans-serif;letter-spacing:3px;
-  text-shadow:0 0 24px rgba(255,204,0,.35)}
-.clock.acabando{animation:blink .6s infinite;color:var(--red)!important}
-.controls{display:flex;justify-content:center;gap:10px;margin-bottom:6px}
-.btn-c{width:40px;height:40px;border-radius:50%;border:1px solid #333;background:#1e2126;
-  color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
-.scoreboard{display:flex;justify-content:center;gap:18px;margin-bottom:10px}
-.score-box{width:78px;height:78px;background:#000;border:2px solid;border-radius:15px;
-  display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;font-family:'Bebas Neue',sans-serif}
-.field{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.team-card{background:var(--card);border-radius:12px;border:1px solid #222;overflow:hidden}
-.t-header{padding:8px;font-size:10px;font-weight:900;text-align:center;text-transform:uppercase}
-.player-row-game{display:flex;justify-content:space-between;align-items:center;
-  padding:7px 8px;border-bottom:1px solid #1a1d22;font-size:11px}
-.btn-gol{background:#111;border:1px solid var(--neon);color:var(--neon);font-size:9px;
-  padding:4px 7px;border-radius:6px;font-weight:700}
-.btn-card-y{background:#1a1800;border:1px solid #3a3400;color:var(--gold);font-size:9px;padding:4px 5px;border-radius:6px}
-.btn-card-r{background:#1a0000;border:1px solid #3a0000;color:var(--red);font-size:9px;padding:4px 5px;border-radius:6px}
-.logs-container{display:grid;grid-template-columns:1fr 1fr;gap:10px;background:var(--card);
-  border:1px solid #222;border-radius:12px;padding:10px;min-height:80px}
-.log-header-t{font-size:9px;font-weight:900;text-align:center;margin-bottom:5px}
-.log-item{font-size:10px;margin-bottom:4px;color:#aaa;line-height:1.3}
-.outcome-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:6px}
-.btn-out{background:var(--card);border:1px solid #333;color:#fff;padding:12px 4px;
-  border-radius:10px;font-weight:700;font-size:10px;cursor:pointer}
-/* ═══════════ FILA (T3) ═══════════ */
-.fila-box{border:2px solid var(--neon);border-radius:15px;padding:12px}
-.fila-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.next-list{font-size:10px;color:#888;line-height:1.6}
-.add-atrasado{display:flex;gap:8px;margin-top:8px}
-.add-atrasado input{flex:1;background:#111;border:1px solid #333;color:#fff;border-radius:10px;
-  padding:10px 12px;font-size:12px;height:auto}
-.btn-plus{background:var(--neon);border:none;padding:0 16px;border-radius:10px;font-weight:900;color:#000;font-size:18px}
-/* ═══════════ RANKING ═══════════ */
-.ranking-table{width:100%;border-collapse:collapse;font-size:11px;border-radius:12px;
-  overflow:hidden;border:1px solid #222;margin-top:8px}
-.ranking-table th{background:#1e2126;padding:9px 8px;color:#555;text-align:left;font-weight:700;font-size:10px;letter-spacing:.5px}
-.ranking-table td{padding:9px 8px;border-bottom:1px solid #1a1d22}
-.ranking-table tr:last-child td{border-bottom:none}
-.rank-medal{font-size:14px}
-/* ═══════════ TELA 4 ═══════════ */
-.aba-btns{display:flex;gap:6px;margin-bottom:12px}
-.aba-btn{flex:1;padding:10px 4px;background:#111;border:1px solid #1f1f1f;border-radius:12px;font-size:10px;color:var(--muted);cursor:pointer}
-.aba-btn.active{background:var(--neon);color:#000;border-color:var(--neon)}
-.rank-item-full{display:flex;align-items:center;gap:10px;background:#111;border:1px solid #1f1f1f;
-  border-radius:14px;padding:11px;margin-bottom:7px}
-.rank-pos{font-size:20px;font-weight:900;min-width:28px;text-align:center;font-family:'Bebas Neue',sans-serif}
-.rank-pts-big{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--neon);white-space:nowrap}
-.rank-pts-big span{font-size:11px;color:var(--muted);font-family:'Inter',sans-serif;font-weight:400}
-/* ═══════════ MODAIS ═══════════ */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:200;display:none;
-  align-items:center;justify-content:center;padding:20px}
-.modal-inner{background:var(--card);border-radius:22px;padding:20px;width:100%;max-width:320px;
-  border:1px solid #2a2a2a;max-height:82vh;overflow-y:auto}
-.fila-edit-item{background:#1e2126;margin-bottom:8px;padding:10px;border-radius:10px;
-  display:flex;justify-content:space-between;align-items:center;cursor:grab;border:1px solid #2a2d32}
-.fila-edit-item.dragging{opacity:.4;background:#2a2d32}
-.edit-btns{display:flex;gap:5px}
-.btn-edit{background:#2a2d32;border:1px solid #333;color:#fff;padding:5px 10px;border-radius:6px;font-size:13px}
-/* ═══════════ LOGIN ═══════════ */
-#telaLogin{min-height:92vh;display:none;flex-direction:column;justify-content:center;
-  align-items:center;text-align:center;gap:10px;
-  background:radial-gradient(ellipse at 50% 0%,rgba(0,255,136,.05) 0%,transparent 70%)}
-/* ═══════════ CHAT ═══════════ */
-#telaChat{position:fixed;bottom:0;left:0;right:0;height:50vh;background:#0a0c0f;
-  border-top:2px solid var(--neon);z-index:150;display:none;flex-direction:column;
-  box-shadow:0 -10px 40px rgba(0,255,136,.1)}
-.chat-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #222}
-.chat-msgs{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px}
-.chat-msg{background:#1a1d22;border-radius:12px;padding:8px 12px;font-size:12px;border-left:3px solid var(--neon)}
-.chat-msg.own{border-left-color:var(--blue);background:#0c1420}
-.chat-input-row{display:flex;gap:8px;padding:10px;border-top:1px solid #222}
-.chat-input-row input{flex:1;margin:0;height:auto;padding:12px}
-.fab-chat{position:fixed;bottom:20px;right:20px;width:52px;height:52px;border-radius:50%;
-  display:none;align-items:center;justify-content:center;z-index:99;cursor:pointer;
-  background:#111;border:2px solid var(--neon);color:var(--neon);font-size:22px;
-  box-shadow:0 0 20px rgba(0,255,136,.2)}
-/* ═══════════ MISC ═══════════ */
-.badge-c{display:inline-flex;align-items:center;gap:3px;background:#1a1a0a;border:1px solid #2a2800;border-radius:6px;padding:2px 6px;font-size:9px;font-weight:700}
-.section-title{font-size:9px;font-weight:700;color:#333;letter-spacing:2px;margin:12px 0 8px;text-transform:uppercase}
-#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1e2126;color:#fff;
-  padding:10px 20px;border-radius:30px;font-size:12px;font-weight:600;border:1px solid #333;
-  z-index:300;display:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid #222;border-top-color:var(--neon);
-  border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes blink{50%{opacity:.15}}
-@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
-.animate-in{animation:slideUp .25s ease both}
-.codigo-sala{background:#050e09;border:1px dashed rgba(0,255,136,.3);border-radius:14px;padding:12px;
-  text-align:center;margin-bottom:8px}
-.codigo-val{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--neon);letter-spacing:10px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arena Fut PRO</title>
+    <style>
+        :root { --blue: #007bff; --red: #dc3545; --neon: #00ff88; --gold: #ffcc00; --bg: #0c0e11; --card: #15181d; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
+        #app { width: 100%; max-width: 420px; background: linear-gradient(180deg, #1a1d21 0%, #0c0e11 100%); border-radius: 35px; padding: 20px; border: 1px solid #222; display: flex; flex-direction: column; gap: 15px; }
+        .screen { display: none; flex-direction: column; gap: 15px; }
+        .screen.active { display: flex; }
+
+        /* INPUTS E BUTTONS */
+        input, textarea { width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 12px; font-size: 14px; }
+        button { padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-neon { background: var(--neon); color: #000; }
+        
+        /* TIMER & SCORE */
+        .clock { font-size: 50px; color: var(--gold); font-weight: bold; text-align: center; }
+        .scoreboard { display: flex; justify-content: center; gap: 20px; }
+        .score-box { width: 70px; height: 70px; background: #000; border: 2px solid; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 35px; font-weight: bold; }
+
+        /* JOGO */
+        .field { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .team-card { background: var(--card); border-radius: 12px; border: 1px solid #222; overflow: hidden; }
+        .t-header { padding: 8px; font-size: 10px; font-weight: 900; text-align: center; color: #fff; }
+        .row { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #1c1f24; font-size: 11px; }
+        .btn-gol { background: #111; border: 1px solid var(--neon); color: var(--neon); font-size: 9px; padding: 4px 7px; border-radius: 5px; }
+        .fila-box { border: 2px solid var(--neon); border-radius: 15px; padding: 12px; }
+        .next-list { font-size: 11px; color: #aaa; margin-top: 5px; }
+        
+        /* MODAIS */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:999; }
+        .m-content { background: var(--card); width:90%; padding: 20px; border-radius: 20px; border: 1px solid var(--gold); }
+        .fila-edit-item { background: #222; margin-bottom: 8px; padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; border: 1px solid #333; }
+    </style>
 </head>
 <body>
+
 <div id="app">
-
-<!-- ═══ TOAST ═══ -->
-<div id="toast"></div>
-
-<!-- ═══════════════════════════════════════
-     LOGIN
-══════════════════════════════════════ -->
-<div id="telaLogin">
-  <div style="font-size:64px;filter:drop-shadow(0 0 30px rgba(0,255,136,.5))">⚽</div>
-  <h1 style="color:var(--neon);font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;margin:0">ARENA FUT PRO</h1>
-  <p style="color:var(--muted);font-size:13px">Gestão profissional de pelada</p>
-  <div style="margin-top:28px;width:100%;max-width:280px;display:flex;flex-direction:column;gap:10px">
-    <button class="btn-neon" onclick="login()" id="btnLogin">🔐 Entrar com Google</button>
-  </div>
-</div>
-
-<!-- ═══════════════════════════════════════
-     TELA HOME
-══════════════════════════════════════ -->
-<div id="telaHome" class="screen">
-  <div class="card card-neon" style="display:flex;align-items:center;gap:12px">
-    <img id="homeFoto" style="width:48px;height:48px;border-radius:50%;border:2px solid var(--neon);display:none">
-    <div id="homeFotoFallback" style="width:48px;height:48px;border-radius:50%;background:#222;border:2px solid var(--neon);display:flex;align-items:center;justify-content:center;font-size:22px">👤</div>
-    <div style="flex:1;min-width:0">
-      <div id="homeNome" style="font-weight:900;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-      <div id="homeSaudacao" style="font-size:11px;color:var(--muted);margin-top:2px;font-style:italic"></div>
-    </div>
-    <button onclick="logout()" style="background:transparent;color:var(--red);border:1px solid var(--red);padding:7px 11px;font-size:10px;border-radius:10px">SAIR</button>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
-    <div style="background:#111;border:1px solid #1a1a1a;border-radius:14px;padding:14px;text-align:center">
-      <div id="hPts" style="font-size:28px;font-weight:900;font-family:'Bebas Neue',sans-serif;color:var(--neon)">0</div>
-      <div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;font-weight:700">PONTOS</div>
-    </div>
-    <div style="background:#111;border:1px solid #1a1a1a;border-radius:14px;padding:14px;text-align:center">
-      <div id="hV" style="font-size:28px;font-weight:900;font-family:'Bebas Neue',sans-serif;color:var(--blue)">0</div>
-      <div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;font-weight:700">VITÓRIAS</div>
-    </div>
-    <div style="background:#111;border:1px solid #1a1a1a;border-radius:14px;padding:14px;text-align:center">
-      <div id="hG" style="font-size:28px;font-weight:900;font-family:'Bebas Neue',sans-serif;color:var(--gold)">0</div>
-      <div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;font-weight:700">GOLS</div>
-    </div>
-    <div style="background:#111;border:1px solid #1a1a1a;border-radius:14px;padding:14px;text-align:center">
-      <div id="hA" style="font-size:28px;font-weight:900;font-family:'Bebas Neue',sans-serif">0</div>
-      <div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;font-weight:700">ASSIST.</div>
-    </div>
-  </div>
-  <button class="btn-neon"      onclick="irTela1()"        style="margin-top:4px">⚽ CRIAR NOVA PELADA</button>
-  <button class="btn-secondary" onclick="abrirJoin()">🔗 ENTRAR EM UMA SALA</button>
-  <button class="btn-secondary" onclick="irRankingGlobal()">🏆 RANKING GLOBAL</button>
-</div>
-
-<!-- ═══════════════════════════════════════
-     TELA 1 — CONFIGURAR PELADA
-══════════════════════════════════════ -->
-<div id="tela1" class="screen">
-  <div class="card" style="border-top:4px solid var(--neon)">
-    <div id="saudacaoBox" style="background:rgba(0,255,136,.05);padding:14px;border-radius:12px;border:1px solid #1a1a1a;margin-bottom:18px">
-      <h3 id="saudacaoTxt" style="color:var(--neon);margin:0;font-size:1rem;line-height:1.4">Carregando...</h3>
-      <p style="color:#555;font-size:.7rem;margin-top:6px;font-weight:700;text-transform:uppercase">🎮 Painel do Gestor</p>
+    <div id="screen-1" class="screen active">
+        <h2 style="text-align:center; color:var(--gold)">Configuração</h2>
+        <label>Nome da Pelada</label>
+        <input type="text" id="nomePelada" placeholder="Ex: Pelada da Terça">
+        <label>Tempo de Jogo (min)</label>
+        <input type="number" id="tempoJogo" value="10">
+        <button class="btn-neon" onclick="irParaTela(2)">PRÓXIMA ETAPA →</button>
     </div>
 
-    <div class="row-fields"><div class="col-field"><label>Nome da Pelada</label><input id="nomeEvento" placeholder="Ex: Pelada dos Amigos"></div></div>
-    <div class="row-fields"><div class="col-field"><label>Local da Arena</label><input id="localEvento" placeholder="Ex: Arena Soccer X"></div></div>
-    <div class="row-fields">
-      <div class="col-field" style="flex:1.4"><label>Data</label><input id="dataEv" type="date"></div>
-      <div class="col-field"><label>Horário</label><input id="horaEv" type="time"></div>
+    <div id="screen-2" class="screen">
+        <h2 style="text-align:center; color:var(--neon)">Convocação</h2>
+        <textarea id="listaTexto" rows="8" placeholder="Cole os nomes dos atletas (um por linha)"></textarea>
+        <button class="btn-neon" onclick="iniciarPartida()">INICIAR PARTIDA</button>
     </div>
-    <div class="row-fields">
-      <div class="col-field"><label>Limite Atletas</label><input id="limiteAtletas" type="number" placeholder="Ex: 20"></div>
-      <div class="col-field"><label>Atletas/Time</label><input id="porTime" type="number" placeholder="Ex: 5" value="5"></div>
-    </div>
-    <div class="row-fields">
-      <div class="col-field"><label>Tempo (Min)</label><input id="tempoRegra" type="number" placeholder="Ex: 10" value="10"></div>
-      <div class="col-field"><label>Tipo de Campo</label>
-        <select id="tipoCampo">
-          <option value="" disabled selected>Selecione...</option>
-          <option>Society</option><option>Futsal</option><option>Campo</option>
-        </select>
-      </div>
-    </div>
-    <div class="row-fields">
-      <div class="col-field"><label>Regra de Empate</label>
-        <select id="regraEmpate">
-          <option value="saem">Empate → Ambos saem</option>
-          <option value="mantem">Empate → Campeão fica</option>
-        </select>
-      </div>
-    </div>
-    <button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS →</button>
-    <button class="btn-back" onclick="irHome()" style="margin-top:8px;width:100%;text-align:center">← Voltar</button>
-  </div>
-</div>
 
-<!-- ═══════════════════════════════════════
-     TELA 2 — LISTA DE ATLETAS
-══════════════════════════════════════ -->
-<div id="tela2" class="screen">
-  <div class="card">
-    <textarea id="listaTxt" rows="3" placeholder="Cole a lista de atletas aqui...&#10;1. João&#10;2. Pedro..."></textarea>
-    <button class="btn-neon" style="margin-top:10px" onclick="processarLista()">PROCESSAR LISTA →</button>
-  </div>
-
-  <div id="listaArea" style="display:none">
-    <div style="border-top:2px solid #634d1a;padding-top:14px">
-      <div style="color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:14px">✓ LISTA DE CONVOCAÇÃO</div>
-
-      <div class="status-container">
-        <div class="status-box">
-          <div class="status-label"><span style="color:var(--neon)">CONFIRMADOS</span><span id="percentConf">0%</span></div>
-          <div class="bar-bg"><div id="barConf" class="bar-fill" style="width:0%;background:var(--neon)"></div></div>
+    <div id="screen-3" class="screen">
+        <div class="clock" id="timer">10:00</div>
+        <div class="scoreboard">
+            <div class="score-box" style="border-color:var(--blue); color:var(--blue)" id="s-azul">0</div>
+            <div class="score-box" style="border-color:var(--red); color:var(--red)" id="s-red">0</div>
         </div>
-        <div class="status-box">
-          <div class="status-label"><span style="color:var(--gold)">ESPERA</span><span id="countEsp">(0)</span></div>
-          <div class="bar-bg"><div id="barEsp" class="bar-fill" style="width:0%;background:var(--gold)"></div></div>
+
+        <div class="field" id="field"></div>
+
+        <div class="fila-box">
+            <span style="color:var(--neon); font-size:11px; font-weight:bold">FILA DE ESPERA</span>
+            <div class="next-list" id="fila-lista"></div>
         </div>
-      </div>
-
-      <div class="search-box">
-        <span>🔍</span>
-        <input type="text" id="inputBusca" placeholder="Buscar atleta..." onkeyup="filtrarAtletas()">
-      </div>
-
-      <div id="renderAtletas"></div>
-      <div style="height:140px"></div><!-- espaço rodapé fixo -->
+        
+        <button onclick="irParaTela(1)" style="background:#444; color:#fff;">NOVA PELADA</button>
     </div>
-  </div>
-
-  <!-- Rodapé fixo -->
-  <div class="fixed-footer">
-    <div class="fixed-footer-inner">
-      <div class="btn-row">
-        <div class="btn-outline" onclick="marcarTodos(true)">SELECIONAR TODOS</div>
-        <div class="btn-outline" onclick="marcarTodos(false)">DESMARCAR TODOS</div>
-      </div>
-      <div class="info-footer">
-        TOTAL: <span id="totalFooter">0</span> &nbsp;|&nbsp; GOLEIROS: <span id="goleirosFooter">0</span> &nbsp;|&nbsp; EM ESPERA: <span id="esperaFooter">0</span>
-      </div>
-      <button class="btn-neon" onclick="iniciarPartida()">🚀 INICIAR PARTIDA</button>
-      <button class="btn-back" onclick="voltarPara('tela1')" style="width:100%;text-align:center;margin-top:8px">← Voltar</button>
-    </div>
-  </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     TELA 3 — JOGO AO VIVO
-══════════════════════════════════════ -->
-<div id="tela3" class="screen">
-  <div class="header-nav">
-    <div id="nomeJogoDisplay" style="font-weight:700;color:var(--gold);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px"></div>
-    <div id="numPartidaDisplay" style="font-size:10px;color:#333;font-weight:700;letter-spacing:1px;white-space:nowrap"></div>
-  </div>
-
-  <!-- Código da sala -->
-  <div id="codigoSalaBox" style="display:none" class="codigo-sala">
-    <div style="font-size:9px;color:var(--muted);letter-spacing:1px;margin-bottom:2px">CÓDIGO DA SALA — COMPARTILHE!</div>
-    <div id="codigoSalaValor" class="codigo-val"></div>
-  </div>
-
-  <!-- Cronômetro -->
-  <div id="timer" class="clock">10:00</div>
-  <div class="controls">
-    <button class="btn-c" onclick="startT()" title="Play">▶</button>
-    <button class="btn-c" onclick="pauseT()" title="Pause">⏸</button>
-    <button class="btn-c" onclick="pedirConf('Resetar o tempo?', resetT)" title="Reset">↺</button>
-  </div>
-
-  <!-- Placar -->
-  <div class="scoreboard">
-    <div class="score-box" style="border-color:var(--blue);color:var(--blue)" id="s-azul">0</div>
-    <div class="score-box" style="border-color:var(--red);color:var(--red)"   id="s-red">0</div>
-  </div>
-
-  <!-- Times -->
-  <div class="field" id="field"></div>
-
-  <!-- Logs -->
-  <div class="logs-container">
-    <div><div class="log-header-t" style="color:var(--blue)">AZUL LOG</div><div id="l-azul"></div></div>
-    <div><div class="log-header-t" style="color:var(--red)">RED LOG</div><div id="l-red"></div></div>
-  </div>
-
-  <!-- Resultado -->
-  <div class="outcome-row">
-    <button class="btn-out" style="border-color:var(--blue);color:var(--blue)" onclick="pedirConf('Vitória do Time Azul?', ()=>processarFim('azul'))">VITÓRIA AZUL</button>
-    <button class="btn-out" style="border-color:var(--red);color:var(--red)"   onclick="pedirConf('Vitória do Time Red?',  ()=>processarFim('red'))">VITÓRIA RED</button>
-    <button class="btn-out" onclick="pedirConf('Registrar empate?', ()=>processarFim('empate'))">EMPATE</button>
-  </div>
-
-  <!-- Fila -->
-  <div class="fila-box" style="margin-top:8px">
-    <div class="fila-header">
-      <span style="color:var(--neon);font-weight:900;font-size:11px">PRÓXIMOS (FILA)</span>
-      <button onclick="abrirEditorFila()" style="background:none;border:1px solid var(--gold);color:var(--gold);font-size:9px;padding:4px 8px;border-radius:6px">EDITAR 🖊️</button>
-    </div>
-    <div class="next-list" id="fila-lista"></div>
-  </div>
-
-  <!-- Adicionar retardatário -->
-  <div class="add-atrasado">
-    <input type="text" id="add-nome" placeholder="Adicionar jogador atrasado...">
-    <button class="btn-plus" onclick="addRetardatario()">+</button>
-  </div>
-
-  <!-- Ranking dinâmico -->
-  <div class="section-title">Ranking ao Vivo</div>
-  <table class="ranking-table">
-    <thead><tr><th></th><th>ATLETA</th><th>V</th><th>G</th><th>A</th><th>PTS</th></tr></thead>
-    <tbody id="r-body"></tbody>
-  </table>
-
-  <button class="btn-danger" style="margin-top:10px" onclick="pedirConf('Encerrar a pelada agora?', encerrarPelada)">🏁 ENCERRAR PELADA</button>
-</div>
-
-<!-- ═══════════════════════════════════════
-     TELA 4 — RANKING FINAL
-══════════════════════════════════════ -->
-<div id="tela4" class="screen">
-  <div class="card card-gold" style="text-align:center">
-    <div style="font-size:40px">🏆</div>
-    <h2 id="t4titulo" style="color:var(--gold);font-family:'Bebas Neue',sans-serif;font-size:28px;margin:6px 0">RANKING FINAL</h2>
-    <div id="t4info" style="font-size:11px;color:var(--muted)"></div>
-  </div>
-  <div class="aba-btns">
-    <button class="aba-btn active" id="aba-ranking-btn"    onclick="mudarAba('ranking')">🏅 RANKING</button>
-    <button class="aba-btn"        id="aba-historico-btn"  onclick="mudarAba('historico')">📜 PARTIDAS</button>
-    <button class="aba-btn"        id="aba-artilharia-btn" onclick="mudarAba('artilharia')">⚽ ARTILHARIA</button>
-  </div>
-  <div id="aba-ranking-content"></div>
-  <div id="aba-historico-content"  style="display:none"></div>
-  <div id="aba-artilharia-content" style="display:none"></div>
-  <button class="btn-neon" onclick="irHome()" style="margin-top:10px">🏠 Voltar ao Início</button>
-</div>
-
-<!-- ═══════════════════════════════════════
-     RANKING GLOBAL
-══════════════════════════════════════ -->
-<div id="telaRankingGlobal" class="screen">
-  <button class="btn-back" onclick="voltarPara('telaHome')" style="margin-bottom:10px">← Voltar</button>
-  <div class="card" style="text-align:center">
-    <div style="font-size:32px">🌍</div>
-    <h2 style="color:var(--neon);font-family:'Bebas Neue',sans-serif;font-size:26px;margin:6px 0">RANKING GLOBAL</h2>
-    <div style="font-size:11px;color:var(--muted)">Todos os jogadores cadastrados</div>
-  </div>
-  <div id="rankingGlobalLista">
-    <div style="text-align:center;color:var(--muted);padding:30px"><span class="spinner"></span>Carregando...</div>
-  </div>
-</div>
-
-</div><!-- /app -->
-
-<!-- ═══ FAB CHAT + PAINEL CHAT ═══ -->
-<div class="fab-chat" id="fabChat" onclick="toggleChat()">💬</div>
-<div id="telaChat">
-  <div class="chat-header">
-    <span style="font-weight:700;color:var(--neon);font-size:13px">💬 CHAT DA PELADA</span>
-    <button onclick="toggleChat()" style="background:transparent;color:var(--muted);border:1px solid #333;padding:6px 12px;font-size:10px;border-radius:10px">✕</button>
-  </div>
-  <div id="chatMsgs" class="chat-msgs"></div>
-  <div class="chat-input-row">
-    <input id="chatInput" placeholder="Mensagem..." onkeypress="if(event.key==='Enter')enviarMsg()">
-    <button onclick="enviarMsg()" style="background:var(--neon);color:#000;font-weight:700;padding:13px 16px;border-radius:12px;border:none;font-family:'Inter',sans-serif;white-space:nowrap">→</button>
-  </div>
-</div>
-
-<!-- ═══ MODAL CONFIRMAÇÃO ═══ -->
-<div id="modal-confirm" class="modal">
-  <div class="modal-inner" style="text-align:center">
-    <div style="font-size:32px;margin-bottom:8px">⚠️</div>
-    <h4 id="confirm-msg" style="color:#fff;margin-bottom:18px;font-size:15px">Tem certeza?</h4>
-    <div style="display:flex;gap:10px;justify-content:center">
-      <button style="flex:1;padding:13px;background:#2a2d32;color:#fff;border:none;border-radius:12px;font-weight:700;cursor:pointer" onclick="fecharModal('modal-confirm')">NÃO</button>
-      <button style="flex:1;padding:13px;background:var(--neon);color:#000;border:none;border-radius:12px;font-weight:700;cursor:pointer" id="btn-sim-conf">SIM</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MODAL ASSISTÊNCIA ═══ -->
 <div id="modal-assist" class="modal">
-  <div class="modal-inner" style="text-align:center">
-    <div style="font-size:36px;margin-bottom:6px">👟</div>
-    <h4 style="color:var(--gold);margin-bottom:14px">Quem deu a assistência?</h4>
-    <div id="opts" style="display:flex;flex-direction:column;gap:8px;max-height:260px;overflow-y:auto"></div>
-    <button onclick="gol(null)" style="width:100%;padding:13px;background:#1e2126;color:#888;border:1px solid #2a2d32;border-radius:12px;margin-top:10px;font-weight:700;cursor:pointer;text-transform:uppercase;font-size:12px">⚽ Gol Individual</button>
-    <button onclick="fecharModal('modal-assist')" style="width:100%;padding:10px;background:transparent;color:var(--muted);border:1px solid #2a2d32;border-radius:12px;margin-top:6px;font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase">✕ Cancelar</button>
-  </div>
-</div>
-
-<!-- ═══ MODAL CARTÃO ═══ -->
-<div id="modal-cartao" class="modal">
-  <div class="modal-inner" style="text-align:center">
-    <div id="cartaoEmoji" style="font-size:52px;margin-bottom:8px">🟨</div>
-    <h3 id="cartaoTitulo" style="margin-bottom:8px;color:var(--gold)">Cartão Amarelo</h3>
-    <div id="cartaoJogador" style="font-size:18px;font-weight:900;margin-bottom:10px"></div>
-    <div id="cartaoMsg" style="font-size:12px;color:var(--muted);margin-bottom:16px"></div>
-    <button class="btn-secondary" onclick="fecharModal('modal-cartao')">OK, ENTENDIDO</button>
-  </div>
-</div>
-
-<!-- ═══ MODAL EDITOR DE FILA ═══ -->
-<div id="modal-fila" class="modal">
-  <div class="modal-inner">
-    <h4 style="text-align:center;margin-bottom:14px;color:var(--gold)">Reordenar Fila 📋</h4>
-    <div id="fila-editor-container"></div>
-    <div style="display:flex;gap:10px;margin-top:14px">
-      <button onclick="fecharFila(false)" style="flex:1;padding:13px;background:#2a2d32;color:#fff;border:none;border-radius:12px;font-weight:700;cursor:pointer">CANCELAR</button>
-      <button onclick="fecharFila(true)"  style="flex:1;padding:13px;background:var(--gold);color:#000;border:none;border-radius:12px;font-weight:700;cursor:pointer">SALVAR</button>
+    <div class="m-content">
+        <h4 style="text-align:center">Quem deu o passe?</h4>
+        <div id="opts"></div>
+        <button onclick="gol(null)" style="width:100%; margin-top:10px;">GOL INDIVIDUAL</button>
     </div>
-  </div>
 </div>
 
-<!-- ═══ MODAL JOIN ═══ -->
-<div id="modal-join" class="modal">
-  <div class="modal-inner">
-    <div style="font-size:30px;text-align:center;margin-bottom:8px">🔗</div>
-    <h3 style="text-align:center;color:var(--neon);margin-bottom:16px">Entrar em uma Sala</h3>
-    <input id="codigoJoin" placeholder="CÓDIGO DA SALA" maxlength="6"
-      style="font-size:22px;text-align:center;letter-spacing:8px;text-transform:uppercase">
-    <button class="btn-neon" style="margin-top:10px" onclick="joinRoom()">ENTRAR NA SALA</button>
-    <button class="btn-secondary" style="margin-top:8px" onclick="fecharModal('modal-join')">Cancelar</button>
-  </div>
-</div>
+<script>
+    let atletas = [];
+    let fila = [];
+    let sAzul = 0, sRed = 0, segs = 600, autor = null;
 
-<!-- ═══════════════════════════════════════════════
-     FIREBASE SDK 12.12.0 + LÓGICA COMPLETA
-═══════════════════════════════════════════════ -->
-<script type="module">
-
-/* ── IMPORTS ─────────────────────────────── */
-import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getAnalytics }
-  from "https://www.gstatic.com/firebasejs/12.12.0/firebase-analytics.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
-  from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc,
-         updateDoc, getDocs, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-import { getDatabase, ref as dbRef, push as dbPush, onValue }
-  from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
-
-/* ── CONFIG FIREBASE ─────────────────────── */
-const firebaseConfig = {
-  apiKey:            "AIzaSyDy0lRzcm_9TPYFHz1bJUMwIW9NupkXjG0",
-  authDomain:        "arena-fut-42a7d.firebaseapp.com",
-  databaseURL:       "https://arena-fut-42a7d-default-rtdb.firebaseio.com",
-  projectId:         "arena-fut-42a7d",
-  storageBucket:     "arena-fut-42a7d.firebasestorage.app",
-  messagingSenderId: "843798970197",
-  appId:             "1:843798970197:web:222e052ef828065e5f39dc",
-  measurementId:     "G-SQJCKBVE9V"
-};
-const fbApp = initializeApp(firebaseConfig);
-const auth  = getAuth(fbApp);
-const db    = getFirestore(fbApp);
-const rtdb  = getDatabase(fbApp);
-const gProv = new GoogleAuthProvider();
-getAnalytics(fbApp);
-
-/* ── ESTADO ──────────────────────────────── */
-let currentUser = null;
-let roomId      = null;
-let roomCodigo  = null;
-let isAdmin     = false;
-let chatUnsub   = null;
-
-// Estado do jogo
-let atletasApp  = [];   // Tela 2: lista de atletas com meta-dados
-let jogAtivos   = [];   // Objetos completos dos atletas em campo + fila
-let fila        = [];   // nomes na fila
-let filaTemp    = [];   // cópia temporária para o editor
-let sAzul = 0, sRed = 0;
-let segs  = 600, tId = null;
-let golAutor = null, golTimeAutor = null;
-
-let config = {};     // config da pelada (tela 1)
-let logs   = [];     // logs de gols/cartões
-let totalPartidas = 0;
-
-/* ── UTILIDADES ──────────────────────────── */
-const $ = id => document.getElementById(id);
-
-function voltarPara(id){
-  document.querySelectorAll('.screen, #telaLogin, #telaHome').forEach(e => e.style.display='none');
-  $(id).style.display = 'flex'; // screens usam flex
-  $(id).classList.add('active');
-}
-window.voltarPara = voltarPara;
-
-function fecharModal(id){ $(id).style.display='none'; }
-window.fecharModal = fecharModal;
-
-function toast(msg, dur=2500){
-  const el=$('toast'); el.innerText=msg; el.style.display='block';
-  clearTimeout(el._t); el._t=setTimeout(()=>el.style.display='none',dur);
-}
-
-function calcPts(s){ return (s.v||0)*3+(s.e||0)+(s.g||0)*2+(s.a||0); }
-function gerarCodigo(){ return Math.random().toString(36).slice(2,8).toUpperCase(); }
-function formatT(s){ const abs=Math.abs(s); return (s<0?'+':'')+String(Math.floor(abs/60)).padStart(2,'0')+':'+String(abs%60).padStart(2,'0'); }
-function minAtual(){ return Math.max(0,Math.floor(((config.tempo||10)*60-segs)/60)); }
-
-function irHome(){
-  document.querySelectorAll('.screen').forEach(e=>{e.style.display='none';e.classList.remove('active')});
-  $('telaHome').style.display='flex'; $('telaHome').classList.add('active');
-  $('telaChat').style.display='none'; $('fabChat').style.display='none';
-  carregarHome();
-}
-window.irHome = irHome;
-
-/* ── AUTH ────────────────────────────────── */
-window.login = async()=>{
-  $('btnLogin').innerHTML='<span class="spinner"></span>Entrando...';
-  try{ await signInWithPopup(auth,gProv); }
-  catch(e){ $('btnLogin').innerHTML='🔐 Entrar com Google'; toast('❌ '+e.message,4000); }
-};
-window.logout = async()=>{
-  if(chatUnsub){chatUnsub();chatUnsub=null;}
-  clearInterval(tId); tId=null;
-  roomId=null; roomCodigo=null; isAdmin=false;
-  await signOut(auth);
-};
-onAuthStateChanged(auth, async user=>{
-  currentUser=user;
-  if(user){
-    const uRef=doc(db,'usuarios',user.uid);
-    const snap=await getDoc(uRef).catch(()=>null);
-    if(!snap||!snap.exists()){
-      await setDoc(uRef,{nome:user.displayName||'Jogador',email:user.email,foto:user.photoURL||'',
-        pts:0,v:0,e:0,d:0,g:0,a:0,criadoEm:serverTimestamp()}).catch(()=>{});
-    } else {
-      await updateDoc(uRef,{nome:user.displayName||'Jogador',foto:user.photoURL||''}).catch(()=>{});
+    function irParaTela(n) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + n).classList.add('active');
+        if(n === 3) render();
     }
-    await carregarHome();
-    document.querySelectorAll('.screen').forEach(e=>{e.style.display='none';e.classList.remove('active')});
-    $('telaLogin').style.display='none';
-    $('telaHome').style.display='flex'; $('telaHome').classList.add('active');
-  } else {
-    document.querySelectorAll('.screen').forEach(e=>{e.style.display='none';e.classList.remove('active')});
-    $('telaHome').style.display='none';
-    $('telaLogin').style.display='flex';
-  }
-});
 
-/* ── HOME ────────────────────────────────── */
-async function carregarHome(){
-  if(!currentUser) return;
-  const snap=await getDoc(doc(db,'usuarios',currentUser.uid)).catch(()=>null);
-  const d=snap?.data()||{};
-  const nome=currentUser.displayName?.split(' ')[0]||'Gestor';
-  $('homeNome').innerText=currentUser.displayName||'Jogador';
-  const frases=[
-    `Fala, ${nome}! Já cobrou o PIX de quem "ia ver e avisava"? 💸`,
-    `Bem-vindo, ${nome}. Preparado pro gol de mão que "ninguém viu"? 🤷`,
-    `E aí, ${nome}! Quem vai ser o primeiro a pedir pra sair com 2 min? ⏱`,
-    `Salve, ${nome}! Sem massagem hoje, hein! 💪`
-  ];
-  const idx=parseInt(localStorage.getItem('sIdx')||'0');
-  $('homeSaudacao').innerText=frases[idx%frases.length];
-  localStorage.setItem('sIdx',idx+1);
-  if(currentUser.photoURL){ $('homeFoto').src=currentUser.photoURL; $('homeFoto').style.display='block'; $('homeFotoFallback').style.display='none'; }
-  else { $('homeFoto').style.display='none'; $('homeFotoFallback').style.display='flex'; }
-  $('hPts').innerText=calcPts(d); $('hV').innerText=d.v||0; $('hG').innerText=d.g||0; $('hA').innerText=d.a||0;
-}
-
-/* ── JOIN ────────────────────────────────── */
-window.abrirJoin=()=>{ $('modal-join').style.display='flex'; };
-window.joinRoom=async()=>{
-  const cod=$('codigoJoin').value.trim().toUpperCase();
-  if(cod.length<4){toast('⚠️ Código inválido!');return;}
-  const snap=await getDocs(collection(db,'partidas')).catch(e=>{toast('❌ '+e.message,4000);return null;});
-  if(!snap) return;
-  let found=null; snap.forEach(d=>{ if(d.data().codigo===cod) found=d; });
-  if(!found){toast('❌ Sala não encontrada!');return;}
-  const rd=found.data();
-  roomId=found.id; roomCodigo=cod; isAdmin=false;
-  config=rd.config||{};
-  // Restaura estado
-  jogAtivos=(rd.jogAtivos||[]);
-  fila=(rd.fila||[]);
-  sAzul=rd.placar?.[0]||0; sRed=rd.placar?.[1]||0;
-  $('s-azul').innerText=sAzul; $('s-red').innerText=sRed;
-  segs=rd.tempoSeg||(config.tempo||10)*60;
-  logs=rd.logs||[]; totalPartidas=rd.totalPartidas||0;
-  $('nomeJogoDisplay').innerText=config.nome||'Pelada';
-  fecharModal('modal-join');
-  $('codigoSalaBox').style.display='block'; $('codigoSalaValor').innerText=cod;
-  iniciarChat(cod);
-  voltarPara('tela3'); $('fabChat').style.display='flex';
-  renderJogo(); renderFila(); renderRankingJogo();
-  toast('✅ Conectado à sala '+cod);
-};
-
-/* ── SALVAR SALA ─────────────────────────── */
-async function salvarSala(){
-  if(!roomId||!isAdmin) return;
-  try{
-    await updateDoc(doc(db,'partidas',roomId),{
-      jogAtivos, fila, logs, totalPartidas,
-      placar:[sAzul,sRed], tempoSeg:segs
-    });
-  }catch(e){console.warn('salvar:',e.message);}
-}
-
-/* ════════════════════════════════════════
-   TELA 1 — CONFIGURAR
-════════════════════════════════════════ */
-window.irTela1=()=>{
-  const nome=currentUser?.displayName?.split(' ')[0]||'Gestor';
-  const frases=[
-    `Fala, ${nome}! Já cobrou o PIX de quem disse "ia ver"? 💸`,
-    `Bora, ${nome}! Hoje ninguém rouba no tempo ⏱`,
-    `Salve, ${nome}! Expulsa quem trouxer chuteira de cravo no Society! 👟`
-  ];
-  $('saudacaoTxt').innerText=frases[Math.floor(Math.random()*frases.length)];
-  // Preenche data de hoje
-  if(!$('dataEv').value) $('dataEv').value=new Date().toISOString().split('T')[0];
-  voltarPara('tela1');
-};
-
-window.irTela2=()=>{
-  const nome=$('nomeEvento').value.trim();
-  if(!nome){toast('⚠️ Dê um nome para a pelada!');return;}
-  config={
-    nome, local:$('localEvento').value.trim(),
-    data:$('dataEv').value, hora:$('horaEv').value,
-    tipo:$('tipoCampo').value,
-    limite:parseInt($('limiteAtletas').value)||20,
-    porTime:parseInt($('porTime').value)||5,
-    tempo:parseInt($('tempoRegra').value)||10,
-    regraEmpate:$('regraEmpate').value
-  };
-  voltarPara('tela2');
-};
-
-/* ════════════════════════════════════════
-   TELA 2 — LISTA DE ATLETAS
-════════════════════════════════════════ */
-window.processarLista=()=>{
-  const txt=$('listaTxt').value.trim();
-  const linhas=txt.split('\n').filter(l=>l.trim()!=='');
-  if(!linhas.length){toast('⚠️ Cole uma lista primeiro!');return;}
-  const lim=config.limite||999;
-  atletasApp=linhas.map((linha,i)=>({
-    id:i,
-    nome:linha.replace(/^\d+[\s.\-\):]*/,'').trim(),
-    cat:linha.toUpperCase().includes('MENSALISTA')?'MENSALISTA':'CONVIDADO',
-    stars:3, pos:'A', img:'👟',
-    confirmado:i<lim
-  }));
-  $('listaArea').style.display='block';
-  renderizarLista();
-  toast(`✅ ${linhas.length} atleta(s) carregado(s)`);
-};
-
-window.marcarTodos=v=>{ atletasApp.forEach(a=>a.confirmado=v); renderizarLista(); };
-
-function renderizarLista(){
-  const container=$('renderAtletas');
-  container.innerHTML=atletasApp.map(a=>`
-    <div class="atleta-item ${a.confirmado?'confirmado':'espera'}" data-nome="${a.nome.toLowerCase()}">
-      <input type="checkbox" class="atleta-check" ${a.confirmado?'checked':''} onchange="toggleCheckAtleta(${a.id})">
-      <div class="atleta-avatar">
-        <img src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${encodeURIComponent(a.nome)}&backgroundColor=1a1d22" onerror="this.parentNode.innerText='👤'">
-      </div>
-      <div class="atleta-dados">
-        <span class="atleta-nome">${a.nome}</span>
-        <span class="tag ${a.cat==='MENSALISTA'?'tag-mensalista':'tag-convidado'}" onclick="mudarCat(${a.id})">${a.cat}</span>
-        <div class="estrelas" onclick="mudarNivel(${a.id})">${'★'.repeat(a.stars)}${'☆'.repeat(5-a.stars)}</div>
-      </div>
-      <div class="pos-badge" onclick="alternarPos(${a.id})">
-        <span>${a.img}</span><span>${a.pos}</span>
-      </div>
-    </div>`).join('');
-  atualizarResumos();
-}
-window.toggleCheckAtleta=id=>{ atletasApp[id].confirmado=!atletasApp[id].confirmado; atletasApp[id].confirmado?atletasApp[id].img='👟':null; renderizarLista(); };
-window.mudarCat=id=>{ atletasApp[id].cat=atletasApp[id].cat==='MENSALISTA'?'CONVIDADO':'MENSALISTA'; renderizarLista(); };
-window.mudarNivel=id=>{ atletasApp[id].stars=(atletasApp[id].stars%5)+1; renderizarLista(); };
-window.alternarPos=id=>{
-  if(atletasApp[id].pos==='A'){ atletasApp[id].pos='G'; atletasApp[id].img='🧤'; }
-  else if(atletasApp[id].pos==='G'){ atletasApp[id].pos='Z'; atletasApp[id].img='🛡️'; }
-  else if(atletasApp[id].pos==='Z'){ atletasApp[id].pos='M'; atletasApp[id].img='⚙️'; }
-  else { atletasApp[id].pos='A'; atletasApp[id].img='👟'; }
-  renderizarLista();
-};
-window.filtrarAtletas=()=>{
-  const b=$('inputBusca').value.toLowerCase();
-  document.querySelectorAll('.atleta-item').forEach(c=>{
-    c.style.display=c.getAttribute('data-nome').includes(b)?'flex':'none';
-  });
-};
-function atualizarResumos(){
-  const conf=atletasApp.filter(a=>a.confirmado);
-  const esp=atletasApp.filter(a=>!a.confirmado);
-  const total=atletasApp.length;
-  const goleiros=conf.filter(a=>a.pos==='G').length;
-  const pc=total>0?Math.round(conf.length/total*100):0;
-  const pe=total>0?Math.round(esp.length/total*100):0;
-  $('percentConf').innerText=pc+'%'; $('barConf').style.width=pc+'%';
-  $('countEsp').innerText=`(${esp.length})`; $('barEsp').style.width=pe+'%';
-  $('totalFooter').innerText=conf.length;
-  $('goleirosFooter').innerText=goleiros;
-  $('esperaFooter').innerText=esp.length;
-}
-
-/* ── SNAKE DRAFT ─────────────────────────── */
-function equilibrar(lista){
-  const bns={G:.1,Z:.2,M:.15,A:.1,C:0};
-  const sorted=[...lista].sort((a,b)=>(b.stars+(bns[b.pos]||0))-(a.stars+(bns[a.pos]||0)));
-  const t1=[],t2=[];
-  sorted.forEach((p,i)=>{ const r=Math.floor(i/2),pos=i%2; (r%2===0?pos===0:pos===1)?t1.push(p):t2.push(p); });
-  return{t1,t2};
-}
-
-/* ════════════════════════════════════════
-   INICIAR PARTIDA
-════════════════════════════════════════ */
-window.iniciarPartida=async()=>{
-  const conf=atletasApp.filter(a=>a.confirmado);
-  if(conf.length<2){toast('⚠️ Mínimo 2 jogadores confirmados!');return;}
-  const qtd=config.porTime||5;
-  isAdmin=true; roomCodigo=gerarCodigo();
-
-  // Monta jogAtivos (campo) e fila com objetos
-  const iniciais=conf.slice(0,qtd*2);
-  const eq=equilibrar(iniciais);
-  jogAtivos=[
-    ...eq.t1.map(p=>({...p,time:'azul',v:0,e:0,d:0,g:0,a:0,amarelos:0,vermelhos:0})),
-    ...eq.t2.map(p=>({...p,time:'red', v:0,e:0,d:0,g:0,a:0,amarelos:0,vermelhos:0}))
-  ];
-  fila=conf.slice(qtd*2).map(p=>p.nome);
-
-  segs=(config.tempo||10)*60; sAzul=0; sRed=0;
-  logs=[]; totalPartidas=0;
-
-  try{
-    const ref=await addDoc(collection(db,'partidas'),{
-      admin_uid:currentUser.uid, adminNome:currentUser.displayName,
-      codigo:roomCodigo, status:'jogando', config,
-      jogAtivos, fila, placar:[0,0], tempoSeg:segs,
-      logs:[], totalPartidas:0, criadoEm:serverTimestamp()
-    });
-    roomId=ref.id;
-  }catch(e){toast('❌ Erro ao criar sala: '+e.message,5000);return;}
-
-  $('nomeJogoDisplay').innerText=config.nome;
-  $('codigoSalaBox').style.display='block'; $('codigoSalaValor').innerText=roomCodigo;
-  $('s-azul').innerText='0'; $('s-red').innerText='0';
-  $('l-azul').innerHTML=''; $('l-red').innerHTML='';
-  resetT();
-  iniciarChat(roomCodigo);
-  voltarPara('tela3'); $('fabChat').style.display='flex';
-  renderJogo(); renderFila(); renderRankingJogo();
-  toast('✅ Sala criada! Código: '+roomCodigo);
-};
-
-/* ════════════════════════════════════════
-   TELA 3 — JOGO
-════════════════════════════════════════ */
-function getTime(t){ return jogAtivos.filter(j=>j.time===t); }
-
-function renderJogo(){
-  const $f=$('field');
-  const teamHtml=(time,cor)=>`
-    <div class="team-card">
-      <div class="t-header" style="background:var(--${cor})">${time==='azul'?'🔵 TIME AZUL':'🔴 TIME RED'}</div>
-      ${getTime(time).map(j=>{
-        const ns=j.nome.replace(/'/g,"\\'");
-        const badges=[(j.amarelos||0)>0?`<span class="badge-c">🟨${j.amarelos}</span>`:'',(j.vermelhos||0)>0?`<span class="badge-c" style="border-color:#3a0000">🟥${j.vermelhos}</span>`:''].join('');
-        return `<div class="player-row-game">
-          <div><div style="font-weight:700;font-size:11px">${j.nome}</div>${badges?`<div style="margin-top:2px">${badges}</div>`:''}</div>
-          <div style="display:flex;gap:3px">
-            <button class="btn-gol"    onclick="abrirAssist('${ns}','${time}')">⚽</button>
-            <button class="btn-card-y" onclick="darCartao('${ns}','amarelo')">🟨</button>
-            <button class="btn-card-r" onclick="darCartao('${ns}','vermelho')">🟥</button>
-          </div></div>`;
-      }).join('')}
-    </div>`;
-  $f.innerHTML=teamHtml('azul','blue')+teamHtml('red','red');
-  $('numPartidaDisplay').innerText=`PARTIDA ${totalPartidas+1}`;
-}
-
-function renderFila(){
-  let txt=''; for(let i=0;i<fila.length;i+=5 ) txt+=`TIME ${Math.floor(i/5)+1}: [${fila.slice(i,i+5).join(', ')}]<br>`;
-  $('fila-lista').innerHTML=txt||'<span style="color:#2a2a2a">Fila vazia</span>';
-}
-
-function renderRankingJogo(){
-  const sorted=[...jogAtivos].sort((a,b)=>{
-    const pa=calcPts(a),pb=calcPts(b);
-    if(pb!==pa) return pb-pa; if(b.g!==a.g) return b.g-a.g; return b.a-a.a;
-  });
-  const medals=['🥇','🥈','🥉'];
-  $('r-body').innerHTML=sorted.map((j,i)=>`<tr>
-    <td class="rank-medal">${medals[i]||''}</td>
-    <td style="font-weight:700">${j.nome}</td>
-    <td>${j.v||0}</td><td>${j.g||0}</td><td>${j.a||0}</td>
-    <td style="color:var(--neon);font-weight:700">${calcPts(j)}</td>
-  </tr>`).join('');
-}
-
-/* ── GOLS ────────────────────────────────── */
-window.abrirAssist=(nome,time)=>{
-  golAutor=nome; golTimeAutor=time;
-  $('opts').innerHTML=getTime(time)
-    .filter(j=>j.nome!==nome)
-    .map(j=>`<button onclick="gol('${j.nome.replace(/'/g,"\\'")}');this.parentNode.parentNode.parentNode.style.display='none'" style="width:100%;padding:12px;margin-bottom:6px;background:#1e2126;color:#fff;border:1px solid #2a2d32;border-radius:12px;font-weight:700;cursor:pointer;font-size:12px">👟 ${j.nome}</button>`).join('');
-  $('modal-assist').style.display='flex';
-};
-
-window.gol=async(assist)=>{
-  const jAtual=jogAtivos.find(j=>j.nome===golAutor);
-  if(!jAtual) return;
-  jAtual.g++; if(assist){ const jA=jogAtivos.find(j=>j.nome===assist); if(jA) jA.a++; }
-  if(golTimeAutor==='azul'){ sAzul++; $('s-azul').innerText=sAzul; }
-  else { sRed++; $('s-red').innerText=sRed; }
-  const min=minAtual();
-  const logEl=$('l-'+golTimeAutor);
-  logEl.innerHTML=`<div class="log-item">⚽ <b>${golAutor}</b>${assist?' 👟 '+assist:''} <span style="color:#555">${min}'</span></div>`+logEl.innerHTML;
-  logs.push({min,autor:golAutor,ass:assist||null,time:golTimeAutor,partida:totalPartidas+1});
-  fecharModal('modal-assist');
-  renderJogo(); renderRankingJogo();
-  await salvarSala();
-};
-
-/* ── CARTÕES ─────────────────────────────── */
-window.darCartao=async(nome,tipo)=>{
-  const j=jogAtivos.find(x=>x.nome===nome);
-  if(!j) return;
-  if(tipo==='amarelo'){
-    j.amarelos=(j.amarelos||0)+1;
-    $('cartaoEmoji').innerText='🟨'; $('cartaoTitulo').innerText='Cartão Amarelo';
-    $('cartaoJogador').innerText=nome;
-    $('cartaoMsg').innerText=j.amarelos>=2?`⚠️ ${j.amarelos}º amarelo — considere suspensão!`:`1º cartão amarelo registrado.`;
-  } else {
-    j.vermelhos=(j.vermelhos||0)+1;
-    $('cartaoEmoji').innerText='🟥'; $('cartaoTitulo').innerText='Cartão Vermelho!';
-    $('cartaoJogador').innerText=nome; $('cartaoMsg').innerText='🚫 Expulso! Deve sair de campo.';
-  }
-  logs.push({min:minAtual(),autor:nome,tipo:'cartao',cartao:tipo==='amarelo'?'🟨':'🟥',partida:totalPartidas+1,time:''});
-  $('modal-cartao').style.display='flex';
-  renderJogo(); await salvarSala();
-};
-
-/* ── CRONÔMETRO ──────────────────────────── */
-function startT(){
-  if(!tId) tId=setInterval(()=>{
-    segs--;
-    $('timer').innerText=formatT(segs);
-    segs<=0?$('timer').classList.add('acabando'):$('timer').classList.remove('acabando');
-  },1000);
-}
-function pauseT(){ clearInterval(tId); tId=null; }
-function resetT(){ pauseT(); segs=(config.tempo||10)*60; $('timer').innerText=formatT(segs); $('timer').classList.remove('acabando'); }
-window.startT=startT; window.pauseT=pauseT; window.resetT=resetT;
-
-/* ── MODAL CONFIRMAÇÃO ───────────────────── */
-function pedirConf(msg,cb){
-  $('confirm-msg').innerText=msg;
-  $('btn-sim-conf').onclick=()=>{ cb(); fecharModal('modal-confirm'); };
-  $('modal-confirm').style.display='flex';
-}
-window.pedirConf=pedirConf;
-
-/* ── FIM DE PARTIDA ──────────────────────── */
-window.processarFim=async(resultado)=>{
-  pauseT();
-  totalPartidas++;
-  const qtd=config.porTime||5;
-  const re=config.regraEmpate||'saem';
-
-  if(resultado==='empate'){
-    getTime('azul').concat(getTime('red')).forEach(j=>{ j.e++; fila.push(j.nome); j.time=null; });
-    if(re==='saem'){
-      if(fila.length>=qtd*2){
-        const pr=fila.splice(0,qtd*2).map(n=>atletasApp.find(a=>a.nome===n)||{nome:n,stars:3,pos:'A'});
-        const eq=equilibrar(pr);
-        jogAtivos=jogAtivos.filter(j=>j.time!==null);
-        eq.t1.forEach(p=>{ const x=jogAtivos.find(j=>j.nome===p.nome); if(x){x.time='azul';}else{jogAtivos.push({...p,time:'azul',v:0,e:0,d:0,g:0,a:0,amarelos:0,vermelhos:0});} });
-        eq.t2.forEach(p=>{ const x=jogAtivos.find(j=>j.nome===p.nome); if(x){x.time='red';}else{jogAtivos.push({...p,time:'red',v:0,e:0,d:0,g:0,a:0,amarelos:0,vermelhos:0});} });
-      } else toast('⚠️ Fila insuficiente!');
-    } else {
-      // Campeão é azul (por convenção, quem tem mais gols; senão azul)
-      const perdedor=sAzul>=sRed?'red':'azul';
-      getTime(perdedor).forEach(j=>j.time=null);
-      if(fila.length>=qtd){
-        const pr=fila.splice(0,qtd).map(n=>atletasApp.find(a=>a.nome===n)||{nome:n,stars:3,pos:'A'});
-        pr.forEach(p=>{ const x=jogAtivos.find(j=>j.nome===p.nome); if(x){x.time=perdedor;}else{jogAtivos.push({...p,time:perdedor,v:0,e:0,d:0,g:0,a:0,amarelos:0,vermelhos:0});} });
-      }
+    function iniciarPartida() {
+        const texto = document.getElementById('listaTexto').value;
+        const nomes = texto.split('\n').filter(l => l.trim() !== '');
+        
+        atletas = [];
+        fila = [];
+        
+        // Distribui os 10 primeiros como ativos, resto na fila
+        nomes.forEach((nome, i) => {
+            if (i < 10) {
+                atletas.push({ n: nome.trim(), v: 0, g: 0, a: 0, t: i < 5 ? 'azul' : 'red', active: true });
+            } else {
+                fila.push(nome.trim());
+            }
+        });
+        
+        segs = document.getElementById('tempoJogo').value * 60;
+        irParaTela(3);
     }
-  } else {
-    const vencedor=resultado; const perdedor=resultado==='azul'?'red':'azul';
-    getTime(vencedor).forEach(j=>j.v++);
-    getTime(perdedor).forEach(j=>{ j.d++; fila.push(j.nome); j.time=null; });
-    if(fila.length>=qtd){
-      const pr=fila.splice(0,qtd).map(n=>atletasApp.find(a=>a.nome===n)||{nome:n,stars:3,pos:'A'});
-      pr.forEach(p=>{ const x=jogAtivos.find(j=>j.nome===p.nome); if(x){x.time=perdedor;}else{jogAtivos.push({...p,time:perdedor,v:0,e:0,d:0,g:0,a:0,amarelos:0,vermelhos:0});} });
+
+    function render() {
+        const field = document.getElementById('field');
+        field.innerHTML = `
+            <div class="team-card"><div class="t-header" style="background:var(--blue)">AZUL</div>${atletas.filter(a => a.t === 'azul' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'azul')">GOL</button></div>`).join('')}</div>
+            <div class="team-card"><div class="t-header" style="background:var(--red)">RED</div>${atletas.filter(a => a.t === 'red' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
+        `;
+        document.getElementById('fila-lista').innerText = fila.length > 0 ? fila.join(', ') : "Fila vazia";
     }
-  }
 
-  sAzul=0; sRed=0; $('s-azul').innerText=0; $('s-red').innerText=0;
-  $('l-azul').innerHTML=''; $('l-red').innerHTML='';
-  resetT();
-  renderJogo(); renderFila(); renderRankingJogo();
-  await salvarSala();
-};
-
-/* ── RETARDATÁRIO ────────────────────────── */
-window.addRetardatario=()=>{
-  const inp=$('add-nome'), nome=inp.value.trim();
-  if(!nome) return;
-  fila.push(nome);
-  if(!atletasApp.find(a=>a.nome===nome)) atletasApp.push({id:atletasApp.length,nome,stars:3,pos:'A',img:'👟',cat:'CONVIDADO',confirmado:true});
-  inp.value=''; renderFila(); toast('➕ '+nome+' adicionado à fila');
-};
-
-/* ── EDITOR DE FILA ──────────────────────── */
-window.abrirEditorFila=()=>{ filaTemp=[...fila]; renderEditor(); $('modal-fila').style.display='flex'; };
-function renderEditor(){
-  const c=$('fila-editor-container'); c.innerHTML='';
-  filaTemp.forEach((n,i)=>{
-    const d=document.createElement('div'); d.className='fila-edit-item'; d.draggable=true;
-    d.innerHTML=`<span class="nome-ed">☰ ${n}</span><div class="edit-btns">
-      <button class="btn-edit" onclick="moverFila(${i},-1)">↑</button>
-      <button class="btn-edit" onclick="moverFila(${i},1)">↓</button>
-      <button class="btn-edit" style="color:var(--red)" onclick="filaTemp.splice(${i},1);renderEditor()">✕</button>
-    </div>`;
-    d.addEventListener('dragstart',()=>d.classList.add('dragging'));
-    d.addEventListener('dragend',()=>{d.classList.remove('dragging');reordenarTemp();});
-    c.appendChild(d);
-  });
-}
-window.moverFila=(i,d)=>{ const np=i+d; if(np>=0&&np<filaTemp.length){[filaTemp[i],filaTemp[np]]=[filaTemp[np],filaTemp[i]];renderEditor();} };
-function reordenarTemp(){ filaTemp=[...document.querySelectorAll('.nome-ed')].map(e=>e.innerText.replace('☰ ','')); }
-window.fecharFila=async(save)=>{ if(save){fila=[...filaTemp];renderFila();await salvarSala();} fecharModal('modal-fila'); };
-$('fila-editor-container').addEventListener('dragover',e=>{
-  e.preventDefault();
-  const after=getDragAfter($('fila-editor-container'),e.clientY);
-  const drag=document.querySelector('.dragging');
-  if(after) $('fila-editor-container').insertBefore(drag,after);
-  else $('fila-editor-container').appendChild(drag);
-});
-function getDragAfter(container,y){
-  const els=[...container.querySelectorAll('.fila-edit-item:not(.dragging)')];
-  return els.reduce((cl,ch)=>{
-    const box=ch.getBoundingClientRect(), off=y-box.top-box.height/2;
-    return off<0&&off>cl.offset?{offset:off,element:ch}:cl;
-  },{offset:Number.NEGATIVE_INFINITY}).element;
-}
-
-/* ── ENCERRAR PELADA ─────────────────────── */
-window.encerrarPelada=async()=>{
-  pauseT();
-  await salvarPartidaFinal();
-  await atualizarStatsUsuario();
-  if(roomId&&isAdmin) await updateDoc(doc(db,'partidas',roomId),{status:'finalizado'}).catch(()=>{});
-  mostrarTela4();
-  voltarPara('tela4');
-  $('telaChat').style.display='none'; $('fabChat').style.display='none';
-  toast('🏆 Pelada encerrada!');
-};
-
-async function salvarPartidaFinal(){
-  if(!currentUser||!roomId) return;
-  await updateDoc(doc(db,'partidas',roomId),{
-    status:'finalizado',
-    statsFinais:jogAtivos.map(j=>({nome:j.nome,v:j.v,e:j.e,d:j.d,g:j.g,a:j.a,pts:calcPts(j)})),
-    totalPartidas, logs, finalizadoEm:serverTimestamp()
-  }).catch(()=>{});
-}
-
-async function atualizarStatsUsuario(){
-  if(!currentUser) return;
-  const nc=currentUser.displayName?.split(' ')[0]||'', nf=currentUser.displayName||'';
-  for(const j of jogAtivos){
-    if(j.nome===nf||j.nome===nc||nf.toLowerCase().includes(j.nome.toLowerCase())||j.nome.toLowerCase().includes(nc.toLowerCase())){
-      const uRef=doc(db,'usuarios',currentUser.uid);
-      const snap=await getDoc(uRef).catch(()=>null);
-      const cur=snap?.data()||{};
-      await updateDoc(uRef,{v:(cur.v||0)+(j.v||0),e:(cur.e||0)+(j.e||0),d:(cur.d||0)+(j.d||0),g:(cur.g||0)+(j.g||0),a:(cur.a||0)+(j.a||0),pts:calcPts(cur)+calcPts(j)}).catch(()=>{});
-      break;
+    function gol(assist) {
+        let aObj = atletas.find(x => x.n === autor);
+        aObj.g++; 
+        if(assist) atletas.find(x => x.n === assist).a++;
+        aObj.t === 'azul' ? sAzul++ : sRed++;
+        document.getElementById('s-azul').innerText = sAzul; 
+        document.getElementById('s-red').innerText = sRed;
+        document.getElementById('modal-assist').style.display = 'none';
+        render();
     }
-  }
-}
 
-/* ════════════════════════════════════════
-   TELA 4 — RANKING FINAL
-════════════════════════════════════════ */
-function mostrarTela4(){
-  $('t4titulo').innerText=config.nome||'RANKING FINAL';
-  $('t4info').innerText=[config.local,config.data,`${totalPartidas} partida${totalPartidas!==1?'s':''}`,`${jogAtivos.reduce((s,j)=>s+(j.g||0),0)} gols`].filter(Boolean).join(' · ');
-  mudarAba('ranking');
-}
-
-window.mudarAba=aba=>{
-  ['ranking','historico','artilharia'].forEach(a=>{
-    $('aba-'+a+'-content').style.display=a===aba?'block':'none';
-    $('aba-'+a+'-btn').className='aba-btn'+(a===aba?' active':'');
-  });
-  if(aba==='ranking')    renderRanking4();
-  if(aba==='historico')  renderHistorico4();
-  if(aba==='artilharia') renderArtilharia4();
-};
-
-function renderRanking4(){
-  const medals=['🥇','🥈','🥉'];
-  const sorted=[...jogAtivos].sort((a,b)=>calcPts(b)-calcPts(a));
-  $('aba-ranking-content').innerHTML=sorted.length?sorted.map((j,i)=>{
-    const isTop=i===0;
-    const cart=[(j.amarelos||0)>0?`🟨${j.amarelos}`:'',(j.vermelhos||0)>0?`🟥${j.vermelhos}`:'' ].filter(Boolean).join(' ');
-    return `<div class="rank-item-full animate-in" style="${isTop?'border:1px solid rgba(255,204,0,.4);background:#0e0c00':''};animation-delay:${i*.04}s">
-      <div class="rank-pos">${medals[i]||(i+1)}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:13px">${j.nome}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px">V:${j.v||0} E:${j.e||0} D:${j.d||0} &nbsp;⚽${j.g||0} 👟${j.a||0}${cart?' '+cart:''}</div>
-      </div>
-      <div class="rank-pts-big">${calcPts(j)}<span> pts</span></div>
-    </div>`;
-  }).join(''):'<div style="color:var(--muted);text-align:center;padding:30px">Sem dados</div>';
-}
-
-function renderHistorico4(){
-  const por={};
-  logs.forEach(l=>{if(!por[l.partida])por[l.partida]={gols:[],cartoes:[]};l.tipo==='cartao'?por[l.partida].cartoes.push(l):por[l.partida].gols.push(l);});
-  const keys=Object.keys(por).sort((a,b)=>+a-+b);
-  $('aba-historico-content').innerHTML=keys.length?keys.map(num=>{
-    const p=por[num];
-    const gh=p.gols.length?p.gols.map(g=>`<div style="font-size:11px;color:#aaa;margin-bottom:3px">${g.min}' ⚽ <b style="color:#fff">${g.autor}</b> <span style="color:${g.time==='azul'?'var(--blue)':'var(--red)'}">(${g.time})</span>${g.ass?` 👟 <span style="color:#555">${g.ass}</span>`:''}</div>`).join(''):`<div style="font-size:11px;color:#2a2a2a">Sem gols</div>`;
-    const ch=p.cartoes.length?p.cartoes.map(c=>`<div style="font-size:11px;color:#888;margin-bottom:2px">${c.cartao} <b style="color:#fff">${c.autor}</b></div>`).join(''):'';
-    return `<div style="background:#111;border:1px solid #1a1d22;border-radius:14px;padding:13px;margin-bottom:8px"><div style="font-weight:700;color:var(--neon);margin-bottom:8px;font-size:13px">Partida ${num}</div>${gh}${ch}</div>`;
-  }).join(''):'<div style="color:var(--muted);text-align:center;padding:30px">Sem histórico</div>';
-}
-
-function renderArtilharia4(){
-  const art=[...jogAtivos].filter(j=>(j.g||0)>0||(j.a||0)>0).sort((a,b)=>(b.g*2+b.a)-(a.g*2+a.a));
-  $('aba-artilharia-content').innerHTML=art.length?art.map((j,i)=>`<div class="rank-item-full animate-in" style="animation-delay:${i*.04}s">
-    <div class="rank-pos">${i+1}</div>
-    <div style="flex:1"><div style="font-weight:700;font-size:13px">${j.nome}</div>
-    <div style="font-size:10px;color:var(--muted);margin-top:2px">⚽ ${j.g||0} gol${j.g!==1?'s':''} &nbsp;·&nbsp; 👟 ${j.a||0} assist.</div></div>
-    <div class="rank-pts-big" style="color:var(--gold)">${(j.g||0)*2+(j.a||0)}<span> pts</span></div>
-  </div>`).join(''):'<div style="color:var(--muted);text-align:center;padding:30px">Nenhum gol</div>';
-}
-
-/* ════════════════════════════════════════
-   RANKING GLOBAL
-════════════════════════════════════════ */
-window.irRankingGlobal=async()=>{
-  voltarPara('telaRankingGlobal');
-  $('rankingGlobalLista').innerHTML='<div style="text-align:center;color:var(--muted);padding:30px"><span class="spinner"></span>Carregando...</div>';
-  try{
-    const snap=await getDocs(collection(db,'usuarios'));
-    const jogs=[]; snap.forEach(d=>jogs.push({id:d.id,...d.data()}));
-    jogs.sort((a,b)=>(b.pts||0)-(a.pts||0));
-    const medals=['🥇','🥈','🥉'];
-    $('rankingGlobalLista').innerHTML=jogs.length?jogs.map((p,i)=>`<div class="rank-item-full animate-in" style="${i===0?'border:1px solid rgba(255,204,0,.4);background:#0e0c00':''};animation-delay:${i*.04}s">
-      <div class="rank-pos">${medals[i]||(i+1)}</div>
-      ${p.foto?`<img src="${p.foto}" style="width:36px;height:36px;border-radius:50%;border:1px solid #333;flex-shrink:0">`:`<div style="width:36px;height:36px;background:#222;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">👤</div>`}
-      <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nome||'Jogador'}</div>
-      <div style="font-size:10px;color:var(--muted);margin-top:2px">V:${p.v||0} G:${p.g||0} A:${p.a||0}</div></div>
-      <div class="rank-pts-big">${p.pts||0}<span> pts</span></div>
-    </div>`).join('')
-    :'<div style="color:var(--muted);text-align:center;padding:30px">Nenhum jogador ainda</div>';
-  }catch(e){
-    $('rankingGlobalLista').innerHTML=`<div style="color:var(--red);text-align:center;padding:20px">❌ Erro: ${e.message}</div>`;
-  }
-};
-
-/* ════════════════════════════════════════
-   CHAT (Realtime Database)
-════════════════════════════════════════ */
-function iniciarChat(codigo){
-  if(chatUnsub){chatUnsub();chatUnsub=null;}
-  if(!codigo) return;
-  const msgsRef=dbRef(rtdb,`chats/${codigo}/msgs`);
-  const unsub=onValue(msgsRef,snap=>{
-    const el=$('chatMsgs'), msgs=[];
-    snap.forEach(ch=>msgs.push(ch.val()));
-    el.innerHTML=msgs.map(m=>{
-      const own=m.uid===currentUser?.uid;
-      return `<div class="chat-msg ${own?'own':''}">
-        <div style="font-size:10px;color:${own?'var(--blue)':'var(--neon)'};font-weight:700;margin-bottom:3px">${m.nome}</div>
-        <div style="word-break:break-word">${m.texto}</div></div>`;
-    }).join('');
-    el.scrollTop=el.scrollHeight;
-  });
-  chatUnsub=()=>unsub();
-}
-window.toggleChat=()=>{const c=$('telaChat');c.style.display=c.style.display==='flex'?'none':'flex';};
-window.enviarMsg=async()=>{
-  const inp=$('chatInput'),txt=inp.value.trim();
-  if(!txt) return;
-  if(!roomCodigo){toast('⚠️ Entre em uma sala primeiro!');return;}
-  inp.value='';
-  await dbPush(dbRef(rtdb,`chats/${roomCodigo}/msgs`),{
-    uid:currentUser.uid,nome:currentUser.displayName?.split(' ')[0]||'Jogador',texto:txt,ts:Date.now()
-  });
-};
-
+    function abrAssist(n, t) { 
+        autor = n; 
+        const opts = document.getElementById('opts'); 
+        opts.innerHTML = atletas.filter(a => a.t === t && a.active && a.n !== n).map(c => `<button onclick="gol('${c.n}')" style="width:100%; margin:5px 0; padding:10px;">${c.n}</button>`).join(''); 
+        document.getElementById('modal-assist').style.display = 'flex'; 
+    }
 </script>
 </body>
 </html>
