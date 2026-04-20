@@ -3,281 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arena Fut PRO V2</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-
+    <title>Arena Fut PRO - Sistema Completo</title>
     <style>
-        :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; }
+        :root { --blue: #007bff; --red: #dc3545; --neon: #00ff88; --gold: #ffcc00; --bg: #0c0e11; --card: #15181d; --border: #333; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; }
+        #app { width: 100%; max-width: 420px; }
         
-        body { background: var(--dark); color: #fff; font-family: 'Segoe UI', sans-serif; padding: 10px; margin: 0; padding-bottom: 160px; overflow-x: hidden; }
-        
-        /* GERAL */
-        .card { background: var(--card); padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; box-sizing: border-box; }
-        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        .screen { display: none; flex-direction: column; gap: 12px; }
+        .screen.active { display: flex; }
+
+        /* ESTILOS COMUNS */
+        .card { background: var(--card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); }
+        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; font-size: 1rem; }
+        .btn-finalizar { background: var(--gold); color: #000; padding: 15px; border-radius: 15px; border: none; font-weight: bold; margin-top: 10px; cursor: pointer; width: 100%; }
         
-        /* FORMULÁRIOS TELA 1 */
-        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
-        input, textarea, select { 
-            width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); 
-            background: #111; color: #fff; box-sizing: border-box; font-size: 14px; outline: none; -webkit-appearance: none; appearance: none;
-        }
-        textarea { height: auto; padding: 12px; resize: none; }
-        .row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .col { flex: 1; }
+        /* HEADER NAV */
+        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .btn-nav { background: #222; border: 1px solid #444; color: #fff; padding: 5px 15px; border-radius: 10px; cursor: pointer; font-size: 12px; }
 
-        /* TELA 2: LISTA (CONGELADA) */
-        .header-lista { border-top: 2px solid #634d1a; padding-top: 15px; margin-top: 20px; }
-        .titulo-secao { color: #fff; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
-        
-        .status-container { display: flex; gap: 10px; margin-bottom: 20px; width: 100%; }
-        .status-box { flex: 1; background: #111; padding: 10px; border-radius: 12px; border: 1px solid #222; }
-        .status-label { font-size: 11px; font-weight: 900; display: flex; justify-content: space-between; margin-bottom: 5px; text-transform: uppercase; }
-        .bar-bg { background: #222; height: 10px; border-radius: 20px; overflow: hidden; }
-        .bar-fill { height: 100%; border-radius: 20px; transition: 0.3s; }
+        /* TIMER & SCORE */
+        .clock { font-size: clamp(50px, 15vw, 65px); color: var(--gold); font-weight: bold; text-align: center; margin: 5px 0; }
+        .scoreboard { display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; }
+        .score-box { width: 75px; height: 75px; background: #000; border: 2px solid; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 45px; font-weight: bold; }
 
-        .search-box { background: #111; border: 1px solid #222; border-radius: 20px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; }
-        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; margin-left: 8px; height: auto; padding: 0; }
+        /* FIELD */
+        .field { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .team-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+        .t-header { padding: 8px; font-size: 10px; font-weight: 900; text-align: center; text-transform: uppercase; }
+        .row-player { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid #1c1f24; font-size: 11px; }
+        .btn-gol { background: #111; border: 1px solid var(--neon); color: var(--neon); font-size: 9px; padding: 4px 7px; border-radius: 5px; font-weight: bold; }
 
-        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
-        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; -webkit-appearance: none; cursor: pointer; position: relative; }
-        .atleta-check:checked { background: var(--neon); }
-        .atleta-check:checked::after { content: '✓'; position: absolute; color: #000; font-weight: 900; font-size: 14px; left: 3px; top: -2px; }
-        
-        .atleta-avatar { width: 45px; height: 45px; background: #444; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
-        .atleta-avatar img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
+        /* RANKING */
+        .ranking-table { width: 100%; border-collapse: collapse; background: var(--card); font-size: 11px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin-top: 10px; }
+        .ranking-table th { background: #222; padding: 8px; color: #666; text-align: left; }
+        .ranking-table td { padding: 8px; border-bottom: 1px solid #222; }
 
-        .atleta-dados { flex: 1; min-width: 0; }
-        .atleta-nome { display: block; font-weight: bold; font-size: 14px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .tag { font-size: 9px; font-weight: 900; padding: 3px 10px; border-radius: 10px; text-transform: uppercase; display: inline-block; margin-bottom: 4px; cursor: pointer; user-select: none; }
-        .tag-mensalista { background: rgba(0, 255, 136, 0.15); color: var(--neon); border: 1px solid rgba(0, 255, 136, 0.3); }
-        .tag-convidado { background: rgba(0, 123, 255, 0.15); color: #007bff; border: 1px solid rgba(0, 123, 255, 0.3); }
-        
-        .estrelas { color: var(--gold); font-size: 16px; margin-top: 4px; letter-spacing: 2px; cursor: pointer; user-select: none; }
-
-        .pos-badge { width: 35px; height: 35px; background: #222; border: 1px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
-        .pos-badge span:first-child { font-size: 18px; }
-        .pos-badge span:last-child { font-size: 10px; font-weight: 900; color: var(--gold); margin-top: -3px; }
-
-        /* RODAPÉ TELA 2 */
-        .fixed-footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.95); padding: 15px; border-top: 1px solid #222; z-index: 100; padding-bottom: 25px; }
-        .btn-row { display: flex; gap: 10px; margin-bottom: 12px; }
-        .btn-outline { flex: 1; background: transparent; border: 1px solid #333; color: #fff; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; text-align: center; }
-        .info-footer { text-align: center; font-size: 11px; color: #666; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
-
-        .hidden { display: none; }
+        /* MODAIS */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:999; }
+        .m-content { background: var(--card); width:90%; padding: 20px; border-radius: 20px; border: 1px solid var(--gold); }
     </style>
 </head>
 <body>
 
-    <div id="tela1">
-        <div class="card" style="border-top: 5px solid var(--neon);">
-            <div id="saudacao-container" style="text-align: left; margin-bottom: 25px; background: rgba(0,255,136,0.05); padding: 15px; border-radius: 12px; border: 1px solid #222;">
-                <h3 id="txt-saudacao" style="color: var(--neon); margin: 0; font-size: 1.1rem; line-height: 1.4;">Carregando...</h3>
-                <p style="color: #666; font-size: 0.75rem; margin-top: 8px; font-weight: bold; text-transform: uppercase;">🎮 Painel do Gestor</p>
-            </div>
-
-            <div class="row"><div class="col"><label>Nome da Pelada</label><input id="nomeEvento" placeholder="Ex: Pelada dos Amigos"></div></div>
-            <div class="row"><div class="col"><label>Local da Arena</label><input id="local" placeholder="Ex: Arena Soccer X"></div></div>
-
-            <div class="row">
-                <div class="col" style="flex: 1.4;"><label>Data</label><input id="dataEv" type="date"></div>
-                <div class="col"><label>Horário</label><input id="horarioEv" type="time"></div>
-            </div>
-
-            <div class="row">
-                <div class="col"><label>Limite Atletas</label><input id="limite" type="number" placeholder="Ex: 20"></div>
-                <div class="col"><label>Atletas/Time</label><input id="jogadoresPorTime" type="number" placeholder="Ex: 5"></div>
-            </div>
-
-            <div class="row">
-                <div class="col"><label>Tempo (Min)</label><input id="tempoRegra" type="number" placeholder="Ex: 10"></div>
-                <div class="col">
-                    <label>Tipo de Campo</label>
-                    <select id="tipoCampo">
-                        <option value="" disabled selected>Selecione...</option>
-                        <option>Society</option>
-                        <option>Futsal</option>
-                        <option>Campo</option>
-                    </select>
-                </div>
-            </div>
-
-            <button class="btn-neon" onclick="irTela2()">CONVOCAR ATLETAS →</button>
-        </div>
-    </div>
-
-    <div id="tela2" class="hidden">
+<div id="app">
+    <div id="screen-1" class="screen active">
         <div class="card">
-            <textarea id="listaTexto" rows="3" placeholder="Cole a lista de atletas aqui..."></textarea>
-            <button class="btn-neon" style="margin-top: 10px;" onclick="processarLista()">PROCESSAR LISTA →</button>
-        </div>
-
-        <div id="listaArea" style="display: none;">
-            <div class="header-lista">
-                <div class="titulo-secao">✓ LISTA DE CONVOCAÇÃO</div>
-                
-                <div class="status-container">
-                    <div class="status-box">
-                        <div class="status-label"><span style="color:var(--neon)">CONFIRMADOS</span> <span id="percentConf">0%</span></div>
-                        <div class="bar-bg"><div id="barConf" class="bar-fill" style="width: 0%; background: var(--neon);"></div></div>
-                    </div>
-                    <div class="status-box">
-                        <div class="status-label"><span style="color:var(--gold)">ESPERA</span> <span id="countEsp">(0)</span></div>
-                        <div class="bar-bg"><div id="barEsp" class="bar-fill" style="width: 0%; background: var(--gold);"></div></div>
-                    </div>
-                </div>
-
-                <div class="search-box">
-                    <span>🔍</span>
-                    <input type="text" id="inputBusca" placeholder="Buscar atleta..." onkeyup="filtrarAtletas()">
-                </div>
-
-                <div id="renderAtletas"></div>
-            </div>
-        </div>
-
-        <div class="fixed-footer">
-            <div class="btn-row">
-                <div class="btn-outline" onclick="marcarTodos(true)">SELECIONAR TODOS</div>
-                <div class="btn-outline" onclick="marcarTodos(false)">DESMARCAR TODOS</div>
-            </div>
-            <div class="info-footer">TOTAL: <span id="totalFooter">0</span> | GOLEIROS: <span id="goleirosFooter">0</span></div>
-            <button class="btn-neon" onclick="alert('Iniciando Partida!')">INICIAR PARTIDA</button>
+            <h3 style="color:var(--neon)">Configurar Pelada</h3>
+            <input type="text" id="nomeEvento" placeholder="Nome da Pelada" style="width:100%; padding:10px; margin-bottom:10px; background:#111; color:#fff; border-radius:10px;">
+            <button class="btn-neon" onclick="irParaTela(2)">PRÓXIMO</button>
         </div>
     </div>
 
-    <script>
-        const frasesGestor = [
-            "Fala, João! Já cobrou o PIX de quem disse que 'ia ver e avisava'?",
-            "Bem-vindo, João. Preparado para ouvir que o gol foi de banheira o jogo todo?",
-            "E aí, João! Já sabe quem vai ser o primeiro a pedir pra sair com 2 minutos?",
-            "João, hoje é dia de expulsar quem trouxer chuteira de cravo pro Society!",
-            "Fala, Capitão! Se o time do colete perder de novo, a culpa é sua, hein?"
-        ];
+    <div id="screen-2" class="screen">
+        <div class="header-nav">
+            <button class="btn-nav" onclick="irParaTela(1)">← VOLTAR</button>
+            <span style="font-weight:bold">CONVOCADOS</span>
+        </div>
+        <textarea id="listaTexto" rows="5" placeholder="Cole os nomes dos atletas aqui..." style="width:100%; padding:10px; background:#111; color:#fff; border-radius:10px;"></textarea>
+        <button class="btn-neon" onclick="iniciarPartida()">INICIAR PARTIDA</button>
+    </div>
 
-        window.onload = function() {
-            document.getElementById('txt-saudacao').innerText = frasesGestor[Math.floor(Math.random() * frasesGestor.length)];
-        };
+    <div id="screen-3" class="screen">
+        <div class="header-nav">
+            <button class="btn-nav" onclick="irParaTela(2)">← VOLTAR</button>
+            <span style="font-weight:bold; color:var(--gold)">JOGO ATUAL</span>
+            <div style="width: 50px;"></div>
+        </div>
 
-        let atletasApp = [];
+        <div class="clock" id="timer">10:00</div>
+        
+        <div class="scoreboard">
+            <div class="score-box" style="border-color:var(--blue); color:var(--blue)" id="s-azul">0</div>
+            <div class="score-box" style="border-color:var(--red); color:var(--red)" id="s-red">0</div>
+        </div>
 
-        function irTela2() {
-            document.getElementById('tela1').classList.add('hidden');
-            document.getElementById('tela2').classList.remove('hidden');
-        }
+        <div class="field" id="field"></div>
+        
+        <button class="btn-finalizar" onclick="irParaTela(4)">FINALIZAR PELADA</button>
 
-        function processarLista() {
-            const texto = document.getElementById('listaTexto').value;
-            const linhas = texto.split('\n').filter(l => l.trim() !== '');
-            const limiteMax = parseInt(document.getElementById('limite').value) || 999;
-            
-            atletasApp = linhas.map((linha, index) => {
-                let cat = linha.toUpperCase().includes('MENSALISTA') ? 'MENSALISTA' : 'CONVIDADO';
-                // AJUSTE: Se o index for maior ou igual ao limite, começa desmarcado (espera)
-                let confirmado = (index < limiteMax);
-                
-                return {
-                    id: index,
-                    nome: linha.replace(/^\d+[\s.-]*/, '').trim(),
-                    cat: cat,
-                    stars: 3,
-                    pos: 'A',
-                    img: '👟',
-                    confirmado: confirmado
-                };
-            });
+        <table class="ranking-table">
+            <thead><tr><th>ATLETA</th><th>V</th><th>G</th><th>A</th></tr></thead>
+            <tbody id="r-body"></tbody>
+        </table>
+    </div>
 
-            document.getElementById('listaArea').style.display = 'block';
-            renderizarLista();
-        }
+    <div id="screen-4" class="screen">
+        <h2 style="text-align:center; color:var(--gold)">RESUMO FINAL</h2>
+        <table class="ranking-table">
+            <thead><tr><th>ATLETA</th><th>V</th><th>G</th><th>A</th></tr></thead>
+            <tbody id="r-body-final"></tbody>
+        </table>
+        <button class="btn-finalizar" onclick="irParaTela(3)">VOLTAR AO JOGO</button>
+    </div>
+</div>
 
-        function renderizarLista() {
-            const container = document.getElementById('renderAtletas');
-            container.innerHTML = atletasApp.map(atleta => `
-                <div class="atleta-item" data-nome="${atleta.nome.toLowerCase()}">
-                    <input type="checkbox" class="atleta-check" ${atleta.confirmado ? 'checked' : ''} onchange="toggleCheck(${atleta.id})">
-                    <div class="atleta-avatar">
-                        <img src="https://www.w3schools.com/howto/img_avatar.png">
-                    </div>
-                    <div class="atleta-dados">
-                        <span class="atleta-nome">${atleta.nome}</span>
-                        <span class="tag ${atleta.cat === 'MENSALISTA' ? 'tag-mensalista' : 'tag-convidado'}" 
-                              onclick="mudarCategoria(${atleta.id})">
-                            ${atleta.cat}
-                        </span>
-                        <div class="estrelas" onclick="mudarNivel(${atleta.id})">
-                            ${"★".repeat(atleta.stars)}${"☆".repeat(5 - atleta.stars)}
-                        </div>
-                    </div>
-                    <div class="pos-badge" onclick="alternarPosicao(${atleta.id})">
-                        <span>${atleta.img}</span>
-                        <span>${atleta.pos}</span>
-                    </div>
-                </div>
-            `).join('');
-            atualizarResumos();
-        }
+<div id="modal-assist" class="modal">
+    <div class="m-content">
+        <h4 style="text-align:center">Quem deu o passe? 👟</h4>
+        <div id="opts"></div>
+        <button onclick="gol(null)" style="width:100%; padding:15px; margin-top:10px;">GOL INDIVIDUAL</button>
+    </div>
+</div>
 
-        function mudarCategoria(id) {
-            atletasApp[id].cat = atletasApp[id].cat === 'MENSALISTA' ? 'CONVIDADO' : 'MENSALISTA';
-            renderizarLista();
-        }
+<script>
+    let atletas = [];
+    let sAzul = 0, sRed = 0, autor = null;
 
-        function mudarNivel(id) {
-            atletasApp[id].stars = (atletasApp[id].stars % 5) + 1;
-            renderizarLista();
-        }
+    function irParaTela(n) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + n).classList.add('active');
+        render();
+    }
 
-        function alternarPosicao(id) {
-            if (atletasApp[id].pos === 'A') {
-                atletasApp[id].pos = 'G';
-                atletasApp[id].img = '🧤';
-            } else {
-                atletasApp[id].pos = 'A';
-                atletasApp[id].img = '👟';
-            }
-            renderizarLista();
-        }
+    function iniciarPartida() {
+        const texto = document.getElementById('listaTexto').value;
+        const nomes = texto.split('\n').filter(l => l.trim() !== '');
+        
+        // Populando atletas iniciais
+        atletas = nomes.map((n, i) => ({ 
+            n: n.trim(), v: 0, g: 0, a: 0, 
+            t: i < (nomes.length/2) ? 'azul' : 'red', 
+            active: true 
+        }));
+        
+        irParaTela(3);
+    }
 
-        function toggleCheck(id) {
-            atletasApp[id].confirmado = !atletasApp[id].confirmado;
-            atualizarResumos();
-        }
+    function processarFim(resultado) {
+        if (resultado === 'azul') atletas.filter(a => a.t === 'azul' && a.active).forEach(a => a.v++);
+        else if (resultado === 'red') atletas.filter(a => a.t === 'red' && a.active).forEach(a => a.v++);
+        
+        // Reset simples de placar para nova partida
+        sAzul=0; sRed=0;
+        document.getElementById('s-azul').innerText=0; document.getElementById('s-red').innerText=0;
+        render();
+    }
 
-        function marcarTodos(status) {
-            atletasApp.forEach(a => a.confirmado = status);
-            renderizarLista();
-        }
+    function render() {
+        // Render Campo
+        const field = document.getElementById('field');
+        field.innerHTML = `
+            <div class="team-card"><div class="t-header" style="background:var(--blue)">AZUL</div>${atletas.filter(a => a.t === 'azul' && a.active).map(a => `<div class="row-player"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'azul')">GOL</button></div>`).join('')}</div>
+            <div class="team-card"><div class="t-header" style="background:var(--red)">RED</div>${atletas.filter(a => a.t === 'red' && a.active).map(a => `<div class="row-player"><span>${a.n}</span><button class="btn-gol" onclick="abrAssist('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
+        `;
+        
+        // Render Ranking (V > G > A)
+        const sorted = [...atletas].sort((a,b) => (b.v - a.v) || (b.g - a.g) || (b.a - a.a));
+        const htmlRanking = sorted.map(a => `<tr><td>${a.n}</td><td>${a.v}</td><td>${a.g}</td><td>${a.a}</td></tr>`).join('');
+        document.getElementById('r-body').innerHTML = htmlRanking;
+        document.getElementById('r-body-final').innerHTML = htmlRanking;
+    }
 
-        function filtrarAtletas() {
-            const busca = document.getElementById('inputBusca').value.toLowerCase();
-            document.querySelectorAll('.atleta-item').forEach(card => {
-                const nome = card.getAttribute('data-nome');
-                card.style.display = nome.includes(busca) ? 'flex' : 'none';
-            });
-        }
+    function abrAssist(n, t) { 
+        autor = n; 
+        const opts = document.getElementById('opts'); 
+        opts.innerHTML = atletas.filter(a => a.t === t && a.active && a.n !== n).map(c => `<button onclick="gol('${c.n}')" style="width:100%; margin:5px 0; padding:10px;">${c.n}</button>`).join(''); 
+        document.getElementById('modal-assist').style.display = 'flex'; 
+    }
 
-        function atualizarResumos() {
-            const confirmados = atletasApp.filter(a => a.confirmado);
-            const espera = atletasApp.filter(a => !a.confirmado);
-            const total = atletasApp.length;
-            const goleiros = confirmados.filter(a => a.pos === 'G').length;
-            
-            const percConf = total > 0 ? Math.round((confirmados.length / total) * 100) : 0;
-            const percEsp = total > 0 ? Math.round((espera.length / total) * 100) : 0;
-            
-            document.getElementById('percentConf').innerText = percConf + '%';
-            document.getElementById('barConf').style.width = percConf + '%';
-            
-            document.getElementById('countEsp').innerText = `(${espera.length})`;
-            document.getElementById('barEsp').style.width = percEsp + '%';
-            
-            document.getElementById('totalFooter').innerText = confirmados.length;
-            document.getElementById('goleirosFooter').innerText = goleiros;
-        }
-    </script>
+    function gol(assist) {
+        let aObj = atletas.find(x => x.n === autor);
+        aObj.g++; if(assist) atletas.find(x => x.n === assist).a++;
+        aObj.t === 'azul' ? sAzul++ : sRed++;
+        document.getElementById('s-azul').innerText = sAzul; document.getElementById('s-red').innerText = sRed;
+        document.getElementById('modal-assist').style.display = 'none';
+        render();
+    }
+</script>
 </body>
 </html>
