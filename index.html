@@ -3,44 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Arena Fut PRO - Sistema Integrado</title>
+    <title>Arena Fut PRO</title>
     <style>
-        :root { --neon: #00ff88; --dark: #000; --card: #1a1a1a; --border: #333; --blue: #007bff; --red: #dc3545; --gold: #ffcc00; --bg: #0c0e11; }
+        :root { --blue: #007bff; --red: #dc3545; --neon: #00ff88; --gold: #ffcc00; --bg: #0c0e11; --card: #15181d; --border: #333; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; }
-        #app { width: 100%; max-width: 420px; background: linear-gradient(180deg, #1a1d21 0%, #0c0e11 100%); border-radius: 35px; padding: 15px; border: 1px solid #222; position: relative; }
+        body { background: var(--bg); color: #fff; font-family: -apple-system, sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
         
+        #app { width: 100%; max-width: 420px; background: linear-gradient(180deg, #1a1d21 0%, #0c0e11 100%); border-radius: 35px; padding: 15px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
         .screen { display: none; flex-direction: column; gap: 12px; }
         .screen.active { display: flex; }
         .hidden { display: none; }
 
-        /* Estilos Comuns */
+        /* COMPONENTES GERAIS */
         .card { background: var(--card); padding: 15px; border-radius: 16px; border: 1px solid var(--border); }
-        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        button { border-radius: 12px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .btn-neon { background: var(--neon); color: #000; padding: 15px; width: 100%; font-size: 1rem; }
-        
-        /* TELA 1 & 2 UI */
-        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; }
-        input, textarea, select { width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; font-size: 14px; outline: none; }
-        textarea { height: auto; padding: 12px; resize: none; }
+        .btn-finalizar { background: var(--gold); color: #000; padding: 15px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; }
+
+        /* FORMULÁRIOS TELA 1 */
+        label { font-size: 0.65rem; color: var(--neon); font-weight: 900; text-transform: uppercase; display: block; margin-bottom: 6px; margin-left: 5px; }
+        input, select, textarea { width: 100%; height: 48px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--border); background: #111; color: #fff; font-size: 14px; outline: none; }
         .row { display: flex; gap: 10px; margin-bottom: 15px; }
         .col { flex: 1; }
-        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid #222; }
-        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; cursor: pointer; }
-        .atleta-check:checked { background: var(--neon); }
 
-        /* TELA 3 (JOGO) UI */
-        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .btn-nav { background: #222; border: 1px solid #444; color: #fff; padding: 5px 15px; border-radius: 10px; cursor: pointer; font-size: 12px; }
-        .clock { font-size: clamp(40px, 12vw, 55px); color: var(--gold); font-weight: bold; text-align: center; margin: 5px 0; }
-        .scoreboard { display: flex; justify-content: center; gap: 20px; margin-bottom: 10px; }
-        .score-box { width: 70px; height: 70px; background: #000; border: 2px solid; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; font-weight: bold; }
+        /* ESTILOS TELA 2 (LISTA) */
+        .atleta-item { display: flex; align-items: center; background: #1a1a1a; padding: 12px; border-radius: 15px; margin-bottom: 10px; gap: 12px; border: 1px solid var(--border); }
+        .atleta-check { width: 22px; height: 22px; border: 2px solid var(--neon); border-radius: 6px; appearance: none; cursor: pointer; position: relative; }
+        .atleta-check:checked { background: var(--neon); }
+        .atleta-check:checked::after { content: '✓'; position: absolute; color: #000; font-weight: 900; font-size: 14px; left: 3px; top: -2px; }
+        .atleta-dados { flex: 1; font-size: 14px; font-weight: bold; }
+        .tag { font-size: 9px; padding: 3px 10px; border-radius: 10px; display: inline-block; border: 1px solid rgba(0, 255, 136, 0.3); color: var(--neon); }
+
+        /* ESTILOS TELA 3 (JOGO) */
+        .header-nav { display: flex; justify-content: space-between; align-items: center; }
+        .btn-nav { background: #222; border: 1px solid #444; color: #fff; padding: 5px 15px; border-radius: 10px; font-size: 12px; }
+        .clock { font-size: 50px; color: var(--gold); font-weight: bold; text-align: center; }
+        .scoreboard { display: flex; justify-content: center; gap: 20px; }
+        .score-box { width: 75px; height: 75px; background: #000; border: 2px solid; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 45px; font-weight: bold; }
         .field { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .team-card { background: var(--card); border-radius: 12px; border: 1px solid #222; padding: 8px; }
-        .t-header { font-size: 10px; font-weight: 900; text-align: center; text-transform: uppercase; margin-bottom: 5px; }
-        .btn-gol { background: #111; border: 1px solid var(--neon); color: var(--neon); font-size: 9px; padding: 4px 7px; border-radius: 5px; font-weight: bold; }
-        .ranking-table { width: 100%; border-collapse: collapse; background: var(--card); font-size: 11px; border-radius: 12px; overflow: hidden; border: 1px solid #222; margin-top: 10px; }
-        .ranking-table th, .ranking-table td { padding: 8px; border-bottom: 1px solid #222; text-align: left; }
+        .team-card { background: var(--card); border-radius: 12px; border: 1px solid #222; }
+        .t-header { padding: 8px; font-size: 10px; font-weight: 900; text-align: center; text-transform: uppercase; }
+        .btn-gol { background: #111; border: 1px solid var(--neon); color: var(--neon); font-size: 9px; padding: 4px 7px; border-radius: 5px; }
+        .ranking-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+        .ranking-table td { padding: 8px; border-bottom: 1px solid #222; }
         
         /* MODAIS */
         .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:999; }
@@ -51,8 +56,8 @@
 
 <div id="app">
     <div id="screen-1" class="screen active">
-        <div class="card" style="border-top: 5px solid var(--neon);">
-            <h3>Configurar Pelada</h3>
+        <div class="card">
+            <h3 style="color: var(--neon);">Configuração da Pelada</h3>
             <div class="row"><div class="col"><label>Nome da Pelada</label><input id="nomeEvento"></div></div>
             <div class="row"><div class="col"><label>Limite Atletas</label><input id="limite" type="number" value="20"></div></div>
             <button class="btn-neon" onclick="irParaTela(2)">AVANÇAR →</button>
@@ -61,23 +66,17 @@
 
     <div id="screen-2" class="screen">
         <div class="card">
-            <label>Cole a Lista de Atletas</label>
-            <textarea id="listaTexto" rows="4"></textarea>
+            <textarea id="listaTexto" rows="5" placeholder="Cole a lista de nomes aqui..."></textarea>
             <button class="btn-neon" style="margin-top: 10px;" onclick="processarLista()">PROCESSAR LISTA</button>
         </div>
-        <div id="listaArea" class="hidden">
-            <div id="renderAtletas" style="margin-bottom: 80px;"></div>
-        </div>
-        <div style="position:fixed; bottom:20px; width:100%; max-width:400px; padding:0 15px;">
-            <button class="btn-neon" onclick="iniciarPartida()">INICIAR PARTIDA</button>
-        </div>
+        <div id="renderAtletas"></div>
+        <button class="btn-finalizar" onclick="iniciarPartida()">INICIAR PARTIDA</button>
     </div>
 
     <div id="screen-3" class="screen">
         <div class="header-nav">
             <button class="btn-nav" onclick="irParaTela(2)">← VOLTAR</button>
             <span style="font-weight:bold; color:var(--gold)">JOGO ATUAL</span>
-            <div style="width: 50px;"></div>
         </div>
         <div class="clock" id="timer">10:00</div>
         <div class="scoreboard">
@@ -85,88 +84,108 @@
             <div class="score-box" style="border-color:var(--red); color:var(--red)" id="s-red">0</div>
         </div>
         <div class="field" id="field"></div>
-        <button class="btn-neon" style="margin-top:10px; background:var(--gold); color:#000" onclick="irParaTela(4)">FINALIZAR PELADA</button>
-        <table class="ranking-table">
-            <thead><tr><th>ATLETA</th><th>V</th><th>G</th><th>A</th></tr></thead>
-            <tbody id="r-body"></tbody>
-        </table>
+        <button class="btn-finalizar" onclick="irParaTela(4)">FINALIZAR PELADA</button>
+        <table class="ranking-table"><tbody id="r-body"></tbody></table>
     </div>
 
     <div id="screen-4" class="screen">
         <h2 style="text-align:center; color:var(--gold)">RESUMO FINAL</h2>
-        <table class="ranking-table"><thead><tr><th>ATLETA</th><th>V</th><th>G</th><th>A</th></tr></thead><tbody id="r-body-final"></tbody></table>
-        <button class="btn-neon" onclick="irParaTela(3)">VOLTAR</button>
+        <table class="ranking-table"><tbody id="r-body-final"></tbody></table>
+        <button class="btn-finalizar" onclick="irParaTela(3)">VOLTAR AO JOGO</button>
     </div>
 </div>
 
 <script>
-    // --- ESTADO GLOBAL ---
-    let atletasDraft = []; // Dados da Tela 2
-    let atletas = [];      // Dados do Jogo (Tela 3)
+    // ESTADO GLOBAL
+    let atletas = []; 
     let fila = [];
-    let sAzul = 0, sRed = 0, segs = 600, tId = null;
+    let sAzul = 0, sRed = 0, segs = 600, tId = null, autor = null;
 
-    // --- NAVEGAÇÃO ---
     function irParaTela(n) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('screen-' + n).classList.add('active');
-        if(n === 3) renderGame();
     }
 
-    // --- TELA 2: PROCESSAMENTO ---
+    // PROCESSAMENTO DE LISTA (TELA 2)
     function processarLista() {
         const texto = document.getElementById('listaTexto').value;
         const linhas = texto.split('\n').filter(l => l.trim() !== '');
-        atletasDraft = linhas.map((nome, i) => ({ id: i, nome: nome.trim(), confirmado: true }));
-        document.getElementById('listaArea').classList.remove('hidden');
-        renderDraft();
+        const limiteMax = parseInt(document.getElementById('limite').value) || 999;
+        
+        atletas = linhas.map((nome, index) => ({
+            id: index,
+            n: nome.trim(),
+            v: 0, g: 0, a: 0,
+            t: null,
+            active: (index < limiteMax),
+            confirmado: (index < limiteMax)
+        }));
+        renderAtletasTela2();
     }
 
-    function renderDraft() {
-        document.getElementById('renderAtletas').innerHTML = atletasDraft.map(a => `
+    function renderAtletasTela2() {
+        const container = document.getElementById('renderAtletas');
+        container.innerHTML = atletas.map(a => `
             <div class="atleta-item">
-                <input type="checkbox" class="atleta-check" ${a.confirmado ? 'checked' : ''} onchange="atletasDraft[${a.id}].confirmado = this.checked">
-                <span>${a.nome}</span>
+                <input type="checkbox" class="atleta-check" ${a.confirmado ? 'checked' : ''} onchange="toggleAtleta(${a.id})">
+                <div class="atleta-dados">${a.n} <br><span class="tag">${a.confirmado ? 'CONFIRMADO' : 'ESPERA'}</span></div>
             </div>
         `).join('');
     }
 
-    // --- CONVERSÃO PARA JOGO ---
-    function iniciarPartida() {
-        const confirmados = atletasDraft.filter(a => a.confirmado);
-        if(confirmados.length < 2) { alert("Selecione pelo menos 2 atletas!"); return; }
-        
-        // Formata para o jogo
-        atletas = confirmados.map((a, i) => ({
-            n: a.nome, v: 0, g: 0, a: 0, 
-            t: (i < 5 ? 'azul' : (i < 10 ? 'red' : null)), 
-            active: (i < 10)
-        }));
-        
-        fila = confirmados.slice(10).map(a => a.nome);
-        irParaTela(3);
+    function toggleAtleta(id) {
+        atletas[id].confirmado = !atletas[id].confirmado;
+        atletas[id].active = atletas[id].confirmado;
+        renderAtletasTela2();
     }
 
-    // --- TELA 3: LÓGICA DO JOGO ---
+    // INICIAR PARTIDA
+    function iniciarPartida() {
+        // Separa confirmados em times (se mais de 10) e o resto na fila
+        const confirmados = atletas.filter(a => a.confirmado);
+        
+        // Setup inicial dos times
+        confirmados.forEach((atleta, index) => {
+            if(index < 5) atleta.t = 'azul';
+            else if(index < 10) atleta.t = 'red';
+            else {
+                atleta.active = false;
+                fila.push(atleta.n);
+            }
+        });
+        
+        irParaTela(3);
+        renderGame();
+    }
+
+    // LÓGICA DO JOGO (TELA 3)
     function renderGame() {
         const field = document.getElementById('field');
         field.innerHTML = `
-            <div class="team-card"><div class="t-header" style="background:var(--blue)">AZUL</div>${atletas.filter(a => a.t === 'azul' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="marcarGol('${a.n}', 'azul')">GOL</button></div>`).join('')}</div>
-            <div class="team-card"><div class="t-header" style="background:var(--red)">RED</div>${atletas.filter(a => a.t === 'red' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="marcarGol('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
+            <div class="team-card"><div class="t-header" style="background:var(--blue)">AZUL</div>
+            ${atletas.filter(a => a.t === 'azul' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="marcarGol('${a.n}', 'azul')">GOL</button></div>`).join('')}</div>
+            
+            <div class="team-card"><div class="t-header" style="background:var(--red)">RED</div>
+            ${atletas.filter(a => a.t === 'red' && a.active).map(a => `<div class="row"><span>${a.n}</span><button class="btn-gol" onclick="marcarGol('${a.n}', 'red')">GOL</button></div>`).join('')}</div>
         `;
-        const sorted = [...atletas].sort((a,b) => (b.v - a.v) || (b.g - a.g) || (b.a - a.a));
-        document.getElementById('r-body').innerHTML = sorted.map(a => `<tr><td>${a.n}</td><td>${a.v}</td><td>${a.g}</td><td>${a.a}</td></tr>`).join('');
-        document.getElementById('r-body-final').innerHTML = document.getElementById('r-body').innerHTML;
+        
+        const sorted = [...atletas].sort((a,b) => b.v - a.v || b.g - a.g || b.a - a.a);
+        const html = sorted.map(a => `<tr><td>${a.n}</td><td>${a.v}</td><td>${a.g}</td><td>${a.a}</td></tr>`).join('');
+        document.getElementById('r-body').innerHTML = html;
+        document.getElementById('r-body-final').innerHTML = html;
     }
 
     function marcarGol(nome, time) {
-        atletas.find(a => a.n === nome).g++;
+        const p = atletas.find(a => a.n === nome);
+        p.g++;
         if(time === 'azul') sAzul++; else sRed++;
         document.getElementById('s-azul').innerText = sAzul;
         document.getElementById('s-red').innerText = sRed;
         renderGame();
     }
 
-    // Funções auxiliares (Timer)
-    function startT() { if(!tId) tId = setInterval(() => { segs--; let m=Math.floor(segs/60), s=segs%60; document.getElementById('timer').innerText=`${m}:${s<10?'0':''}${s}`; }, 1000); }
-    function pauseT() { clearInterval(tId
+    // Funções auxiliares mantidas para compatibilidade
+    function resetPlacar() { sAzul=0; sRed=0; renderGame(); }
+</script>
+</body>
+</html>
