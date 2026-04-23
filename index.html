@@ -17,7 +17,6 @@
 
         body {
             background-color: var(--bg-color);
-            /* Textura Fibra de Carbono */
             background-image: linear-gradient(45deg, #121417 25%, transparent 25%, transparent 75%, #121417 75%, #121417), 
                               linear-gradient(45deg, #121417 25%, transparent 25%, transparent 75%, #121417 75%, #121417);
             background-size: 20px 20px;
@@ -69,14 +68,19 @@
         .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 11px; }
 
         /* 5. PRESENCE */
-        .presence-box { background: #111; padding: 15px; border-radius: 10px; text-align: center; font-size: 10px; color: var(--text-gray); }
+        .presence-box { background: #111; padding: 15px; border-radius: 10px; text-align: center; font-size: 10px; color: var(--text-gray); margin-bottom: 20px; }
 
-        /* 6. FOOTER */
-        .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        /* 6. SHARE SECTION (NOVO) */
+        .share-container { display: flex; gap: 10px; margin-bottom: 20px; }
         .btn-share { 
-            background: var(--neon-cyan); color: #000; border: none; padding: 5px 10px; 
-            border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 10px;
+            flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
+            color: #000; font-size: 12px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;
         }
+        .btn-wa { background: #25D366; }
+        .btn-ig { background: linear-gradient(45deg, #405DE6, #E1306C, #FD1D1D); color: #fff; }
+
+        /* 7. FOOTER */
+        .footer { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -124,9 +128,14 @@
         Arena Fut PRO | Caio Silva | Lucas R. | Playmaker | Pedro S. | ...
     </div>
 
+    <div class="share-container">
+        <button class="btn-share btn-wa" onclick="compartilhar()">WhatsApp</button>
+        <button class="btn-share btn-ig" onclick="compartilhar()">Instagram</button>
+    </div>
+
     <div class="footer">
         <div>Arena Fut PRO V2</div>
-        <button class="btn-share" onclick="compartilhar()">COMPARTILHAR</button>
+        <div>(INSTAGRAM...) [PDF]</div>
     </div>
 </div>
 
@@ -134,13 +143,12 @@
     function compartilhar() {
         if (navigator.share) {
             navigator.share({
-                title: 'Arena Fut PRO',
-                text: 'Confira o resultado do Arena Fut PRO!',
-                url: window.location.href
-            }).catch(console.error);
+                title: 'Arena Fut PRO - Resultado',
+                text: 'Confira os resultados da rodada do Arena Fut PRO!',
+                url: window.location.href,
+            }).catch((err) => console.error('Erro ao compartilhar:', err));
         } else {
-            // Fallback para WhatsApp caso o navegador não suporte o nativo
-            window.open('https://wa.me/?text=Confira%20o%20resultado%20do%20Arena%20Fut%20PRO:%20' + encodeURIComponent(window.location.href), '_blank');
+            alert("Seu navegador não suporta compartilhamento nativo. Copie o link da página!");
         }
     }
 </script>
