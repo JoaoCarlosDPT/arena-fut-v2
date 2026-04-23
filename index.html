@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela 4 - Arena Fut PRO</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-color: #0c0e11;
@@ -29,7 +30,7 @@
 
         .screen-container { width: 100%; max-width: 450px; }
 
-        /* 1. HEADER */
+        /* HEADER */
         .header { text-align: center; margin-bottom: 20px; position: relative; }
         .logo-title { font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
         .report-bar { 
@@ -40,7 +41,7 @@
         .stats-total { font-size: 10px; color: var(--text-gray); }
         .pdf-icon { position: absolute; right: 0; top: 5px; color: var(--neon-cyan); }
 
-        /* 2. FIELD VIEW */
+        /* FIELD VIEW */
         .field-view { 
             width: 100%; height: 200px; border: 2px solid var(--neon-cyan); 
             border-radius: 10px; background: #000; position: relative;
@@ -48,7 +49,7 @@
         }
         .field-text { color: var(--neon-cyan); font-weight: bold; font-size: 14px; }
 
-        /* 3. MVP SECTION */
+        /* MVP SECTION */
         .mvp-wrapper { 
             display: grid; grid-template-columns: 1fr 1.3fr 1fr; align-items: end; gap: 8px; margin-bottom: 30px; 
         }
@@ -62,30 +63,25 @@
         .stat-val { font-size: 14px; font-weight: 900; color: var(--gold); }
         .label-stat { font-size: 7px; color: var(--text-gray); text-transform: uppercase; }
 
-        /* 4. RESULTS TABLE */
+        /* RESULTS TABLE */
         .results-box { background: var(--card-bg); border-radius: 15px; padding: 15px; margin-bottom: 20px; }
         .results-title { text-align: center; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
         .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 11px; }
 
-        /* 5. PRESENCE */
-        .presence-box { background: #111; padding: 15px; border-radius: 10px; text-align: center; font-size: 10px; color: var(--text-gray); margin-bottom: 20px; }
+        /* PRESENCE */
+        .presence-box { background: #111; padding: 15px; border-radius: 10px; text-align: center; font-size: 10px; color: var(--text-gray); }
 
-        /* 6. SHARE SECTION (NOVO) */
-        .share-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        /* FOOTER & BOTÃO */
+        .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
         .btn-share { 
-            flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;
-            color: #000; font-size: 12px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--neon-cyan); color: #000; border: none; padding: 12px; border-radius: 10px; 
+            width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px;
         }
-        .btn-wa { background: #25D366; }
-        .btn-ig { background: linear-gradient(45deg, #405DE6, #E1306C, #FD1D1D); color: #fff; }
-
-        /* 7. FOOTER */
-        .footer { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
-<div class="screen-container">
+<div class="screen-container" id="capture">
     <div class="header">
         <div class="pdf-icon">PDF</div>
         <div class="logo-title">Arena Fut PRO</div>
@@ -128,27 +124,36 @@
         Arena Fut PRO | Caio Silva | Lucas R. | Playmaker | Pedro S. | ...
     </div>
 
-    <div class="share-container">
-        <button class="btn-share btn-wa" onclick="compartilhar()">WhatsApp</button>
-        <button class="btn-share btn-ig" onclick="compartilhar()">Instagram</button>
-    </div>
-
     <div class="footer">
         <div>Arena Fut PRO V2</div>
         <div>(INSTAGRAM...) [PDF]</div>
     </div>
+
+    <button class="btn-share" onclick="shareReport()">COMPARTILHAR RESULTADO</button>
 </div>
 
 <script>
-    function compartilhar() {
-        if (navigator.share) {
-            navigator.share({
-                title: 'Arena Fut PRO - Resultado',
-                text: 'Confira os resultados da rodada do Arena Fut PRO!',
-                url: window.location.href,
-            }).catch((err) => console.error('Erro ao compartilhar:', err));
-        } else {
-            alert("Seu navegador não suporta compartilhamento nativo. Copie o link da página!");
+    async function shareReport() {
+        const container = document.getElementById('capture');
+        try {
+            // Gera a imagem do container
+            const canvas = await html2canvas(container, { backgroundColor: '#0c0e11' });
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], 'relatorio-arena.png', { type: 'image/png' });
+                
+                // Abre o menu de compartilhamento do sistema (WhatsApp, Instagram, etc)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Relatório Arena Fut PRO',
+                        text: 'Confira o resultado da nossa rodada!'
+                    });
+                } else {
+                    alert('Seu navegador não suporta compartilhamento direto. Tente baixar a imagem.');
+                }
+            });
+        } catch (err) {
+            console.error('Erro ao compartilhar:', err);
         }
     }
 </script>
