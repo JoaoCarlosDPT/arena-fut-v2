@@ -28,10 +28,10 @@
             display: flex; justify-content: center;
         }
 
-        .screen-container { width: 100%; max-width: 450px; }
+        .screen-container { width: 100%; max-width: 450px; padding-bottom: 20px; }
 
         /* HEADER */
-        .header { text-align: center; margin-bottom: 20px; position: relative; }
+        .header { text-align: center; margin-bottom: 20px; }
         .logo-title { font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
         .report-bar { 
             background: linear-gradient(90deg, #004d4f, var(--neon-cyan));
@@ -39,7 +39,6 @@
             display: inline-block; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
         }
         .stats-total { font-size: 10px; color: var(--text-gray); }
-        .pdf-icon { position: absolute; right: 0; top: 5px; color: var(--neon-cyan); }
 
         /* FIELD VIEW */
         .field-view { 
@@ -72,7 +71,7 @@
         .presence-box { background: #111; padding: 15px; border-radius: 10px; text-align: center; font-size: 10px; color: var(--text-gray); }
 
         /* FOOTER & BOTÃO */
-        .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-gray); }
         .btn-share { 
             background: var(--neon-cyan); color: #000; border: none; padding: 12px; border-radius: 10px; 
             width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px;
@@ -83,7 +82,6 @@
 
 <div class="screen-container" id="capture">
     <div class="header">
-        <div class="pdf-icon">PDF</div>
         <div class="logo-title">Arena Fut PRO</div>
         <div class="report-bar">MATCH DAY #042 REPORT - 22 ABRIL 2026</div>
         <div class="stats-total">TOTAL GOLS: 42 | TOTAL JOGOS: 12</div>
@@ -126,7 +124,6 @@
 
     <div class="footer">
         <div>Arena Fut PRO V2</div>
-        <div>(INSTAGRAM...) [PDF]</div>
     </div>
 
     <button class="btn-share" onclick="shareReport()">COMPARTILHAR RESULTADO</button>
@@ -136,20 +133,23 @@
     async function shareReport() {
         const container = document.getElementById('capture');
         try {
-            // Gera a imagem do container
-            const canvas = await html2canvas(container, { backgroundColor: '#0c0e11' });
+            // Ajuste para evitar o corte lateral
+            const canvas = await html2canvas(container, { 
+                backgroundColor: '#0c0e11',
+                scale: 2,
+                width: container.scrollWidth + 10,
+                windowWidth: document.body.offsetWidth
+            });
+            
             canvas.toBlob(async (blob) => {
                 const file = new File([blob], 'relatorio-arena.png', { type: 'image/png' });
-                
-                // Abre o menu de compartilhamento do sistema (WhatsApp, Instagram, etc)
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Relatório Arena Fut PRO',
-                        text: 'Confira o resultado da nossa rodada!'
-                    });
+                    await navigator.share({ files: [file] });
                 } else {
-                    alert('Seu navegador não suporta compartilhamento direto. Tente baixar a imagem.');
+                    const link = document.createElement('a');
+                    link.download = 'relatorio.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
                 }
             });
         } catch (err) {
